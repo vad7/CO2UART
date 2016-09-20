@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html><head>
+	<meta http-equiv="Content-type" content="text/html; charset=windows-1251">
+	<title>Fans Setup</title>
+	<link rel="stylesheet" href="../style.css">
+	<script src="/scripts.js"></script>
+	<script src="/site.js"></script>
+</head><body>
+~inc:menumain.inc~
+	<div class="content">
+		<h2 class="title">Fans Setup</h2>
+		<form method="post" action="" onsubmit="SubmitFunction()">
+			<table class="form">
+				<tr>
+				<td class="label">Select fan:</td>
+				<td><select title="fan" id="cfg_fan_" onchange="ShowNewFan()">
+				</select></td>
+				</tr>
+				<tr>
+					<td class="label">Name:</td>
+					<td><input name='cfg_fan_name' maxlength='16' value='~cfg_fan_name~'></td>
+				</tr>
+				<tr>
+					<td class="label">Fan RF channel:</td>
+					<td><input title='0..126' name='cfg_fan_rf_ch' maxlength='4' value='~cfg_fan_rf_ch~'></td>
+				</tr>
+				<tr>
+					<td class="label">Receive address:</td>
+					<td><input title='0x00..0xFF' name='cfg_fan_addr_LSB' maxlength='4' value='~cfg_fan_addr_LSB~'></td>
+				</tr>
+				<tr>
+					<td class="label">Speed Min:</td>
+					<td><input title='0..6' name='cfg_fan_min' maxlength='4' value='~cfg_fan_min~'></td>
+				</tr>
+				<tr>
+					<td class="label">Speed Max:</td>
+					<td><input title='0..6' name='cfg_fan_max' maxlength='4' value='~cfg_fan_max~'></td>
+				</tr>
+				<tr>
+					<td class="label">Override day:</td>
+					<td><select name='cfg_fan_override_day'>
+						<option value='0'>No</option>
+						<option value='1'>=Day speed</option>
+						<option value='2'>+Day speed</option>
+					</select>&nbsp;&nbsp;<input title='0..6' name='cfg_fan_day' size='5' maxlength='4' value='~cfg_fan_day~'></td>
+				</tr>
+				<tr>
+					<td class="label">Override at night:</td>
+					<td><select name='cfg_fan_override_night'>
+						<option value='0'>No</option>
+						<option value='1'>=Night speed</option>
+						<option value='2'>+Night speed</option>
+					</select>&nbsp;&nbsp;<input title='0..6' name='cfg_fan_night' size='5' maxlength='4' value='~cfg_fan_night~'></td>
+				</tr>
+				<tr>
+					<td class="label">Flags:</td>
+					<td><select name='cfg_fan_flags'>
+						<option value='0'>-</option>
+						<option value='1'>Skip fan</option>
+						<option value='2'>Forced speed</option>
+					</select></td>
+				</tr>
+ 			</table>
+		<p class="center">
+			<input type='hidden' name='cfg_co2_save_fans' value='1'>
+			<input type='submit' value='Set Config' class="button">
+		</p>
+ 		</form>
+	</div>
+~inc:footer.inc~
+<script src="cookie.js"></script>
+<script type="text/javascript">
+function SubmitFunction() {
+	var inputs = document.forms[0].getElementsByTagName('input');
+	for(var i=0; i<inputs.length; i++){
+		var f = inputs[i];
+		if(f.getAttribute('type') == 'checkbox'){
+			if(f.checked) {
+				f.value = '1';
+			} else {
+				f.checked = true;
+				f.value = '0';
+			}
+		}
+	}
+}
+function ShowNewFan() {
+	setCookie("cfg_fan_", document.getElementById("cfg_fan_").value);
+	location.assign(location.pathname);
+}
+var f = document.getElementById("cfg_fan_");
+var sel = getCookie("cfg_fan_");
+for(var i=0; i < ~cfg_co2_fans~; i++) {
+	var o = document.createElement("option");
+	o.text = i+1;
+	o.value = i;
+	if(o.value == sel) o.selected = true;
+	f.add(o);
+}
+var val = getCookie("cfg_fan_");
+if (val == null) {
+	SetCookie("cfg_fan_", "0");
+}
+document.getElementsByName("cfg_fan_override_day")[0].selectedIndex = ~cfg_fan_override_day~;
+document.getElementsByName("cfg_fan_override_night")[0].selectedIndex = ~cfg_fan_override_night~;
+document.getElementsByName("cfg_fan_flags")[0].selectedIndex = ~cfg_fan_flags~;
+setFormCheckBoxes(document.forms[0]);
+</script>
+</body></html>

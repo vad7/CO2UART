@@ -1,0 +1,19 @@
+<h3 class="top">Вентиляция</h3>
+<div class="menu">
+	<div>
+		<a href="/index.htm">Главная</a>
+		<a href="/history.htm">История</a>
+		<a href="/peak.htm">График</a>
+	</div>
+	<div>
+		<a href="/protect/setmeter.htm">Настройка</a>
+		<a href="/settings.htm">Дополнительно</a>
+	</div>
+</div>
+<script type="text/javascript">
+for (var i = 0; i < document.links.length; i++) {
+    if (document.links[i].href == document.URL) {
+        document.links[i].className = 'active';
+    }
+}
+</script>

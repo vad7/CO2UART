@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html><head>
+	<meta http-equiv="Content-type" content="text/html; charset=windows-1251">
+	<title>CO2 Meter Setup</title>
+	<link rel="stylesheet" href="../style.css">
+	<script src="/scripts.js"></script>
+	<script src="/site.js"></script>
+</head><body>
+~inc:menumain.inc~
+	<div class="content">
+		<h2 class="title">CO<sub>2</sub> Meter Setup</h2>
+		<form method="post" action="" onsubmit="SubmitFunction()">
+			<table class="form">
+				<tr>
+					<td class="label">Fans speed override:</td>
+					<td><input title='-6..0..+6' name='cfg_vars_fans_speed_ov' maxlength='4' value='~cfg_vars_fans_speed_ov~'></td>
+				</tr>
+				<tr>
+					<td class="label">Receive timeout, sec:</td>
+					<td><input title='0 - forever' name='cfg_vars_receive_timeout' maxlength='4' value='~cfg_vars_receive_timeout~'></td>
+				</tr>
+				<tr>
+				</tr>
+				<tr>
+					<td class="label">Sensor RF channel:</td>
+					<td><input title='0..126' name='cfg_co2_rf_ch' maxlength='4' value='~cfg_co2_rf_ch~'></td>
+				</tr>
+				<tr>
+					<td class="label">Receive address:</td>
+					<td><input title='0x00..0xFF' name='cfg_co2_addr_LSB' maxlength='4' value='~cfg_co2_addr_LSB~'></td>
+				</tr>
+				<tr>
+					<td class="label">Fans:</td>
+					<td><input title='1..10' name='cfg_co2_fans' maxlength='4' value='~cfg_co2_fans~'></td>
+				</tr>
+				<tr>
+					<td></td><td><a href="setfans.htm">Configure Fans...</a></td>
+				</tr>
+				<tr>
+					<td class="label">Fans speed thresholds:</td>
+					<td><input title='n,n,n,n,n,n' name='cfg_co2_fans_speed_th' size='40' maxlength='50' value='~cfg_co2_fans_speed_th~'></td>
+				</tr>
+				<tr>
+					<td class="label">Fans speed delta to decrease:</td>
+					<td><input title='ppm' name='cfg_co2_fans_speed_delta' maxlength='10' value='~cfg_co2_fans_speed_delta~'></td>
+				</tr>
+				<tr>
+					<td class="label">Night start:</td>
+					<td><input title='hhmm' name='cfg_co2_night_start' maxlength='4' value='~cfg_co2_night_start~'></td>
+				</tr>
+				<tr>
+					<td class="label">Night end:</td>
+					<td><input title='hhmm' name='cfg_co2_night_end' maxlength='4' value='~cfg_co2_night_end~'></td>
+				</tr>
+				<tr>
+					<td class="label">Weekend Night start:</td>
+					<td><input title='hhmm' name='cfg_co2_night_start_wd' maxlength='4' value='~cfg_co2_night_start_wd~'></td>
+				</tr>
+				<tr>
+					<td class="label">Weekend Night end:</td>
+					<td><input title='hhmm' name='cfg_co2_night_end_wd' maxlength='4' value='~cfg_co2_night_end_wd~'></td>
+				</tr>
+				<tr>
+					<td class="label">Maximum fan speed at night:</td>
+					<td><input title='0..6' name='cfg_co2_night_max' maxlength='4' value='~cfg_co2_night_max~'></td>
+				</tr>
+				<tr>
+					<td class="label">Delimiter in .csv:</td>
+					<td><input title='char' name='cfg_co2_csv_delim' maxlength='1' value='~cfg_co2_csv_delim~'></td>
+				</tr>
+				<tr>
+					<td class="label">Page refresh time, ms:</td>
+					<td><input title='0..65535' name='cfg_co2_refresh_t' maxlength='10' value='~cfg_co2_refresh_t~'></td>
+				</tr>
+				<tr>
+					<td class="label">History buffer size:</td>
+					<td><input title='1024..32768' name='cfg_co2_history_size' maxlength='10' value='~cfg_co2_history_size~'></td>
+				</tr>
+				<tr>
+					<td class="label">IoT cloud enable:</td>
+					<td><input type='checkbox' name='cfg_iot_cloud_enable' value='~cfg_iot_cloud_enable~'></td>
+				</tr>
+				<tr>
+					<td class="label">IoT cloud setup:
+					<input title='change?' type='checkbox' name='change_iot_ini' value='0'></td>
+					<td><textarea title='protect/iot_cloud.ini' name='cfg_iot_ini' rows=4 cols=50 wrap="off" maxlength=1023>~cfg_iot_ini~</textarea></td>
+				</tr>
+ 			</table>
+		<p class="center">
+			<input type='hidden' name='cfg_co2_save' value='1'>
+			<input type='hidden' name='cfg_vars_save' value='1'>
+			<input type='submit' value='Set Config' class="button">
+		</p>
+ 		</form>
+		<br>
+		<p class="center">
+			<a href="settings.bin">Download settings...</a><br>
+			<form method='post' action='/fsupload' enctype='multipart/form-data' class="center">
+			Restore settings:
+			<input type='file' name='settings'> <input type='submit' value='Upload' class="button">
+		</p>
+	</div>
+~inc:footer.inc~
+<script type="text/javascript">
+setFormCheckBoxes(document.forms[0]);
+function SubmitFunction() {
+	var inputs = document.forms[0].getElementsByTagName('input');
+	for(var i=0; i<inputs.length; i++){
+		var f = inputs[i];
+		if(f.getAttribute('type') == 'checkbox'){
+			if(f.checked) {
+				f.value = '1';
+			} else {
+				if(f.name == 'change_iot_ini') document.getElementsByName('cfg_iot_ini')[0].removeAttribute('name');
+				else {
+					f.checked = true;
+					f.value = '0';
+				}
+			}
+		}
+	}
+}
+</script>
+</body></html>
