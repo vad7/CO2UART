@@ -13,14 +13,19 @@
 #include "iot_cloud.h"
 #include "driver/spi.h"
 #include "driver/nrf24l01.h"
+#include "driver/uart.h"
 
 os_timer_t user_loop_timer DATA_IRAM_ATTR;
+
+char AZ_7798_Command_Info[] = { 'I', 0x0D, 0 };
+char AZ_7798_Command_GetValues[] = { ':', 0x0D, 0 };
+char AZ_7798_ResponseEnd[] = { '%', 0x0D, 0 };
 
 uint8 CO2_work_flag = 0; // 0 - not inited, 1 - wait incoming, 2 - send
 uint8 CO2_send_flag;		// 0 - ready to send, 1 - sending
 uint8 CO2_send_fan_idx;
 uint8 nrf_last_rf_channel = 255;
-uint16 receive_timeout;
+uint16 receive_timeout; // sec
 #define CO2LevelAverageArrayLength 6
 uint16_t CO2LevelAverageIdx = CO2LevelAverageArrayLength;
 uint16_t CO2LevelAverageArray[CO2LevelAverageArrayLength];
@@ -125,6 +130,28 @@ void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 	}
 }
 
+void ICACHE_FLASH_ATTR uart_recvTask(os_event_t *events)
+{
+    if(events->sig == 0){
+        uint8 fifo_len = (READ_PERI_REG(UART_STATUS(UART0))>>UART_RXFIFO_CNT_S)&UART_RXFIFO_CNT;
+        uint8 idx=0;
+        for(idx = 0; idx < fifo_len; idx++) {
+        	uint8 d_tmp = READ_PERI_REG(UART_FIFO(UART0)) & 0xFF;
+        	if(UART_Buffer_idx < sizeof(UART_Buffer)) {
+            	UART_Buffer[UART_Buffer_idx++] = d_tmp;
+        	}
+            //uart_tx_one_char(UART0, d_tmp);
+        }
+        WRITE_PERI_REG(UART_INT_CLR(UART0), UART_RXFIFO_FULL_INT_CLR|UART_RXFIFO_TOUT_INT_CLR);
+        uart_rx_intr_enable(UART0);
+        uint8* p = web_strnstr(UART_Buffer, AZ_7798_ResponseEnd, sizeof(UART_Buffer));
+        if(p != NULL) { // parse string
+
+
+        } else if(UART_Buffer_idx >= sizeof(UART_Buffer)) UART_Buffer_idx = 0; // garbage in the buf - reseting
+    }
+}
+
 void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 {
 	uint8 fan;
@@ -133,6 +160,21 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			if(cfg_fans[fan].forced_speed_timeout) if(--cfg_fans[fan].forced_speed_timeout == 0) cfg_fans[fan].flags &= ~(1<<FAN_SPEED_FORCED_BIT);
 		}
 	}
+	if(CO2_work_flag == 0) { // init
+		if(--receive_timeout == 0) {
+			UART_Buffer_idx = 0;
+			uart0_sendStr(AZ_7798_Command_GetValues);
+			CO2_work_flag == 1;
+		}
+	} else if(CO2_work_flag == 1) { // wait incoming
+
+
+
+
+		receive_timeout = global_vars.receive_timeout;
+
+	}
+
 	if(CO2_work_flag == 0) { // init
 		set_new_rf_channel(cfg_co2.sensor_rf_channel);
 		if(NRF24_SetAddresses(cfg_co2.address_LSB)) {
@@ -270,7 +312,17 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	//ets_timer_disarm(&user_loop_timer);
 	os_timer_setfn(&user_loop_timer, (os_timer_func_t *)user_loop, NULL);
 	ets_timer_arm_new(&user_loop_timer, 1000, 1, 1); // 1s, repeat
+	receive_timeout = 1;
 	NRF24_init(); // After init transmit must be delayed
+	set_new_rf_channel(cfg_co2.sensor_rf_channel);
+	if(NRF24_SetAddresses(cfg_co2.address_LSB)) {
+		NRF24_SetMode(NRF24_ReceiveMode);
+		#if DEBUGSOO > 4
+	} else {
+			os_printf("NRF-SetAddr error\n");
+		#endif
+	}
+	uart_init(global_vars.UART_speed, &uart_recvTask);
 	iot_cloud_init();
 	if(history_co2 == NULL) {
 		history_co2 = os_malloc(cfg_co2.history_size);

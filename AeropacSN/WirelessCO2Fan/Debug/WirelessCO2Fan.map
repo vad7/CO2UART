@@ -501,9 +501,9 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1037
+.debug_info     0x00000000     0x1039
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000     0x1037 WirelessCO2Fan.o
+ .debug_info    0x00000000     0x1039 WirelessCO2Fan.o
 
 .debug_abbrev   0x00000000      0x2ef
  *(.debug_abbrev)

@@ -13,19 +13,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   4 .debug_aranges 000000d0  00000000  00000000  00000718  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00001037  00000000  00000000  000007e8  2**0
+  5 .debug_info   00001039  00000000  00000000  000007e8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000002ef  00000000  00000000  0000181f  2**0
+  6 .debug_abbrev 000002ef  00000000  00000000  00001821  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   000005ad  00000000  00000000  00001b0e  2**0
+  7 .debug_line   000005ad  00000000  00000000  00001b10  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000274  00000000  00000000  000020bc  2**2
+  8 .debug_frame  00000274  00000000  00000000  000020c0  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000004c6  00000000  00000000  00002330  2**0
+  9 .debug_str    000004c6  00000000  00000000  00002334  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000d2b  00000000  00000000  000027f6  2**0
+ 10 .debug_loc    00000d2b  00000000  00000000  000027fa  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 000000d8  00000000  00000000  00003521  2**0
+ 11 .debug_ranges 000000d8  00000000  00000000  00003525  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -444,7 +444,7 @@ void NRF24_SetMode(uint8_t mode) // Set mode in CONFIG reg
  1ec:	c8 2f       	mov	r28, r24
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_CONFIG, NRF24_CONFIG | (1<<NRF24_BIT_PWR_UP) | mode);
  1ee:	68 2f       	mov	r22, r24
- 1f0:	6e 60       	ori	r22, 0x0E	; 14
+ 1f0:	6e 67       	ori	r22, 0x7E	; 126
  1f2:	80 e2       	ldi	r24, 0x20	; 32
  1f4:	c4 df       	rcall	.-120    	; 0x17e <NRF24_WriteByte>
 	if(mode & NRF24_ReceiveMode) { // Receive mode

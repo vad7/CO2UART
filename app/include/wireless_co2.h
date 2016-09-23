@@ -4,8 +4,8 @@
 #include "sntp.h"
 #include "debug_ram.h"
 
-#define FANS_MAX 					10
-#define FAN_SPEED_MAX				6
+#define FANS_MAX 					1
+#define FAN_SPEED_MAX				7
 
 typedef struct __attribute__((packed)) {
 	uint16	fans_speed_threshold[FAN_SPEED_MAX]; //  Fan speed: CO2 < 500 ppm = 0; < 550 ppm = 1; < 600 ppm = 2; < 800 ppm = 3; < 900 ppm = 4; < 1100 ppm = 5; > = 6 (max)
@@ -54,12 +54,14 @@ typedef struct __attribute__ ((packed)) {
 	uint16_t CO2level;
 	uint8_t FanSpeed;
 	uint8_t Flags; // Mask: 0x80 - Setup command, 0x01 - Lowlight
+	uint8_t Pause; // sec, between next scan
 } CO2_SEND_DATA;
 CO2_SEND_DATA __attribute__((aligned(4))) co2_send_data;
 
 typedef struct __attribute__ ((packed)) {
-	uint16 receive_timeout;		// timeout before start transmit, counts of user_loop calls (sec), 0 - forever
+	uint16 receive_timeout;		// sec, timeout before get CO2
 	int8   fans_speed_override;	// +- total speed
+	uint32 UART_speed; // 9600
 } GLOBAL_VARS;
 GLOBAL_VARS __attribute__((aligned(4))) global_vars;
 
@@ -76,6 +78,8 @@ uint8  now_night_override; // 0 - use now_night, 1 - not night, 2 - night
 uint32 Web_ChartMaxDays; 	// ~ChartMaxDays~
 uint32 Web_ShowByDay; 		// ~ShowByDay~
 uint32 Web_cfg_fan_;		// fan idx for change setting
+char 	UART_Buffer[32];
+uint8_t UART_Buffer_idx;
 //
 
 void send_fans_speed_now(uint8 fan, uint8 calc_speed) ICACHE_FLASH_ATTR;

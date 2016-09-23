@@ -21,7 +21,7 @@
 #define NRF24_RF_CHANNEL		2 // default
 #define NRF24_ADDRESS_LEN		3 // 3..5 bytes
 #define NRF24_PAYLOAD_LEN		sizeof(master_data) // MUST be EQUAL or GREATER than Address field width!!
-#define NRF24_CONFIG			(1<<NRF24_BIT_EN_CRC) | (1<<NRF24_BIT_CRCO) // Enable CRC, CRC 2 bytes, IRQ disabled
+#define NRF24_CONFIG			(1<<NRF24_BIT_EN_CRC) | (1<<NRF24_BIT_CRCO) | (1<<NRF24_BIT_MASK_RX_DR)|(1<<NRF24_BIT_MASK_TX_DS)|(1<<NRF24_BIT_MASK_MAX_RT) // Enable CRC, CRC 2 bytes, IRQs disabled
 
 uint8_t NRF24_Buffer[NRF24_PAYLOAD_LEN]; // MUST be EQUAL or GREATER than Address field width!!! 
 
