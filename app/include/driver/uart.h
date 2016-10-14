@@ -14,6 +14,9 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#ifdef uart_c_enabled
+
 #ifndef UART_APP_H
 #define UART_APP_H
 
@@ -228,3 +231,4 @@ bool UART_CheckOutputFinished(uint8 uart_no, uint32 time_out_us);
 
 #endif
 
+#endif

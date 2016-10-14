@@ -27,7 +27,7 @@
 #include "sdk/rom2ram.h"
 #include "sys_const_utils.h"
 #include "wifi_events.h"
-#include "power_meter.h"
+#include "../include/wireless_co2.h"
 #include "driver/eeprom.h"
 #include "time.h"
 #include "iot_cloud.h"
@@ -133,6 +133,93 @@ void ICACHE_FLASH_ATTR web_test_adc(TCP_SERV_CONN *ts_conn)
     SetSCB(SCB_FCLOSE | SCB_DISCONNECT); // connection close
 }
 #endif // TEST_SEND_WAVE
+
+// Print fans array as xml, web_conn->udata_start = start fan n, web_conn->udata_stop = max fan n + 1
+void ICACHE_FLASH_ATTR web_fans_xml(TCP_SERV_CONN *ts_conn)
+{
+	WEB_SRV_CONN *web_conn = (WEB_SRV_CONN *) ts_conn->linkd;
+	if(CheckSCB(SCB_RETRYCB)==0) { // Check if this is a first round call
+    	tcp_puts_fd("<total>%d</total>", web_conn->udata_stop - web_conn->udata_start);
+    	tcp_puts_fd("<night>%d</night>", now_night);
+    	tcp_puts_fd("<night_ov>%d</night_ov>", now_night_override);
+    	tcp_puts_fd("<sp_ov>%d</sp_ov>", global_vars.fans_speed_override);
+    	tcp_puts_fd("<co2>%d</co2>", co2_send_data.CO2level);
+    	tcp_puts_fd("<time_co2>%u</time_co2>", sntp_local_to_UTC_time(CO2_last_time));
+    	tcp_puts_fd("<time_sntp>%u</time_sntp>", get_sntp_time());
+	}
+	while(web_conn->msgbuflen + 250 <= web_conn->msgbufsize)
+	{ // +max string size
+		CFG_FAN *f = &cfg_fans[web_conn->udata_start];
+		tcp_puts_fd("<fan id=\"%d\"><name>", web_conn->udata_start);
+		web_conn->msgbuflen += htmlcode(&web_conn->msgbuf[web_conn->msgbuflen], f->name, sizeof(f->name) * 6, sizeof(f->name));
+		tcp_puts_fd("</name><fl>%u</fl>"
+				//"<rf>%d</rf><addr>%d</addr><ovd>%d</ovd><ovn>%d</ovn><spmax>%d</spmax><spmin>%d</spmin><spd>%d</spd><spn>%d</spn>"
+				"<fspt>%u</fspt><spc>%d</spc><tst>%d</tst><ttm>%u</ttm></fan>\n",
+			f->flags,
+			//f->rf_channel, f->address_LSB, f->override_day, f->override_night, f->speed_max, f->speed_min, f->speed_day, f->speed_night,
+			f->forced_speed_timeout, f->speed_current, f->transmit_last_status, sntp_local_to_UTC_time(f->transmit_ok_last_time));
+		if(++web_conn->udata_start >= web_conn->udata_stop) {
+			ClrSCB(SCB_RETRYCB);
+			return;
+		}
+	}
+	// repeat in the next call ...
+	SetSCB(SCB_RETRYCB);
+	SetNextFunSCB(web_fans_xml);
+}
+
+// Output history from last record to previous,
+// yyyy-mm-dd hh:mm:ss,n
+// Attention - memory may be moved while outputting!
+void ICACHE_FLASH_ATTR web_get_history(TCP_SERV_CONN *ts_conn)
+{
+    WEB_SRV_CONN *web_conn = (WEB_SRV_CONN *)ts_conn->linkd;
+    if(CheckSCB(SCB_RETRYCB)==0) {// Check if this is a first round call
+		tcp_puts("date,value\r\n"); // csv header
+    	if(history_co2 == NULL || (history_co2_pos == 0 && !history_co2_full) || average_period == 0) return; // empty
+		web_conn->udata_start = history_co2_pos - 1; // start idx
+		web_conn->udata_stop = CO2_last_time;
+#if DEBUGSOO > 2
+		os_printf("Output History: ");
+#endif
+    } else if(web_conn->udata_stop == history_co2_pos) { // pos changed
+		ClrSCB(SCB_RETRYCB);
+		return;
+    }
+	while(web_conn->msgbuflen + 50 <= web_conn->msgbufsize) { // +max string size
+		struct tm tm;
+	    time_t time = web_conn->udata_stop;
+		_localtime(&time, &tm);
+		uint32 idx = web_conn->udata_start * 15;
+		uint8  idxt = idx % 10;
+		idx /= 10;
+		// MSB(32 13 21 ...)
+		uint16 co2 = 0;
+		if(idxt) co2 = (history_co2[idx] & 0x0F) << 8;
+		else co2 = history_co2[idx] << 4;
+		if(idxt) co2 |= history_co2[idx+1];
+		else co2 |= history_co2[idx+1] >> 4;
+		tcp_puts("%04d-%02d-%02d %02d:%02d:%02d%c%d\r\n",
+				1900+tm.tm_year, 1+tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,cfg_co2.csv_delimiter, co2);
+		if(web_conn->udata_start == 0) {
+			if(history_co2_full) {
+				web_conn->udata_start = cfg_co2.history_size * 10 / 15;
+			} else { // end
+				ClrSCB(SCB_RETRYCB);
+				return;
+			}
+		}
+    	web_conn->udata_start--;
+		if(history_co2_full && web_conn->udata_start == history_co2_pos) { // end
+			ClrSCB(SCB_RETRYCB);
+			return;
+		}
+		web_conn->udata_stop -= average_period;
+	}
+	// repeat in the next call ...
+	SetSCB(SCB_RETRYCB);
+	SetNextFunSCB(web_get_history);
+}
 
 // Send text file until zero byte found.
 // web_conn->udata_stop - WEBFS handle
@@ -388,227 +475,16 @@ typedef struct {
 	time_t	PreviousTime; 	// Previous printed time
 	int32_t	minutes;		// How many minutes printed
 	bool 	FlagContinue;	// Need continue print packed
-	uint8_t OutType;		// 0b0100 - TotalCnt, 0b0010 - by date, 0b0001 - kWt
+	uint8_t OutType;		// 0 - out non zero cnts in min, 1 - kWt per day
 	int32_t	len;
 	int32_t	i;
 	bool 	packed_flag;
-	bool	previous_skipped;
 	uint8_t	n;
-	uint32_t previous_n;		// to skip multi-zeros or in TotalCnt mode the same value
-	uint32_t Sum;			// for OutType by date / TotalCnt
+	int16_t	previous_n;
+	int32_t Sum;			// for OutType=1
 	uint8_t	buf[48];
 	char 	str[32];
 } history_output;
-
-// return True if overflow
-bool web_get_history_put_csv_str(WEB_SRV_CONN *web_conn, history_output *hst, time_t *Time, uint32_t num)
-{
-	struct tm tm;
-	_localtime(Time, &tm);
-	uint16 L = ets_sprintf(hst->str, "%04d-%02d-%02d %02d:%02d:00%c", 1900+tm.tm_year, 1+tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, cfg_meter.csv_delimiter);
-	if(hst->OutType & 0b0001) { // kWt
-		if((hst->OutType & 0b0110) == 0) num *= 60; // kwt per hour
-		num = num * 10 / cfg_meter.PulsesPer0_01KWt;
-		L += ets_sprintf(hst->str + L, "%u.%03u\r\n", num / 1000, num % 1000);
-	} else {
-		L += ets_sprintf(hst->str + L, "%u\r\n", num);
-	}
-	if(web_conn->msgbuflen + L + 1 > web_conn->msgbufsize) { // overflow
-		return true;
-	}
-	os_memcpy(&web_conn->msgbuf[web_conn->msgbuflen], hst->str, L);
-	web_conn->msgbuflen += L;
-	#if DEBUGSOO > 4
-		os_printf("%02d.%02d.%04d %02d:%02d:%02d,%d\n", tm.tm_mday, tm.tm_mon, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec, num);
-	#endif
-	return false;
-}
-
-// Output history by 1 min from last record to previous,
-// web_conn->udata_stop - how many minutes out, if minutes = 0 - all records
-// yyyy-mm-dd hh:mm:00,n
-void ICACHE_FLASH_ATTR web_get_history(TCP_SERV_CONN *ts_conn)
-{
-	history_output * hst;
-	int32 len, i;
-	uint8 n;
-	bool packed_flag;
-
-    WEB_SRV_CONN *web_conn = (WEB_SRV_CONN *)ts_conn->linkd;
-    if(CheckSCB(SCB_RETRYCB)==0) {  // Check if this is a first round call
-#if DEBUGSOO > 2
-		os_printf("Output History %u, %u: ", web_conn->udata_start, web_conn->udata_stop);
-#endif
-		hst = os_zalloc(sizeof(history_output));
-		if(hst == NULL) {
-			#if DEBUGSOO > 2
-				os_printf("Error malloc: %u\n", sizeof(history_output));
-			#endif
-			return;
-		}
-		hst->minutes = web_conn->udata_stop;
-		web_conn->udata_stop = (uint32)hst;
-		hst->OutType = web_conn->udata_start;
-		hst->PtrCurrent = fram_store.PtrCurrent;
-		if(CntCurrent.Cnt2) { // packed available
-			hst->PtrCurrent += CntCurrent.Cnt2 == 1 ? 1 : 2; // 0,1 in CurrentCnt is 0 last minute
-			if(hst->PtrCurrent >= cfg_meter.Fram_Size - StartArrayOfCnts) hst->PtrCurrent -= cfg_meter.Fram_Size - StartArrayOfCnts;
-		}
-		hst->LastTime = fram_store.LastTime;
-		tcp_puts("date,power\r\n"); // csv header
-		if(hst->OutType & 0b0100) { // TotalCnt
-			hst->Sum = fram_store.TotalCnt;
-			if((hst->OutType & 0b0010) == 0) { // not By day
-				hst->previous_n = hst->Sum; // save value and wait changing
-			}
-		} else hst->previous_n = 0xFFFFFFFF;
-    } else hst = (history_output *)web_conn->udata_stop; // restore ptr
-    // Get/put as many bytes as possible
-	if(hst->FlagContinue) {
-		len = hst->len;
-		i = hst->i;
-		n = hst->n;
-		packed_flag = hst->packed_flag;
-		goto xContinue;
-	}
-	do {
-		uint16_t num = 0;
-		if(hst->PtrCurrent == 0) hst->PtrCurrent = cfg_meter.Fram_Size - StartArrayOfCnts; // jump to the end
-		len = mMIN(sizeof(hst->buf), hst->PtrCurrent);
-		#if DEBUGSOO > 4
-			os_printf(" st %u -> len: %u, ", hst->PtrCurrent, len);
-		#endif
-		if(eeprom_read_block(StartArrayOfCnts + hst->PtrCurrent - len, hst->buf, len)) {
-xErrorI2C:
-			#if DEBUGSOO > 2
-				os_printf("fram R error\n");
-			#endif
-			break;
-		} else {
-			if(len == 1) { // may be packed - load previous byte from end
-				hst->buf[1] = hst->buf[0];
-				if(eeprom_read_block(cfg_meter.Fram_Size - 1, hst->buf, 1)) goto xErrorI2C;
-				len = 2;
-			}
-			for(i = len - 1; i > 0; i--) { // first byte may be not proceeded
-				n = hst->buf[i];
-				#if DEBUGSOO > 4
-					os_printf(" %d=%d ", i, n);
-				#endif
-				packed_flag = hst->buf[i-1] == 0; // packed
-				if(packed_flag) {
-					if(n == 0) { // end
-xEnd:
-						// if TotalCnt - print sum, otherwise 0;
-						if(web_get_history_put_csv_str(web_conn, hst, &hst->LastTime, (hst->OutType & 0b0110) ? hst->Sum : 0)) goto xBufferFull;
-						goto xEndExit;
-					}
-					if(n == 1) packed_flag = 0; // special case "0,1" - last min = 1, previous min = 0
-					else i--;
-				}
-				do {
-xContinue:
-					num = packed_flag ? 0 : n;
-					uint32_t prn_num;
-					if(hst->OutType & 0b0100) hst->Sum -= num; // TotalCnt
-					if(hst->OutType & 0b0010) { // by day
-						if((hst->OutType & 0b0100) == 0) hst->Sum += num; // Not TotalCnt(+)
-						if(hst->LastTime % 86400 / 60 != (hst->OutType & 0b0100 ? 1439 : 0)) { // time is not 00:00 / 23:59(TotalCnt) - skip
-							goto xSkip;
-						}
-						prn_num = hst->Sum;
-					} else if(hst->OutType & 0b0100) { // TotalCnt not by day
-						if(hst->previous_n == hst->Sum) goto xSkip; // Skip the same value
-						prn_num = hst->previous_n;
-					} else {
-						if(hst->previous_n == 0 && num && hst->previous_skipped) { // out 0 if num after multi zero
-							if(web_get_history_put_csv_str(web_conn, hst, &hst->PreviousTime, 0)) goto xBufferFull;
-						}
-						if(!(hst->previous_n || num)) {
-							hst->previous_skipped = 1;
-							goto xSkip; // multi-zeros will be skipped
-						}
-						prn_num = num;
-					}
-					if(web_get_history_put_csv_str(web_conn, hst, &hst->LastTime, prn_num)) {
-xBufferFull:
-						hst->Sum = (hst->OutType & 0b0100) ? hst->Sum + num : hst->Sum - num; // TotalCnt(+) / by day(-)
-						hst->len = len;
-						hst->i = i;
-						hst->n = n;
-						hst->packed_flag = packed_flag;
-						hst->FlagContinue = 1;
-						#if DEBUGSOO > 4
-							os_printf("Buf full: %d, %d, %d\n", len, i, n);
-						#endif
-						SetNextFunSCB(web_get_history);
-						SetSCB(SCB_RETRYCB);
-						return;
-					}
-					if((hst->OutType & 0b0100) == 0) hst->Sum = 0; // not TotalCnt
-					hst->previous_skipped = 0;
-xSkip:
-					hst->previous_n = (hst->OutType & 0b0100) ? hst->Sum : num; // TotalCnt = sum
-					hst->PreviousTime = hst->LastTime;
-					hst->LastTime -= TIME_STEP_SEC;
-					if(hst->minutes) {
-						hst->minutes -= 1;
-						if(hst->minutes == 0) goto xEnd;
-					}
-				} while(packed_flag && --n);
-			}
-			if(i <= 0) { // buffer has been proceeded
-				len -= 1 + i;
-				if(hst->PtrCurrent < len) hst->PtrCurrent += cfg_meter.Fram_Size - StartArrayOfCnts - len;
-				else hst->PtrCurrent -= len;
-				#if DEBUGSOO > 4
-					os_printf("H ptr_curr: %u, t%u\n", hst->PtrCurrent, hst->LastTime);
-				#endif
-			}
-		}
-	} while(1);
-xEndExit:
-	#if DEBUGSOO > 4
-		os_printf("End(mbs=%u) ", web_conn->msgbufsize);
-	#endif
-	os_free(hst);
-	web_conn->udata_stop = 0;
-	ClrSCB(SCB_RETRYCB);
-	//FRAM_Status = 2;
-}
-
-// Output i2c from eeprom web_conn->udata_start, end: web_conn->udata_stop
-void ICACHE_FLASH_ATTR web_get_i2c_eeprom(TCP_SERV_CONN *ts_conn)
-{
-    WEB_SRV_CONN *web_conn = (WEB_SRV_CONN *)ts_conn->linkd;
-    // Check if this is a first round call
-    if(CheckSCB(SCB_RETRYCB)==0) {
-    	if(web_conn->udata_start == web_conn->udata_stop) return;
-#if DEBUGSOO > 2
-		os_printf("i2c from:%u ", web_conn->udata_start);
-#endif
-    }
-    // Get/put as many bytes as possible
-    unsigned int len = mMIN(web_conn->msgbufsize - web_conn->msgbuflen, FRAM_MAX_BLOCK_AT_ONCE);
-#if DEBUGSOO > 2
-	os_printf("%u+%u ",web_conn->udata_start, len);
-#endif
-	if(eeprom_read_block(web_conn->udata_start, web_conn->msgbuf + web_conn->msgbuflen, len)) {
-		os_printf("i2c R error %u, %u\n", web_conn->udata_start, len);
-		//FRAM_Status = 2;
-	} else {
-		web_conn->udata_start += len;
-		web_conn->msgbuflen += len;
-		if(web_conn->udata_start < web_conn->udata_stop) {
-			SetSCB(SCB_RETRYCB);
-    		SetNextFunSCB(web_get_i2c_eeprom);
-    		return;
-    	}
-    }
-    ClrSCB(SCB_RETRYCB);
-//    SetSCB(SCB_FCLOSE | SCB_DISCONNECT);
-    return;
-}
 
 /******************************************************************************
  * FunctionName : web saved flash
@@ -755,7 +631,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         	   return;
            }
         }
-#if DEBUGSOO > 5
+#if DEBUGSOO > 3
         os_printf("[%s]\n", cstr);
 #endif
         ifcmp("start") tcp_puts("0x%08x", web_conn->udata_start);
@@ -952,18 +828,62 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 #endif
 		    	else tcp_put('?');
 		    }
-		    else ifcmp("meter_") { // cfg_
-	        	cstr += 6;
-		        ifcmp("PulsesPerKWt") tcp_puts("%u00", cfg_meter.PulsesPer0_01KWt);
-		        else ifcmp("Fram_Size") tcp_puts("%u", cfg_meter.Fram_Size);
-		        else ifcmp("csv_delim") tcp_puts("%c", cfg_meter.csv_delimiter);
-		        else ifcmp("FramFr") tcp_puts("%u", cfg_meter.fram_freq);
-		        else ifcmp("Debouncing") tcp_puts("%u", cfg_meter.Debouncing_Timeout);
-		        else ifcmp("revsens") tcp_puts("%u", cfg_meter.ReverseSensorPulse);
-		    }
-	        else ifcmp("iot_") {	// cfg_
+		    else ifcmp("co2_") { // cfg_
 	        	cstr += 4;
-	        	ifcmp("cloud_enable") tcp_puts("%d", cfg_meter.iot_cloud_enable);
+		        ifcmp("csv_delim") tcp_puts("%c", cfg_co2.csv_delimiter);
+		        else ifcmp("rf_ch") tcp_puts("%d", cfg_co2.sensor_rf_channel);
+		        else ifcmp("addr_LSB") tcp_puts("0x%X", cfg_co2.address_LSB);
+		        else ifcmp("fans") {
+		        	cstr += 4;
+		        	ifcmp("_speed_th") {
+						int16_t i;
+						for(i = 0; i < FAN_SPEED_MAX; i++) tcp_puts("%u%s", cfg_co2.fans_speed_threshold[i], i < FAN_SPEED_MAX-1 ? "," : "");
+					}
+			        else ifcmp("_speed_delta") tcp_puts("%u", cfg_co2.fans_speed_delta);
+		        	else tcp_puts("%d", cfg_co2.fans);
+		        }
+		        else ifcmp("night_") {
+		        	cstr += 6;
+		        	ifcmp("start") {
+						cstr += 5;
+						ifcmp("_wd") tcp_puts("%04u", cfg_co2.night_start_wd);
+						else tcp_puts("%04u", cfg_co2.night_start);
+		        	}
+		        	else ifcmp("end") {
+			        	cstr += 3;
+			        	ifcmp("_wd") tcp_puts("%04u", cfg_co2.night_end_wd);
+			        	else tcp_puts("%04u", cfg_co2.night_end);
+			        }
+		        	else ifcmp("max") tcp_puts("%d", cfg_co2.fans_speed_night_max);
+		        }
+		        else ifcmp("refresh_t") tcp_puts("%u", cfg_co2.page_refresh_time);
+		        else ifcmp("history_size") tcp_puts("%u", cfg_co2.history_size);
+		    }
+		    else ifcmp("fan_") { // cfg_
+	        	cstr += 4;
+	        	CFG_FAN *f = &cfg_fans[Web_cfg_fan_];
+		        ifcmp("rf_ch") tcp_puts("%d", f->rf_channel);
+		        else ifcmp("name") tcp_puts("%s", f->name);
+		        else ifcmp("addr_LSB") tcp_puts("0x%X", f->address_LSB);
+		        else ifcmp("min") tcp_puts("%d", f->speed_min);
+		        else ifcmp("max") tcp_puts("%d", f->speed_max);
+		        else ifcmp("override") {
+		        	cstr += 8;
+			        ifcmp("_night") tcp_puts("%d", f->override_night);
+			        else ifcmp("_day") tcp_puts("%d", f->override_day);
+		        }
+		        else ifcmp("day") tcp_puts("%d", f->speed_day);
+		        else ifcmp("night") tcp_puts("%d", f->speed_night);
+		        else ifcmp("flags") tcp_puts("%d", f->flags);
+		    }
+			else ifcmp("vars_") { // cfg_
+				cstr += 5;
+	        	ifcmp("fans_speed_ov") tcp_puts("%d", global_vars.fans_speed_override);
+	        	else ifcmp("receive_timeout") tcp_puts("%d", global_vars.receive_timeout);
+			}
+	        else ifcmp("iot_") { // cfg_
+	        	cstr += 4;
+	        	ifcmp("cloud_enable") tcp_puts("%d", cfg_co2.iot_cloud_enable);
 	            else ifcmp("ini") {
 	        		web_conn->udata_start = 0; // pos in the file
 	        		web_conn->udata_stop = WEBFSOpen(iot_cloud_ini); // file handle
@@ -1190,6 +1110,11 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
             			web_conn->udata_stop = web_conn->udata_start + WEBFS_curent_size();
             			web_get_flash(ts_conn);
             		}
+            		else ifcmp("settings") {
+            	    	web_conn->udata_start = FMEMORY_SCFG_BASE_ADDR;
+            	    	web_conn->udata_stop = FMEMORY_SCFG_BASE_ADDR + current_cfg_length();
+            	    	web_get_flash(ts_conn);
+            		}
             		else tcp_put('?');
         		}
         		else web_get_flash(ts_conn);
@@ -1202,20 +1127,9 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         		web_get_ram(ts_conn);
         	}
 #endif
-        	// history*.csv
+        	// history.csv
         	else ifcmp("history") {
-        		cstr += 7;
-        		web_conn->udata_start = 0;
-        		ifcmp("cnt") web_conn->udata_start = 0b0100;
-				web_conn->udata_start |= (Web_ShowByDay<<1) | Web_ShowByKWT;	// OutType
-				web_conn->udata_stop = Web_ChartMaxDays * 60*24; 	// how many minutes, 0 = all
 				web_get_history(ts_conn);
-        	}
-        	// fram_all.bin
-        	else ifcmp("fram_all") {
-    			web_conn->udata_start = 0;
-    			web_conn->udata_stop = cfg_meter.Fram_Size;
-    			web_get_i2c_eeprom(ts_conn);
         	}
         	//
         	else tcp_put('?');
@@ -1225,7 +1139,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         	else ts_conn->flag.user_option1 = 0;
         	web_hexdump(ts_conn);
         }
-        else ifcmp("hellomsg") tcp_puts_fd("Power Meter");
+        else ifcmp("hellomsg") tcp_puts_fd("Wireless CO2");
 #ifdef USE_TCP2UART
         else ifcmp("tcp_") {
         	cstr+=4;
@@ -1335,9 +1249,9 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         			}
         			else ifcmp("fun")	tcp_puts("%u", get_gpiox_mux_func(n));
         			else ifcmp("pull")	tcp_puts("%u", (get_gpiox_mux(n) >> GPIO_MUX_PULLDOWN_BIT) & 3);
-    	            else ifcmp("opd")	tcp_put((GPIOx_PIN(n) & (1<<GPIO_PIN_DRIVER)) ? '1' : '0');
-    	            else ifcmp("pu")	tcp_put((get_gpiox_mux(n) & (1 << GPIO_MUX_PULLUP_BIT)) ? '1' : '0');
-    	            else ifcmp("pd")	tcp_put((get_gpiox_mux(n) & (1 << GPIO_MUX_PULLDOWN_BIT)) ? '1' : '0');
+    	            else ifcmp("opd")	tcp_put((GPIOx_PIN(n) & (1<<GPIO_PIN_DRIVER))? '1' : '0');
+    	            else ifcmp("pu")	tcp_put((get_gpiox_mux(n) & (1 << GPIO_MUX_PULLUP_BIT))? '1' : '0');
+    	            else ifcmp("pd")	tcp_put((get_gpiox_mux(n) & (1 << GPIO_MUX_PULLDOWN_BIT))? '1' : '0');
         			else tcp_put('?');
         		}
         		else tcp_put('?');
@@ -1382,46 +1296,45 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 		else ifcmp("sntp_") {
 			cstr += 5;
 			ifcmp("time") tcp_puts("%u", get_sntp_time());
+	        else ifcmp("status") tcp_puts("%s", sntp_status ? "Ok" : "?");
 			else tcp_put('?');
 		}
 #endif
 #ifdef TEST_SEND_WAVE
         else ifcmp("test_adc") web_test_adc(ts_conn);
 #endif
-// PowerMeter
-        else ifcmp("PowerCnt") tcp_puts("%u", fram_store.PowerCnt);
-        else ifcmp("TotalCntTime") tcp_puts("%u", sntp_local_to_UTC_time(fram_store.LastTime));
-        else ifcmp("TotalCnt") tcp_puts("%u", fram_store.TotalCnt);
-        else ifcmp("LastCnt") {
-        	cstr += 7;
-        	tcp_puts("%u", LastCnt);
-        	ifcmp("_Fill") { // only non zero value
-        		if(LastCnt_Previous == 0 && LastCnt == 0) web_conn->webflag |= SCB_USER; // do not send data to IoT cloud
-        		LastCnt_Previous = LastCnt;
-        	}
-        }
-        else ifcmp("PtrCurrent") tcp_puts("%u", fram_store.PtrCurrent);
-        else ifcmp("CntCurrent1") tcp_puts("%u", CntCurrent.Cnt1);
-        else ifcmp("CntCurrent2") tcp_puts("%u", CntCurrent.Cnt2);
-        else ifcmp("TotalKWT") {
-        	cstr += 8;
-        	tcp_puts("%u.%03u", fram_store.TotalCnt / (cfg_meter.PulsesPer0_01KWt * 100), (fram_store.TotalCnt * 10 / cfg_meter.PulsesPer0_01KWt) % 1000);
-        	ifcmp("_New") { // only new value
-        		if(KWT_Previous == fram_store.TotalCnt) web_conn->webflag |= SCB_USER; // do not send data to IoT cloud
-            	KWT_Previous = fram_store.TotalCnt;
-        	}
-        }
-#ifdef USE_I2C
-        else ifcmp("i2c_errors") tcp_puts("%u", I2C_EEPROM_Error);
-#endif
+// User vars
         else ifcmp("ChartMaxDays") tcp_puts("%u", Web_ChartMaxDays);
         else ifcmp("ShowByDay") tcp_puts("%d", Web_ShowByDay);
-        else ifcmp("ShowByKWT") tcp_puts("%d", Web_ShowByKWT);
         else ifcmp("iot_") {
         	cstr += 4;
             ifcmp("LastSt_time") tcp_puts("%u", iot_last_status_time);
             else ifcmp("LastSt") tcp_puts("%s", iot_last_status);
         }
+        else ifcmp("CO2_") {
+        	cstr += 4;
+        	ifcmp("current") tcp_puts("%u", co2_send_data.CO2level);
+        	else ifcmp("last_time") tcp_puts("%u", sntp_local_to_UTC_time(CO2_last_time));
+        	else ifcmp("r_flags") tcp_puts("%u", co2_send_data.Flags);
+        	else ifcmp("r_speed") tcp_puts("%u", co2_send_data.FanSpeed);
+        }
+        else ifcmp("now_night_override") tcp_puts("%d", now_night_override);
+        else ifcmp("now_night") tcp_puts("%d", now_night);
+        else ifcmp("fan_speed_") {
+        	cstr += 10;
+        	ifcmp("previous") tcp_puts("%d", fan_speed_previous);
+        	else {
+        		uint8 idx = rom_atoi(cstr);
+        		if(idx < cfg_co2.fans) tcp_puts("%d", cfg_fans[idx].speed_current);
+        	}
+        }
+        else ifcmp("history_addr") tcp_puts("0x%x", (uint32)history_co2);
+        else ifcmp("fans_xml") {
+	    	web_conn->udata_start = 0;
+	    	web_conn->udata_stop = cfg_co2.fans;
+	    	web_fans_xml(ts_conn);
+        }
+#ifdef DEBUG_TO_RAM
         else ifcmp("dbg_") { // debug to RAM
         	cstr += 4;
         	ifcmp("enable") tcp_puts("%d", Debug_level);
@@ -1430,8 +1343,8 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         	else ifcmp("len") tcp_puts("%u", Debug_RAM_len);
         	else ifcmp("ram") dbg_tcp_send(ts_conn);
         }
-        else ifcmp("mktime") tcp_puts("%s %s", __DATE__, __TIME__); // make date time
-// PowerMeter
+#endif
+//
 		else tcp_put('?');
 }
 

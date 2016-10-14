@@ -31,9 +31,8 @@
 #include "web_iohw.h"
 #include "wifi_events.h"
 #include "webfs.h"
-#include "power_meter.h"
+#include "../include/wireless_co2.h"
 #include "iot_cloud.h"
-#include "driver/eeprom.h"
 
 #ifdef USE_NETBIOS
 #include "netbios.h"
@@ -334,30 +333,99 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 			system_set_os_print(val);
 			update_mux_txd1();
 		}
-		else ifcmp("meter_") {	// cfg_
-			cstr+=6;
-			ifcmp("TotalCnt") {
-				fram_store.TotalCnt = val;
-				eeprom_write_block(0, (uint8 *)&fram_store, sizeof(fram_store));
-			}
-			else ifcmp("PulsesPerKWt") cfg_meter.PulsesPer0_01KWt = val / 100;
-			else ifcmp("Fram_Size") cfg_meter.Fram_Size = val;
-			else ifcmp("csv_delim") cfg_meter.csv_delimiter = pvar[0];
-			else ifcmp("FramFr") cfg_meter.fram_freq = val;
-			else ifcmp("Debouncing") cfg_meter.Debouncing_Timeout = val;
-			else ifcmp("revsens") cfg_meter.ReverseSensorPulse = val;
-			else ifcmp("reset_data") {
-				if(os_strcmp(pvar, "RESET") == 0) power_meter_clear_all_data();
-			}
+		else ifcmp("co2_") { // cfg_
+			cstr += 4;
+			ifcmp("csv_delim") cfg_co2.csv_delimiter = pvar[0];
+			else ifcmp("rf_ch") cfg_co2.sensor_rf_channel = val;
+	        else ifcmp("addr_LSB") cfg_co2.address_LSB = val;
+	        else ifcmp("fans") {
+	        	cstr += 4;
+	        	ifcmp("_speed_th") str_array_w(pvar, cfg_co2.fans_speed_threshold, FAN_SPEED_MAX);
+	        	else ifcmp("_speed_delta") cfg_co2.fans_speed_delta = val;
+	        	else cfg_co2.fans = val;
+	        }
+	        else ifcmp("night_") {
+	        	cstr += 6;
+				ifcmp("start") {
+					cstr += 5;
+					ifcmp("_wd") cfg_co2.night_start_wd = val;
+					else cfg_co2.night_start = val;
+				}
+				else ifcmp("end") {
+					cstr += 3;
+					ifcmp("_wd") cfg_co2.night_end_wd = val;
+					else cfg_co2.night_end = val;
+				}
+	        	else ifcmp("max") cfg_co2.fans_speed_night_max = val;
+	        }
+	        else ifcmp("refresh_t") cfg_co2.page_refresh_time = val;
+	        else ifcmp("history_size") {
+	        	val = (val / 3) * 3;
+	        	if(cfg_co2.history_size != val) {
+	        		os_free(history_co2);
+		        	cfg_co2.history_size = val;
+					history_co2 = os_malloc(cfg_co2.history_size);
+					history_co2_pos = 0;
+					history_co2_full = 0;
+	        	}
+	        }
+//			else ifcmp("reset_data") {
+//				if(os_strcmp(pvar, "RESET") == 0) ; //_clear_all_data();
+//			}
 			else ifcmp("save") {
-				if(val == 1) write_power_meter_cfg();
+				if(val == 1) {
+					cstr += 4;
+					ifcmp("_fans") write_wireless_fans_cfg();
+					else write_wireless_co2_cfg();
+				}
 			}
 		}
-        else ifcmp("iot_") {	// cfg_
+		else ifcmp("fan_") { // cfg_
+			cstr += 4;
+        	CFG_FAN *f = &cfg_fans[Web_cfg_fan_];
+	        ifcmp("rf_ch") f->rf_channel = val;
+	        else ifcmp("name") os_memcpy(f->name, pvar, os_strlen(pvar) + 1);
+	        else ifcmp("addr_LSB") f->address_LSB = val;
+	        else ifcmp("min") f->speed_min = val;
+	        else ifcmp("max") f->speed_max = val;
+	        else ifcmp("override") {
+	        	cstr += 8;
+		        ifcmp("_night") f->override_night = val;
+		        else ifcmp("_day") f->override_day = val;
+		        else {
+		        	if(pvar[0] == 'p') {
+		        		f->speed_current++;
+		        		f->flags |= (1<<FAN_SPEED_FORCED_BIT);
+		        	} else if(pvar[0] == 'm') {
+		        		f->speed_current--;
+		        		f->flags |= (1<<FAN_SPEED_FORCED_BIT);
+		        	} else {
+		        		f->flags &= ~(1<<FAN_SPEED_FORCED_BIT);
+		        	}
+		    		if(f->speed_current < f->speed_min) f->speed_current = f->speed_min;
+		    		if(f->speed_current > f->speed_max) f->speed_current = f->speed_max;
+		    		if(1<<FAN_SPEED_FORCED_BIT) f->forced_speed_timeout = ahextoul(pvar + 1) * 60;
+		    		send_fans_speed_now(Web_cfg_fan_, !(f->flags & (1<<FAN_SPEED_FORCED_BIT)));
+		        }
+	        }
+	        else ifcmp("day") f->speed_day = val;
+	        else ifcmp("night") f->speed_night = val;
+	        else ifcmp("flags") f->flags = val;
+	        else Web_cfg_fan_ = val < cfg_co2.fans ? val : 0; // "cfg_fan_"
+		}
+		else ifcmp("vars_") { // cfg_
+			cstr += 5;
+        	ifcmp("fans_speed_ov") global_vars.fans_speed_override = val;
+        	else ifcmp("receive_timeout") global_vars.receive_timeout = val;
+        	else ifcmp("save") {
+				if(val == 1) write_global_vars_cfg();
+        	}
+		}
+        else ifcmp("iot_") { // cfg_
         	cstr += 4;
 			ifcmp("cloud_enable") {
-				uint8 oldflag = cfg_meter.iot_cloud_enable;
-				cfg_meter.iot_cloud_enable = val;
+				uint8 oldflag = cfg_co2.iot_cloud_enable;
+				cfg_co2.iot_cloud_enable = val;
 				if(oldflag != val) iot_cloud_init();
 			}
 			else ifcmp("ini") { // save iot cloud setting
@@ -375,7 +443,7 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 				}
 			}
         }
-		else ifcmp("save") {	//cfg_
+		else ifcmp("save") { // cfg_
 			if(val == 2) SetSCB(SCB_SYSSAVE); // по закрытию соединения вызвать sys_write_cfg()
 			else if(val == 1) sys_write_cfg();
 		}
@@ -388,9 +456,13 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 #endif
 #ifdef USE_SNTP
 		else ifcmp("sntp") {
-			syscfg.cfg.b.sntp_ena = (val)? 1 : 0;
-			if(syscfg.cfg.b.sntp_ena) sntp_inits(UTC_OFFSET);
-			else sntp_close();
+			cstr += 4;
+			ifcmp("_time") sntp_set_time(val);
+			else {
+				syscfg.cfg.b.sntp_ena = (val)? 1 : 0;
+				if(syscfg.cfg.b.sntp_ena) sntp_inits(UTC_OFFSET);
+				else sntp_close();
+			}
 		}
 #endif
 #ifdef USE_CAPTDNS
@@ -407,9 +479,9 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 	}
 	else ifcmp("ChartMaxDays") Web_ChartMaxDays = val;
 	else ifcmp("ShowByDay") Web_ShowByDay = val;
-	else ifcmp("ShowByKWT") Web_ShowByKWT = val;
+	else ifcmp("now_night") now_night_override = val;
 	else ifcmp("iot_") { // from iot_cloud.ini
-		cstr+=4;
+		cstr += 4;
 		uint16 len = os_strlen(pvar) + 1;
 		ifcmp("server") {
 			if(iot_server_name != NULL) os_free(iot_server_name);
@@ -679,11 +751,13 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
     		};
     	}
     }
+#ifdef DEBUG_TO_RAM
     else ifcmp("dbg_") {  // debug to RAM
     	cstr += 4;
     	ifcmp("enable") dbg_set(val, 0);
     	else ifcmp("size") if(val != Debug_RAM_size) dbg_set(0, val);
     }
+#endif
 #ifdef USE_RS485DRV
 	else ifcmp("rs485_") {
    		cstr+=6;

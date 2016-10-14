@@ -14,6 +14,9 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#ifdef uart_c_enabled
+
 #include "ets_sys.h"
 #include "osapi.h"
 #include "driver/uart.h"
@@ -814,3 +817,4 @@ uart_init_2(UartBautRate uart0_br, UartBautRate uart1_br)
 }
 */
 
+#endif

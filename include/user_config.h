@@ -82,10 +82,11 @@
 
 //#define USE_I2C 	     // драйвер I2C
 //#define I2C_FRAM_ID 0x50
-#define USE_HSPI	  // дрйвер  HSPI
+#define USE_HSPI	  // дрaйвер  HSPI
 
 //#define DEBUG_TO_RAM
 #define UTC_OFFSET +3 // Moscow time
+#define USE_UART0	  // UART0 in/out
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #endif // PROGECT_NAME
 

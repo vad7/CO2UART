@@ -78,8 +78,7 @@ uint8  now_night_override; // 0 - use now_night, 1 - not night, 2 - night
 uint32 Web_ChartMaxDays; 	// ~ChartMaxDays~
 uint32 Web_ShowByDay; 		// ~ShowByDay~
 uint32 Web_cfg_fan_;		// fan idx for change setting
-char 	UART_Buffer[32];
-uint8_t UART_Buffer_idx;
+
 //
 
 void send_fans_speed_now(uint8 fan, uint8 calc_speed) ICACHE_FLASH_ATTR;

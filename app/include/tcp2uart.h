@@ -25,6 +25,17 @@ void uart_read_fcfg(uint8 set) ICACHE_FLASH_ATTR;
 
 #define uart0_flow_ctrl_flg (UartDev.flow_ctrl)
 
+#if defined(USE_TCP2UART) || defined(USE_UART0)
+#ifdef USE_UART0
+extern char		UART_Buffer[];
+extern uint8_t	UART_Buffer_idx;
+#endif
+
+void uart0_set_tout(void);
+uint32 uart_tx_buf(uint8 *buf, uint32 count);
+
+#endif
+
 #ifndef USE_RS485DRV
 void uart0_set_flow(bool flow_en) ICACHE_FLASH_ATTR;
 void update_rts0(void) ICACHE_FLASH_ATTR;
@@ -59,9 +70,7 @@ typedef struct {
 	ETSEvent taskQueue[UART_TASK_QUEUE_LEN];
 }suart_drv;
 
-void uart0_set_tout(void);
 void uart_del_rx_chars(uint32 len);
-uint32 uart_tx_buf(uint8 *buf, uint32 count);
 bool uart_drv_start(void);
 void uart_drv_close(void);
 
@@ -75,4 +84,6 @@ extern TCP_SERV_CONN * tcp2uart_conn;
 extern TCP_SERV_CFG * tcp2uart_servcfg;
 
 #endif // USE_TCP2UART
+
 #endif /* _TCP2UART_H_ */
+
