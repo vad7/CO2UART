@@ -333,38 +333,38 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 			system_set_os_print(val);
 			update_mux_txd1();
 		}
-		else ifcmp("co2_") { // cfg_
+		else ifcmp("glo_") { // cfg_
 			cstr += 4;
-			ifcmp("csv_delim") cfg_co2.csv_delimiter = pvar[0];
-			else ifcmp("rf_ch") cfg_co2.sensor_rf_channel = val;
-	        else ifcmp("addr_LSB") cfg_co2.address_LSB = val;
+			ifcmp("csv_delim") cfg_glo.csv_delimiter = pvar[0];
+			else ifcmp("rf_ch") cfg_glo.sensor_rf_channel = val;
+	        else ifcmp("addr_LSB") cfg_glo.address_LSB = val;
 	        else ifcmp("fans") {
 	        	cstr += 4;
-	        	ifcmp("_speed_th") str_array_w(pvar, cfg_co2.fans_speed_threshold, FAN_SPEED_MAX);
-	        	else ifcmp("_speed_delta") cfg_co2.fans_speed_delta = val;
-	        	else cfg_co2.fans = val;
+	        	ifcmp("_speed_th") str_array_w(pvar, cfg_glo.fans_speed_threshold, FAN_SPEED_MAX);
+	        	else ifcmp("_speed_delta") cfg_glo.fans_speed_delta = val;
+	        	else cfg_glo.fans = val;
 	        }
 	        else ifcmp("night_") {
 	        	cstr += 6;
 				ifcmp("start") {
 					cstr += 5;
-					ifcmp("_wd") cfg_co2.night_start_wd = val;
-					else cfg_co2.night_start = val;
+					ifcmp("_wd") cfg_glo.night_start_wd = val;
+					else cfg_glo.night_start = val;
 				}
 				else ifcmp("end") {
 					cstr += 3;
-					ifcmp("_wd") cfg_co2.night_end_wd = val;
-					else cfg_co2.night_end = val;
+					ifcmp("_wd") cfg_glo.night_end_wd = val;
+					else cfg_glo.night_end = val;
 				}
-	        	else ifcmp("max") cfg_co2.fans_speed_night_max = val;
+	        	else ifcmp("max") cfg_glo.fans_speed_night_max = val;
 	        }
-	        else ifcmp("refresh_t") cfg_co2.page_refresh_time = val;
+	        else ifcmp("refresh_t") cfg_glo.page_refresh_time = val;
 	        else ifcmp("history_size") {
 	        	val = (val / 3) * 3;
-	        	if(cfg_co2.history_size != val) {
+	        	if(cfg_glo.history_size != val) {
 	        		os_free(history_co2);
-		        	cfg_co2.history_size = val;
-					history_co2 = os_malloc(cfg_co2.history_size);
+		        	cfg_glo.history_size = val;
+					history_co2 = os_malloc(cfg_glo.history_size);
 					history_co2_pos = 0;
 					history_co2_full = 0;
 	        	}
@@ -411,7 +411,7 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 	        else ifcmp("day") f->speed_day = val;
 	        else ifcmp("night") f->speed_night = val;
 	        else ifcmp("flags") f->flags = val;
-	        else Web_cfg_fan_ = val < cfg_co2.fans ? val : 0; // "cfg_fan_"
+	        else Web_cfg_fan_ = val < cfg_glo.fans ? val : 0; // "cfg_fan_"
 		}
 		else ifcmp("vars_") { // cfg_
 			cstr += 5;
@@ -424,8 +424,8 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
         else ifcmp("iot_") { // cfg_
         	cstr += 4;
 			ifcmp("cloud_enable") {
-				uint8 oldflag = cfg_co2.iot_cloud_enable;
-				cfg_co2.iot_cloud_enable = val;
+				uint8 oldflag = cfg_glo.iot_cloud_enable;
+				cfg_glo.iot_cloud_enable = val;
 				if(oldflag != val) iot_cloud_init();
 			}
 			else ifcmp("ini") { // save iot cloud setting

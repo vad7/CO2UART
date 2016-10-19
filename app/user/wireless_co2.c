@@ -56,7 +56,7 @@ void dump_NRF_registers(void)
 void ICACHE_FLASH_ATTR uart_recvTask(os_event_t *events)
 {
     if(events->sig == 0){
-
+    	os_printf("%s\n", UART_Buffer);
     }
 }
 
@@ -90,10 +90,10 @@ void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 	average /= CO2LevelAverageArrayLength;
 	int8_t fanspeed;
 	for(fanspeed = 0; fanspeed < FAN_SPEED_MAX; fanspeed++) {
-		uint16_t tr = cfg_co2.fans_speed_threshold[fanspeed];
+		uint16_t tr = cfg_glo.fans_speed_threshold[fanspeed];
 		if(average < tr) {
 			// if there is a decrease of CO2 level - check delta
-			if(fan_speed_previous <= fanspeed || (tr - average) >= cfg_co2.fans_speed_delta) break;
+			if(fan_speed_previous <= fanspeed || (tr - average) >= cfg_glo.fans_speed_delta) break;
 		}
 	}
 	fan_speed_previous = fanspeed;
@@ -104,21 +104,21 @@ void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 	_localtime(&t, &tm);
 	uint16 st, end, tt = tm.tm_hour * 60 + tm.tm_min; // min
 	if(tm.tm_wday == 0 || tm.tm_wday == 6) { // Weekend?
-		st = cfg_co2.night_start_wd;
-		end = cfg_co2.night_end_wd;
+		st = cfg_glo.night_start_wd;
+		end = cfg_glo.night_end_wd;
 	} else {
-		st = cfg_co2.night_start;
-		end = cfg_co2.night_end;
+		st = cfg_glo.night_start;
+		end = cfg_glo.night_end;
 	}
 	st = (st / 100) * 60 + st % 100;
 	end = (end / 100) * 60 + end % 100;
 	now_night = ((end > st && tt >= st && tt <= end) || (end < st && (tt >= st || tt <= end)));
 	uint8 night = now_night_override == 2 ? 1 : now_night_override == 1 ? 0 : now_night;
-	if(night && fanspeed > cfg_co2.fans_speed_night_max) fanspeed = cfg_co2.fans_speed_night_max;
+	if(night && fanspeed > cfg_glo.fans_speed_night_max) fanspeed = cfg_glo.fans_speed_night_max;
 	uint8 fan;
 	if(nfan == 255) {
 		fan = 0;
-		nfan = cfg_co2.fans;
+		nfan = cfg_glo.fans;
 	} else fan = nfan++;
 	for(; fan < nfan; fan++) {
 		CFG_FAN *f = &cfg_fans[fan];
@@ -140,15 +140,15 @@ void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 {
 	uint8 fan;
-	for(fan = 0; fan < cfg_co2.fans; fan++) {
+	for(fan = 0; fan < cfg_glo.fans; fan++) {
 		if(cfg_fans[fan].flags & (1<<FAN_SPEED_FORCED_BIT)) {
 			if(cfg_fans[fan].forced_speed_timeout) if(--cfg_fans[fan].forced_speed_timeout == 0) cfg_fans[fan].flags &= ~(1<<FAN_SPEED_FORCED_BIT);
 		}
 	}
 	if(CO2_work_flag == 0) { // init
 		if(--receive_timeout == 0) {
-//			UART_Buffer_idx = 0;
-//			uart_tx_buf(AZ_7798_Command_GetValues, sizeof(AZ_7798_Command_GetValues));
+			UART_Buffer_idx = 0;
+			uart_tx_buf(AZ_7798_Command_GetValues, sizeof(AZ_7798_Command_GetValues));
 			CO2_work_flag = 1;
 		}
 	} else if(CO2_work_flag == 1) { // wait incoming
@@ -161,8 +161,8 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 	}
 
 	if(CO2_work_flag == 0) { // init
-		set_new_rf_channel(cfg_co2.sensor_rf_channel);
-		if(NRF24_SetAddresses(cfg_co2.address_LSB)) {
+		set_new_rf_channel(cfg_glo.sensor_rf_channel);
+		if(NRF24_SetAddresses(cfg_glo.address_LSB)) {
 			NRF24_SetMode(NRF24_ReceiveMode);
 			CO2_work_flag = 1;
 		} else {
@@ -185,7 +185,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 				uint32 idx = history_co2_pos * 15;
 				uint8  idxt = idx % 10;
 				idx /= 10;
-				if(idx >= cfg_co2.history_size - 2) { // (history_co2_size / 1.5 - 1) * 1.5
+				if(idx >= cfg_glo.history_size - 2) { // (history_glo_size / 1.5 - 1) * 1.5
 					history_co2_full = 1;
 					history_co2_pos = 0;
 				} else history_co2_pos++;
@@ -217,7 +217,7 @@ xStartSending:
 			if(--receive_timeout == 0) goto xStartSending;
 		}
 	} else if(CO2_work_flag == 2) { // send
-		if(cfg_co2.fans == 0) goto xNextFAN; // skip
+		if(cfg_glo.fans == 0) goto xNextFAN; // skip
 		CFG_FAN *f = &cfg_fans[CO2_send_fan_idx];
 		if(CO2_send_flag == 0) { // start
 			if(f->flags & (1<<FAN_SKIP_BIT)) goto xNextFAN; // skip
@@ -246,7 +246,7 @@ xStartSending:
 				}
 				//dump_NRF_registers();
 xNextFAN:
-				if(++CO2_send_fan_idx >= cfg_co2.fans) CO2_work_flag = 0;
+				if(++CO2_send_fan_idx >= cfg_glo.fans) CO2_work_flag = 0;
 				CO2_send_flag = 0;
 				NRF24_Standby();
 			}
@@ -266,27 +266,28 @@ void  ICACHE_FLASH_ATTR send_fans_speed_now(uint8 fan, uint8 calc_speed)
 
 void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 {
-	if(flash_read_cfg(&cfg_co2, ID_CFG_CO2, sizeof(cfg_co2)) <= 0) {
+	if(flash_read_cfg(&cfg_glo, ID_CFG_CO2, sizeof(cfg_glo)) <= 0) {
 		// defaults
-		os_memset(&cfg_co2, 0, sizeof(cfg_co2));
-		cfg_co2.page_refresh_time = 5000;
-		cfg_co2.csv_delimiter = ',';
-		cfg_co2.sensor_rf_channel = 2;
-		cfg_co2.address_LSB = 0xC0;
-		cfg_co2.fans = 0;
-		cfg_co2.fans_speed_threshold[0] = 500;
-		cfg_co2.fans_speed_threshold[1] = 550;
-		cfg_co2.fans_speed_threshold[2] = 600;
-		cfg_co2.fans_speed_threshold[3] = 800;
-		cfg_co2.fans_speed_threshold[4] = 900;
-		cfg_co2.fans_speed_threshold[5] = 1100;
+		os_memset(&cfg_glo, 0, sizeof(cfg_glo));
+		cfg_glo.page_refresh_time = 5000;
+		cfg_glo.csv_delimiter = ',';
+		cfg_glo.sensor_rf_channel = 2;
+		cfg_glo.address_LSB = 0xC0;
+		cfg_glo.fans = 0;
+		cfg_glo.fans_speed_threshold[0] = 530;
+		cfg_glo.fans_speed_threshold[1] = 590;
+		cfg_glo.fans_speed_threshold[2] = 650;
+		cfg_glo.fans_speed_threshold[3] = 725;
+		cfg_glo.fans_speed_threshold[4] = 800;
+		cfg_glo.fans_speed_threshold[5] = 900;
+		cfg_glo.fans_speed_delta = 30;
 	}
-	if(cfg_co2.history_size <= 9) cfg_co2.history_size = 9999; // bytes
+	if(cfg_glo.history_size <= 9) cfg_glo.history_size = 9999; // bytes
 	if(flash_read_cfg(&cfg_fans, ID_CFG_FANS, sizeof(cfg_fans)) != sizeof(cfg_fans)) {
 		os_memset(&cfg_fans, 0, sizeof(cfg_fans));
 	}
 	uint8 i;
-	for(i = 0; i < cfg_co2.fans; i++) {
+	for(i = 0; i < cfg_glo.fans; i++) {
 		cfg_fans[i].transmit_last_status = 0;
 		cfg_fans[i].transmit_ok_last_time = 0;
 	}
@@ -299,8 +300,8 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	ets_timer_arm_new(&user_loop_timer, 1000, 1, 1); // 1s, repeat
 	receive_timeout = 1;
 	NRF24_init(); // After init transmit must be delayed
-	set_new_rf_channel(cfg_co2.sensor_rf_channel);
-	if(NRF24_SetAddresses(cfg_co2.address_LSB)) {
+	set_new_rf_channel(cfg_glo.sensor_rf_channel);
+	if(NRF24_SetAddresses(cfg_glo.address_LSB)) {
 		NRF24_SetMode(NRF24_ReceiveMode);
 		#if DEBUGSOO > 4
 	} else {
@@ -309,7 +310,7 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	}
 	iot_cloud_init();
 	if(history_co2 == NULL) {
-		history_co2 = os_malloc(cfg_co2.history_size);
+		history_co2 = os_malloc(cfg_glo.history_size);
 		history_co2_full = 0;
 	}
 	//dump_NRF_registers();
@@ -327,7 +328,7 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 }
 
 bool ICACHE_FLASH_ATTR write_wireless_co2_cfg(void) {
-	return flash_save_cfg(&cfg_co2, ID_CFG_CO2, sizeof(cfg_co2));
+	return flash_save_cfg(&cfg_glo, ID_CFG_CO2, sizeof(cfg_glo));
 }
 
 bool ICACHE_FLASH_ATTR write_wireless_fans_cfg(void) {

@@ -7,13 +7,13 @@
 #define DEFAULT_SOFTAP_IP	0x0104A8C0 // ip 192.168.4.1
 #define DEFAULT_SOFTAP_MASK 0x00FFFFFF // mask 255.255.255.0
 
-#define DEBUGSOO	0//5 // 0 - откл вывода, 1 - минимум, 2 - норма, >3 - текушая отладка, >4 - удалить что найдется :)
-//#define DEBUG_UART  0 // включить вывод в загрузчике сообщений, номер UART
+#define DEBUGSOO	5 // 0 - откл вывода, 1 - минимум, 2 - норма, >3 - текушая отладка, >4 - удалить что найдется :)
+#define DEBUG_UART  1 // включить вывод в загрузчике сообщений, номер UART
 
 #define DEBUG_UART0_BAUD 921600 //74880 //115200
-#define DEBUG_UART1_BAUD 460800
+#define DEBUG_UART1_BAUD 921600
 
-#define STARTUP_CPU_CLK 160 // 80
+//#define STARTUP_CPU_CLK 160 // 80
 
 #ifndef ICACHE_FLASH // (назначается в MakeFile -DICACHE_FLASH)
 	#define ICACHE_FLASH

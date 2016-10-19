@@ -4,7 +4,7 @@
 #
 #############################################################
 
-ESPOPTION ?= -p COM9 -b 460800
+ESPOPTION ?= -p COM5 -b 460800
 #115200
 
 UPLOADADDR = http://aesp8266/fsupload
@@ -213,7 +213,7 @@ endif
 #	$(OVLTOOL) $< ../ld/labels.ld
 #	@make -C ../ovls
 #
-	@$(PYTHON) ../bin/make_firmware_image.py $(SPI_SIZE) ../bin/
+	@$(PYTHON) ../bin/make_firmware_image.py 1024 ../bin/
 #	@echo "Fullflash firmware.bin size  : " $(shell printf '%u\n' $$(stat --printf="%s" ../$(FIRMWAREDIR)/firmware.bin) )
 #	@echo "Max firmware.bin size for OTA: " $(shell printf '%u\n' $$((0x7B000 - (($$(stat --printf="%s" ../$(OUTBIN2)) + 0xFFF + $(ADDR_FW2)) & (0xFFFFF000)) )) )
 #	@echo "*Space available to allow OTA: " $(shell printf '%d\n' $$((0x7B000 - (($$(stat --printf="%s" ../$(OUTBIN2)) + 0xFFF + $(ADDR_FW2)) & (0xFFFFF000)) - $$(stat --printf="%s" ../$(FIRMWAREDIR)/firmware.bin) )) )

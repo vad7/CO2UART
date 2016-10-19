@@ -13,14 +13,17 @@
 #ifdef USE_I2C
 
 #include "i2c.h"
+#ifdef USE_EEPROM
 #define eeprom_read_block(addr, buffer, len)  i2c_eeprom_read_block(I2C_ID, addr, buffer, len)
 #define eeprom_write_block(addr, buffer, len) i2c_eeprom_write_block(I2C_ID, addr, buffer, len)
 #define eeprom_init(freq) i2c_init(freq)
+#endif
 #else
 #ifdef USE_HSPI
 
 #include "spi.h"
 
+#ifdef USE_EEPROM
 #define EEPROM_ADDR_BITS (SPI_ADDR_BITS - 8)
 #define EEPROM_WREN 	0b00000110 // Set write enable latch
 #define EEPROM_READ 	0b00000011
@@ -31,6 +34,8 @@
 #define eeprom_init(freq) spi_init(freq)
 uint8_t eeprom_read_block(uint32_t addr, uint8_t *buffer, uint32_t len);
 uint8_t eeprom_write_block(uint32_t addr, uint8_t *buffer, uint32_t len);
+#endif
+
 #endif
 #endif
 

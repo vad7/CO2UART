@@ -62,7 +62,7 @@
 				</tr>
  			</table>
 		<p class="center">
-			<input type='hidden' name='cfg_co2_save_fans' value='1'>
+			<input type='hidden' name='cfg_glo_save_fans' value='1'>
 			<input type='submit' value='Set Config' class="button">
 		</p>
  		</form>
@@ -90,7 +90,7 @@ function ShowNewFan() {
 }
 var f = document.getElementById("cfg_fan_");
 var sel = getCookie("cfg_fan_");
-for(var i=0; i < ~cfg_co2_fans~; i++) {
+for(var i=0; i < ~cfg_glo_fans~; i++) {
 	var o = document.createElement("option");
 	o.text = i+1;
 	o.value = i;

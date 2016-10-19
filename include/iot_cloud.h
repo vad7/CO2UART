@@ -1,3 +1,4 @@
+#include <time.h>
 
 #define DEFAULT_TC_HOST_PORT 80
 #define TCP_REQUEST_TIMEOUT	15 // sec

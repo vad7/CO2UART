@@ -200,10 +200,10 @@ void ICACHE_FLASH_ATTR web_get_history(TCP_SERV_CONN *ts_conn)
 		if(idxt) co2 |= history_co2[idx+1];
 		else co2 |= history_co2[idx+1] >> 4;
 		tcp_puts("%04d-%02d-%02d %02d:%02d:%02d%c%d\r\n",
-				1900+tm.tm_year, 1+tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,cfg_co2.csv_delimiter, co2);
+				1900+tm.tm_year, 1+tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,cfg_glo.csv_delimiter, co2);
 		if(web_conn->udata_start == 0) {
 			if(history_co2_full) {
-				web_conn->udata_start = cfg_co2.history_size * 10 / 15;
+				web_conn->udata_start = cfg_glo.history_size * 10 / 15;
 			} else { // end
 				ClrSCB(SCB_RETRYCB);
 				return;
@@ -828,36 +828,36 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 #endif
 		    	else tcp_put('?');
 		    }
-		    else ifcmp("co2_") { // cfg_
+		    else ifcmp("glo_") { // cfg_
 	        	cstr += 4;
-		        ifcmp("csv_delim") tcp_puts("%c", cfg_co2.csv_delimiter);
-		        else ifcmp("rf_ch") tcp_puts("%d", cfg_co2.sensor_rf_channel);
-		        else ifcmp("addr_LSB") tcp_puts("0x%X", cfg_co2.address_LSB);
+		        ifcmp("csv_delim") tcp_puts("%c", cfg_glo.csv_delimiter);
+		        else ifcmp("rf_ch") tcp_puts("%d", cfg_glo.sensor_rf_channel);
+		        else ifcmp("addr_LSB") tcp_puts("0x%X", cfg_glo.address_LSB);
 		        else ifcmp("fans") {
 		        	cstr += 4;
 		        	ifcmp("_speed_th") {
 						int16_t i;
-						for(i = 0; i < FAN_SPEED_MAX; i++) tcp_puts("%u%s", cfg_co2.fans_speed_threshold[i], i < FAN_SPEED_MAX-1 ? "," : "");
+						for(i = 0; i < FAN_SPEED_MAX; i++) tcp_puts("%u%s", cfg_glo.fans_speed_threshold[i], i < FAN_SPEED_MAX-1 ? "," : "");
 					}
-			        else ifcmp("_speed_delta") tcp_puts("%u", cfg_co2.fans_speed_delta);
-		        	else tcp_puts("%d", cfg_co2.fans);
+			        else ifcmp("_speed_delta") tcp_puts("%u", cfg_glo.fans_speed_delta);
+		        	else tcp_puts("%d", cfg_glo.fans);
 		        }
 		        else ifcmp("night_") {
 		        	cstr += 6;
 		        	ifcmp("start") {
 						cstr += 5;
-						ifcmp("_wd") tcp_puts("%04u", cfg_co2.night_start_wd);
-						else tcp_puts("%04u", cfg_co2.night_start);
+						ifcmp("_wd") tcp_puts("%04u", cfg_glo.night_start_wd);
+						else tcp_puts("%04u", cfg_glo.night_start);
 		        	}
 		        	else ifcmp("end") {
 			        	cstr += 3;
-			        	ifcmp("_wd") tcp_puts("%04u", cfg_co2.night_end_wd);
-			        	else tcp_puts("%04u", cfg_co2.night_end);
+			        	ifcmp("_wd") tcp_puts("%04u", cfg_glo.night_end_wd);
+			        	else tcp_puts("%04u", cfg_glo.night_end);
 			        }
-		        	else ifcmp("max") tcp_puts("%d", cfg_co2.fans_speed_night_max);
+		        	else ifcmp("max") tcp_puts("%d", cfg_glo.fans_speed_night_max);
 		        }
-		        else ifcmp("refresh_t") tcp_puts("%u", cfg_co2.page_refresh_time);
-		        else ifcmp("history_size") tcp_puts("%u", cfg_co2.history_size);
+		        else ifcmp("refresh_t") tcp_puts("%u", cfg_glo.page_refresh_time);
+		        else ifcmp("history_size") tcp_puts("%u", cfg_glo.history_size);
 		    }
 		    else ifcmp("fan_") { // cfg_
 	        	cstr += 4;
@@ -883,7 +883,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 			}
 	        else ifcmp("iot_") { // cfg_
 	        	cstr += 4;
-	        	ifcmp("cloud_enable") tcp_puts("%d", cfg_co2.iot_cloud_enable);
+	        	ifcmp("cloud_enable") tcp_puts("%d", cfg_glo.iot_cloud_enable);
 	            else ifcmp("ini") {
 	        		web_conn->udata_start = 0; // pos in the file
 	        		web_conn->udata_stop = WEBFSOpen(iot_cloud_ini); // file handle
@@ -1325,13 +1325,13 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         	ifcmp("previous") tcp_puts("%d", fan_speed_previous);
         	else {
         		uint8 idx = rom_atoi(cstr);
-        		if(idx < cfg_co2.fans) tcp_puts("%d", cfg_fans[idx].speed_current);
+        		if(idx < cfg_glo.fans) tcp_puts("%d", cfg_fans[idx].speed_current);
         	}
         }
         else ifcmp("history_addr") tcp_puts("0x%x", (uint32)history_co2);
         else ifcmp("fans_xml") {
 	    	web_conn->udata_start = 0;
-	    	web_conn->udata_stop = cfg_co2.fans;
+	    	web_conn->udata_stop = cfg_glo.fans;
 	    	web_fans_xml(ts_conn);
         }
 #ifdef DEBUG_TO_RAM

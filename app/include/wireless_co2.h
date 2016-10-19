@@ -23,8 +23,8 @@ typedef struct __attribute__((packed)) {
 	uint16	page_refresh_time;		// ms
 	uint16	history_size;			// CO2 store RAM buffer size, must be divided by 3 without remains!
 //	char sntp_server[20];
-} CFG_CO2;
-CFG_CO2 __attribute__((aligned(4))) cfg_co2;
+} CFG_GLO;
+CFG_GLO __attribute__((aligned(4))) cfg_glo;
 
 typedef enum
 {

@@ -30,7 +30,7 @@
 ~inc:time.inc~
 <script type="text/javascript">
 function CreateTable() {
-	for(var i = 0; i < ~cfg_co2_fans~; i++){
+	for(var i = 0; i < ~cfg_clo_fans~; i++){
 		r=document.all.fans.insertRow(-1);
 		(r.insertCell(0)).innerHTML = i+1;
 		r.insertCell(1);
@@ -73,9 +73,9 @@ function updateStatus(xmlData) {
 		r.cells[3].style.color = (getXMLValue(f, 'tst') > 1) ? 'red' : '';
 	}
 	updTime();
-	nextimeout = ~cfg_co2_refresh_t~;
+	nextimeout = ~cfg_glo_refresh_t~;
 }
-if(~cfg_co2_fans~ == "0") document.all.fans.hidden = true;
+if(~cfg_glo_fans~ == "0") document.all.fans.hidden = true;
 var f = document.getElementsByName("now_night_ov");
 for(var i=0; i<f.length; i++){
 	if(f[i].value == "~now_night_override~") f[i].checked = true;

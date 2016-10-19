@@ -83,6 +83,7 @@
 //#define USE_I2C 	     // драйвер I2C
 //#define I2C_FRAM_ID 0x50
 #define USE_HSPI	  // дрaйвер  HSPI
+//#define USE_EEPROM	  // работа с EEPROM/FRAM
 
 //#define DEBUG_TO_RAM
 #define UTC_OFFSET +3 // Moscow time

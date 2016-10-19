@@ -32,8 +32,8 @@
 #include "web_utils.h"
 #include "web_fs_init.h"
 #include "../web/include/web_srv_int.h"
-#include "power_meter.h"
 #include "iot_cloud.h"
+#include "../include/wireless_co2.h"
 
 uint8 iot_cloud_ini[] = "protect/iot_cloud.ini";
 uint8 iot_get_request_tpl[] = "GET %s HTTP/1.0\r\nHost: %s\r\nAccept: text/html\r\n\r\n";
@@ -340,7 +340,7 @@ uint8_t ICACHE_FLASH_ATTR iot_cloud_init(void)
 	if(iot_data_first != NULL) { // data exist - clear
 		iot_data_clear();
 	}
-	if(!cfg_meter.iot_cloud_enable) return 0; // iot cloud disabled
+	if(!cfg_glo.iot_cloud_enable) return 0; // iot cloud disabled
 	retval = web_fini(iot_cloud_ini);
 	if(retval == 0) tc_init_flg |= TC_INITED;
 #if DEBUGSOO > 4
