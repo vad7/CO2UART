@@ -49,7 +49,7 @@ extern void uart0_write_char(char c);
 #define MASK_MUX ((1<<GPIO_MUX_FUN_BIT0)|(1<<GPIO_MUX_FUN_BIT1)|(1<<GPIO_MUX_FUN_BIT2)|(1<<GPIO_MUX_PULLDOWN_BIT)|(1<<GPIO_MUX_PULLUP_BIT))
 //-----------------------------------------------------------------------------
 #define UART_RX_ERR_INTS (UART_BRK_DET_INT_ENA | UART_RXFIFO_OVF_INT_ENA | UART_FRM_ERR_INT_ENA | UART_PARITY_ERR_INT_ENA)
-#define DEBUG_OUT(x)  // UART1_FIFO = x
+#define DEBUG_OUT(x)  UART1_FIFO = x
 
 #ifdef USE_TCP2UART
 
@@ -513,7 +513,7 @@ void uart_intr_handler(void *para)
 void uart_intr_handler(void *para)
 {
 	if(DPORT_OFF20 & (1<<0)) { // uart0 and uart1 intr combine togther, when interrupt occur, see reg 0x3ff20020, bit2, bit0 represents
-//		DEBUG_OUT('i');
+		DEBUG_OUT('i');
 		uint32 ints = UART0_INT_ST;
 		if(ints) {
 			if(UART0_INT_RAW & UART_RX_ERR_INTS) { // ошибки при приеме?
@@ -522,7 +522,7 @@ void uart_intr_handler(void *para)
 				//uart_rx_clr_buf(); // сбросить rx fifo, ошибки приема и буфер
 			}
 			if(ints & (UART_RXFIFO_FULL_INT_ST | UART_RXFIFO_TOUT_INT_ST)) { // прерывание по приему символов или Rx time-out event? да
-//					DEBUG_OUT('R');
+					DEBUG_OUT('R');
 				if(UART_Buffer_idx >= sizeof(UART_Buffer)) { // буфер заполнен?
 					DEBUG_OUT('@');
 					// отключим прерывание приема, должен выставиться RTS
@@ -544,7 +544,7 @@ void uart_intr_handler(void *para)
 				}
 			}
 			if(ints & UART_TXFIFO_EMPTY_INT_ST) { // fifo tx пусто?
-//					DEBUG_OUT('W');
+					DEBUG_OUT('W');
 				UART0_INT_ENA &= ~UART_TXFIFO_EMPTY_INT_ENA;
 			}
 	    }

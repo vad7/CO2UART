@@ -145,33 +145,23 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			if(cfg_fans[fan].forced_speed_timeout) if(--cfg_fans[fan].forced_speed_timeout == 0) cfg_fans[fan].flags &= ~(1<<FAN_SPEED_FORCED_BIT);
 		}
 	}
+	if(receive_timeout) receive_timeout--;
 	if(CO2_work_flag == 0) { // init
-		if(--receive_timeout == 0) {
+		if(receive_timeout == 0) {
 			UART_Buffer_idx = 0;
 			uart_tx_buf(AZ_7798_Command_GetValues, sizeof(AZ_7798_Command_GetValues));
 			CO2_work_flag = 1;
 		}
 	} else if(CO2_work_flag == 1) { // wait incoming
+		if(receive_timeout == 0) {
+			CO2_work_flag = 0;
+		}
 
-
-
-
-		receive_timeout = global_vars.receive_timeout;
 
 	}
-
-	if(CO2_work_flag == 0) { // init
-		set_new_rf_channel(cfg_glo.sensor_rf_channel);
-		if(NRF24_SetAddresses(cfg_glo.address_LSB)) {
-			NRF24_SetMode(NRF24_ReceiveMode);
-			CO2_work_flag = 1;
-		} else {
-			#if DEBUGSOO > 4
-				os_printf("NRF-SetAddr error\n");
-			#endif
-		}
 		receive_timeout = global_vars.receive_timeout;
-	} else if(CO2_work_flag == 1) { // wait incoming
+
+	{ // wait incoming
 		//dbg_printf(" %x", NRF24_SendCommand(NRF24_CMD_NOP));
 		if(NRF24_Receive((uint8 *)&co2_send_data)) { // received
 			time_t t = get_sntp_localtime();
@@ -216,41 +206,41 @@ xStartSending:
 		} else if(receive_timeout) {
 			if(--receive_timeout == 0) goto xStartSending;
 		}
-	} else if(CO2_work_flag == 2) { // send
-		if(cfg_glo.fans == 0) goto xNextFAN; // skip
-		CFG_FAN *f = &cfg_fans[CO2_send_fan_idx];
-		if(CO2_send_flag == 0) { // start
-			if(f->flags & (1<<FAN_SKIP_BIT)) goto xNextFAN; // skip
-			NRF24_SetMode(NRF24_TransmitMode);
-			set_new_rf_channel(f->rf_channel);
-			if(NRF24_SetAddresses(f->address_LSB)) {
-				co2_send_data.FanSpeed = f->speed_current;
-				NRF24_Transmit((uint8 *)&co2_send_data);
-				CO2_send_flag = 1;
-				#if DEBUGSOO > 4
-					os_printf("NRF-Transmit %d <= %d (%u)\n", CO2_send_fan_idx, f->speed_current, system_get_time());
-				#endif
-			} else {
-				#if DEBUGSOO > 4
-					os_printf("NRF-SetAddr error: %d\n", CO2_send_fan_idx);
-				#endif
-			}
-		} else { // sending..
-			if(NRF24_transmit_status >= NRF24_Transmit_Ok) {
-				f->transmit_last_status = NRF24_transmit_status;
-				#if DEBUGSOO > 4
-					os_printf("NRF-Transmit end: %d, %u\n", NRF24_transmit_status, system_get_time());
-				#endif
-				if(NRF24_transmit_status == NRF24_Transmit_Ok) {
-					f->transmit_ok_last_time = get_sntp_localtime();
-				}
-				//dump_NRF_registers();
-xNextFAN:
-				if(++CO2_send_fan_idx >= cfg_glo.fans) CO2_work_flag = 0;
-				CO2_send_flag = 0;
-				NRF24_Standby();
-			}
-		}
+//	} else if(CO2_work_flag == 2) { // send
+//		if(cfg_glo.fans == 0) goto xNextFAN; // skip
+//		CFG_FAN *f = &cfg_fans[CO2_send_fan_idx];
+//		if(CO2_send_flag == 0) { // start
+//			if(f->flags & (1<<FAN_SKIP_BIT)) goto xNextFAN; // skip
+//			NRF24_SetMode(NRF24_TransmitMode);
+//			set_new_rf_channel(f->rf_channel);
+//			if(NRF24_SetAddresses(f->address_LSB)) {
+//				co2_send_data.FanSpeed = f->speed_current;
+//				NRF24_Transmit((uint8 *)&co2_send_data);
+//				CO2_send_flag = 1;
+//				#if DEBUGSOO > 4
+//					os_printf("NRF-Transmit %d <= %d (%u)\n", CO2_send_fan_idx, f->speed_current, system_get_time());
+//				#endif
+//			} else {
+//				#if DEBUGSOO > 4
+//					os_printf("NRF-SetAddr error: %d\n", CO2_send_fan_idx);
+//				#endif
+//			}
+//		} else { // sending..
+//			if(NRF24_transmit_status >= NRF24_Transmit_Ok) {
+//				f->transmit_last_status = NRF24_transmit_status;
+//				#if DEBUGSOO > 4
+//					os_printf("NRF-Transmit end: %d, %u\n", NRF24_transmit_status, system_get_time());
+//				#endif
+//				if(NRF24_transmit_status == NRF24_Transmit_Ok) {
+//					f->transmit_ok_last_time = get_sntp_localtime();
+//				}
+//				//dump_NRF_registers();
+//xNextFAN:
+//				if(++CO2_send_fan_idx >= cfg_glo.fans) CO2_work_flag = 0;
+//				CO2_send_flag = 0;
+//				NRF24_Standby();
+//			}
+//		}
 	}
 }
 
@@ -293,7 +283,9 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	}
 	if(flash_read_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars)) <= 0) {
 		os_memset(&global_vars, 0, sizeof(global_vars));
+		global_vars.receive_timeout = 5;
 	}
+	receive_timeout = global_vars.receive_timeout;
 	fan_speed_previous = 0;
 	//ets_timer_disarm(&user_loop_timer);
 	os_timer_setfn(&user_loop_timer, (os_timer_func_t *)user_loop, NULL);

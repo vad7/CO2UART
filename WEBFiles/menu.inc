@@ -5,6 +5,7 @@
 		<a href="/protect/wifi.htm">WiFi settings</a>
 		<a href="/protect/scan.htm">WiFi Scan</a>
 		<a href="/protect/upload.htm">Firmware Upload</a>
+		<a href="/protect/uart.htm">TCP-UART Settings</a>
 		<a href="/protect/setup.htm">System Setup</a>
 	</div>
 	<div>
