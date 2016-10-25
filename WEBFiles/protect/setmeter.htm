@@ -85,10 +85,15 @@
 					<input title='change?' type='checkbox' name='change_iot_ini' value='0'></td>
 					<td><textarea title='protect/iot_cloud.ini' name='cfg_iot_ini' rows=4 cols=50 wrap="off" maxlength=1023>~cfg_iot_ini~</textarea></td>
 				</tr>
+				<tr>
+					<td class="label">CO2 UART Baud:</td>
+					<td><input title='300...10000000' name='uart_0_baud' maxlength='8' value='~uart_0_baud~'></td>
+				</tr>
  			</table>
 		<p class="center">
 			<input type='hidden' name='cfg_glo_save' value='1'>
 			<input type='hidden' name='cfg_vars_save' value='1'>
+			<input type='hidden' name='uart_save' value='1'>
 			<input type='submit' value='Set Config' class="button">
 		</p>
  		</form>

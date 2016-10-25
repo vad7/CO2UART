@@ -37,6 +37,7 @@ typedef struct __attribute__((packed)) {
 	time_t transmit_ok_last_time;
 	uint32 forced_speed_timeout; // sec
 	uint8 transmit_last_status;	// NRF24_transmit_status
+	uint8 active_speed;
 	uint8 flags;				// CFG_FAN_FLAGS enum
 	uint8 rf_channel;
 	uint8 address_LSB;
@@ -60,10 +61,14 @@ CO2_SEND_DATA __attribute__((aligned(4))) co2_send_data;
 
 typedef struct __attribute__ ((packed)) {
 	uint16 receive_timeout;		// sec, timeout before get CO2
+	uint16 pause;				// pause between next NRF request
 	int8   fans_speed_override;	// +- total speed
-	uint32 UART_speed; // 9600
 } GLOBAL_VARS;
 GLOBAL_VARS __attribute__((aligned(4))) global_vars;
+
+uint16_t CO2level;		// (ppm)
+int16_t  Temperature;	// *10 (C)
+uint16_t Humidity;		// *10 (%)
 
 uint8  *history_co2;		// history buffer in the RAM
 uint16	history_co2_pos;	// current pos (by 1.5 byte)

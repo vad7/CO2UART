@@ -68,6 +68,7 @@ uint8_t nrf_last_status				= 0;
 
 
 uint8_t request_data = 0; // send seted speed or 0x80 + last error
+
 typedef struct {
 	uint16_t CO2level;
 	uint8_t FanSpeed; // 0 = off, Speed = 1..FanSpeedMax

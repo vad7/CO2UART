@@ -14,12 +14,19 @@
 #include "driver/spi.h"
 #include "driver/nrf24l01.h"
 #include "tcp2uart.h"
+#include "web_utils.h"
 
 os_timer_t user_loop_timer DATA_IRAM_ATTR;
 
-char AZ_7798_Command_Info[] = { 'I', 0x0D };
-char AZ_7798_Command_GetValues[] = { ':', 0x0D };
-char AZ_7798_ResponseEnd[] = { '%', 0x0D };
+char AZ_7798_Command_Info[] = 		{ 'I', 0x0D };
+char AZ_7798_Command_GetValues[] = 	{ ':', 0x0D };
+// : T20.4C:C1753ppm:H47.5%
+#define MIN_Reponse_length 			20
+#define AZ_7798_TempStart 			'T'
+#define AZ_7798_TempEnd 			'C'
+#define AZ_7798_CO2End				'p'
+char AZ_7798_ResponseEnd[] = 		{ '%', 0x0D, 0 };
+#define AZ_7798_ResponseTimeout		2 // sec
 
 uint8 CO2_work_flag = 0; // 0 - not inited, 1 - wait incoming, 2 - send
 uint8 CO2_send_flag;		// 0 - ready to send, 1 - sending
@@ -53,13 +60,6 @@ void dump_NRF_registers(void)
 }
 */
 
-void ICACHE_FLASH_ATTR uart_recvTask(os_event_t *events)
-{
-    if(events->sig == 0){
-    	os_printf("%s\n", UART_Buffer);
-    }
-}
-
 void ICACHE_FLASH_ATTR set_new_rf_channel(uint8 ch)
 {
 	if(nrf_last_rf_channel != ch) {
@@ -75,10 +75,10 @@ void ICACHE_FLASH_ATTR CO2_Averaging(void)
 {
 	int16_t i;
 	if(CO2LevelAverageIdx == CO2LevelAverageArrayLength) { // First time
-		for(i = 1; i < CO2LevelAverageArrayLength; i++)	CO2LevelAverageArray[i] = co2_send_data.CO2level;
+		for(i = 1; i < CO2LevelAverageArrayLength; i++)	CO2LevelAverageArray[i] = CO2level;
 	}
 	if(CO2LevelAverageIdx >= CO2LevelAverageArrayLength) CO2LevelAverageIdx = 0;
-	CO2LevelAverageArray[CO2LevelAverageIdx++] = co2_send_data.CO2level;
+	CO2LevelAverageArray[CO2LevelAverageIdx++] = CO2level;
 }
 
 // fan = 255 - all
@@ -137,6 +137,72 @@ void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 	}
 }
 
+void ICACHE_FLASH_ATTR ProcessIncomingValues(void)
+{
+	time_t t = get_sntp_localtime();
+	CO2_Averaging();
+	if(CO2_last_time) {
+		uint16 d = t - CO2_last_time;
+		if(average_period == 0) average_period = d;
+		else average_period = (average_period + d) / 2;
+	}
+	if(history_co2 != NULL) { // store history co2
+		uint32 idx = history_co2_pos * 15;
+		uint8  idxt = idx % 10;
+		idx /= 10;
+		if(idx >= cfg_glo.history_size - 2) { // (history_glo_size / 1.5 - 1) * 1.5
+			history_co2_full = 1;
+			history_co2_pos = 0;
+		} else history_co2_pos++;
+		// MSB(32 13 21 ...)
+		if(idxt) history_co2[idx] = ((CO2level & 0xF00) >> 8) | (history_co2[idx] & 0xF0);
+		else history_co2[idx] = (CO2level & 0xFF0) >> 4;
+		if(idxt) history_co2[idx+1] = CO2level & 0x0FF;
+		else history_co2[idx+1] = (CO2level & 0x00F) << 4;
+	}
+	CO2_last_time = t;
+	#if DEBUGSOO > 4
+		os_printf("Received at %u, CO2: %u, T: %d, H: %u\n", CO2_last_time, CO2level, Temperature, Humidity);
+	#endif
+	#ifdef DEBUG_TO_RAM
+		if(Debug_RAM_addr != NULL && CO2level > 1100) {
+			struct tm tm;
+			_localtime(&CO2_last_time, &tm);
+			dbg_printf("%d.%d %d:%d:%d=%u\n", tm.tm_mday, 1+tm.tm_mon, tm.tm_hour, tm.tm_min, tm.tm_sec, co2_send_data.CO2level);
+		}
+	#endif
+	CO2_set_fans_speed_current(255);
+	iot_cloud_send(1);
+}
+
+void ICACHE_FLASH_ATTR uart_recvTask(os_event_t *events)
+{
+    if(events->sig == 0){
+		#if DEBUGSOO > 4
+    		os_printf("%s\n", UART_Buffer);
+		#endif
+    	if(UART_Buffer_idx >= MIN_Reponse_length) {
+    		uint8 *p = web_strnstr(UART_Buffer, AZ_7798_ResponseEnd, UART_Buffer_idx);
+    		if(p == NULL) return;
+   			*p = 0;
+   			if((p = os_strchr(UART_Buffer, AZ_7798_TempStart)) == NULL) return;
+			uint8 *p2 = os_strchr(p, AZ_7798_TempEnd);
+			if(p2 == NULL) return;
+			*p2 = 0;
+			Temperature = ahextoul(p);
+			p = p2 + 3;
+			if((p2 = os_strchr(p, AZ_7798_CO2End)) != NULL) {
+				*p2 = 0;
+				CO2level = ahextoul(p);
+				p = p2 + 5;
+				Humidity = ahextoul(p);
+				ProcessIncomingValues();
+				receive_timeout = 0;
+			}
+    	}
+    }
+}
+
 void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 {
 	uint8 fan;
@@ -148,22 +214,33 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 	if(receive_timeout) receive_timeout--;
 	if(CO2_work_flag == 0) { // init
 		if(receive_timeout == 0) {
+			os_memset(UART_Buffer, 0, UART_Buffer_size);
 			UART_Buffer_idx = 0;
+			uart_drv_start();
 			uart_tx_buf(AZ_7798_Command_GetValues, sizeof(AZ_7798_Command_GetValues));
 			CO2_work_flag = 1;
+			receive_timeout = AZ_7798_ResponseTimeout;
 		}
 	} else if(CO2_work_flag == 1) { // wait incoming
 		if(receive_timeout == 0) {
+			if(CO2level) {
+				uint8 fan;
+				for(fan = 0; fan < cfg_glo.fans; fan++) {
+					CFG_FAN *f = &cfg_fans[fan];
+					if(f->flags & (1<<FAN_SKIP_BIT)) continue;
+					co2_send_data.FanSpeed = f->speed_current;
+					co2_send_data.CO2level = CO2level;
+					co2_send_data.Pause = global_vars.pause;
+					NRF24_WriteArray(NRF24_CMD_W_ACK_PAYLOAD + fan, (uint8 *)&co2_send_data, sizeof(co2_send_data));
+				}
+			}
 			CO2_work_flag = 0;
+			receive_timeout = global_vars.receive_timeout;
 		}
-
-
 	}
-		receive_timeout = global_vars.receive_timeout;
-
-	{ // wait incoming
+	if(CO2level) {
 		//dbg_printf(" %x", NRF24_SendCommand(NRF24_CMD_NOP));
-		if(NRF24_Receive((uint8 *)&co2_send_data)) { // received
+		if(NRF24_Receive((uint8 *)&co2_send_data)) { // check request
 			time_t t = get_sntp_localtime();
 			CO2_Averaging();
 			if(CO2_last_time) {
@@ -284,6 +361,7 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	if(flash_read_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars)) <= 0) {
 		os_memset(&global_vars, 0, sizeof(global_vars));
 		global_vars.receive_timeout = 5;
+		global_vars.pause = 10;
 	}
 	receive_timeout = global_vars.receive_timeout;
 	fan_speed_previous = 0;
@@ -305,6 +383,7 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 		history_co2 = os_malloc(cfg_glo.history_size);
 		history_co2_full = 0;
 	}
+	uarts_init();
 	//dump_NRF_registers();
 
 //	#if DEBUGSOO > 4
@@ -330,4 +409,3 @@ bool ICACHE_FLASH_ATTR write_wireless_fans_cfg(void) {
 bool ICACHE_FLASH_ATTR write_global_vars_cfg(void) {
 	return flash_save_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars));
 }
-
