@@ -37,28 +37,7 @@ uint16 receive_timeout; // sec
 uint16_t CO2LevelAverageIdx = CO2LevelAverageArrayLength;
 uint16_t CO2LevelAverageArray[CO2LevelAverageArrayLength];
 
-/*
-void dump_NRF_registers(void)
-{
-	uint8 i;
-	uint8 buf[4];
-	dbg_printf("\nNR: ");
-	#if DEBUGSOO > 4
-	os_printf("\nNR: ");
-	#endif
-	for(i = 0; i <= 0x1D; i++) {
-		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
-		dbg_printf("%X=%2x ", i, buf[0]);
-		#if DEBUGSOO > 4
-		os_printf("%X=%2x ", i, buf[0]);
-		#endif
-	}
-	dbg_printf("\n");
-	#if DEBUGSOO > 4
-	os_printf("\n");
-	#endif
-}
-*/
+//void dump_NRF_registers(void);
 
 void ICACHE_FLASH_ATTR set_new_rf_channel(uint8 ch)
 {
@@ -240,84 +219,18 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 	}
 	if(CO2level) {
 		//dbg_printf(" %x", NRF24_SendCommand(NRF24_CMD_NOP));
-		if(NRF24_Receive((uint8 *)&co2_send_data)) { // check request
-			time_t t = get_sntp_localtime();
-			CO2_Averaging();
-			if(CO2_last_time) {
-				uint16 d = t - CO2_last_time;
-				if(average_period == 0) average_period = d;
-				else average_period = (average_period + d) / 2;
-			}
-			if(history_co2 != NULL) { // store history co2
-				uint32 idx = history_co2_pos * 15;
-				uint8  idxt = idx % 10;
-				idx /= 10;
-				if(idx >= cfg_glo.history_size - 2) { // (history_glo_size / 1.5 - 1) * 1.5
-					history_co2_full = 1;
-					history_co2_pos = 0;
-				} else history_co2_pos++;
-				// MSB(32 13 21 ...)
-				if(idxt) history_co2[idx] = ((co2_send_data.CO2level & 0xF00) >> 8) | (history_co2[idx] & 0xF0);
-				else history_co2[idx] = (co2_send_data.CO2level & 0xFF0) >> 4;
-				if(idxt) history_co2[idx+1] = co2_send_data.CO2level & 0x0FF;
-				else history_co2[idx+1] = (co2_send_data.CO2level & 0x00F) << 4;
-			}
-			CO2_last_time = t;
+		uint8 pipe;
+		if((pipe = NRF24_Receive(NRF24_Buffer)) != NRF24_RX_FIFO_EMPTY) { // check request
 			#if DEBUGSOO > 4
-				os_printf("NRF Received at %u, CO2: %u, F: %d (%d)\n", CO2_last_time, co2_send_data.CO2level, co2_send_data.FanSpeed, co2_send_data.Flags);
+				os_printf("NRF read pipe: %d, %X\n", pipe, NRF24_Buffer[0]);
 			#endif
-			#ifdef DEBUG_TO_RAM
-				if(Debug_RAM_addr != NULL && co2_send_data.CO2level > 1100) {
-					struct tm tm;
-					_localtime(&CO2_last_time, &tm);
-					dbg_printf("%d.%d %d:%d:%d=%u\n", tm.tm_mday, 1+tm.tm_mon, tm.tm_hour, tm.tm_min, tm.tm_sec, co2_send_data.CO2level);
-				}
-			#endif
-			NRF24_Standby();
-			CO2_set_fans_speed_current(255);
-			iot_cloud_send(1);
-xStartSending:
-			CO2_send_fan_idx = 0;
-			CO2_work_flag = 2;
-			CO2_send_flag = 0;
-		} else if(receive_timeout) {
-			if(--receive_timeout == 0) goto xStartSending;
+			if(pipe < cfg_glo.fans) {
+				CFG_FAN *f = &cfg_fans[pipe];
+				f->transmit_last_status = (NRF24_Buffer[0] >> 5) & 0b111;
+				f->active_speed = NRF24_Buffer[0] & 0b11111;
+				f->transmit_ok_last_time = get_sntp_localtime();
+			}
 		}
-//	} else if(CO2_work_flag == 2) { // send
-//		if(cfg_glo.fans == 0) goto xNextFAN; // skip
-//		CFG_FAN *f = &cfg_fans[CO2_send_fan_idx];
-//		if(CO2_send_flag == 0) { // start
-//			if(f->flags & (1<<FAN_SKIP_BIT)) goto xNextFAN; // skip
-//			NRF24_SetMode(NRF24_TransmitMode);
-//			set_new_rf_channel(f->rf_channel);
-//			if(NRF24_SetAddresses(f->address_LSB)) {
-//				co2_send_data.FanSpeed = f->speed_current;
-//				NRF24_Transmit((uint8 *)&co2_send_data);
-//				CO2_send_flag = 1;
-//				#if DEBUGSOO > 4
-//					os_printf("NRF-Transmit %d <= %d (%u)\n", CO2_send_fan_idx, f->speed_current, system_get_time());
-//				#endif
-//			} else {
-//				#if DEBUGSOO > 4
-//					os_printf("NRF-SetAddr error: %d\n", CO2_send_fan_idx);
-//				#endif
-//			}
-//		} else { // sending..
-//			if(NRF24_transmit_status >= NRF24_Transmit_Ok) {
-//				f->transmit_last_status = NRF24_transmit_status;
-//				#if DEBUGSOO > 4
-//					os_printf("NRF-Transmit end: %d, %u\n", NRF24_transmit_status, system_get_time());
-//				#endif
-//				if(NRF24_transmit_status == NRF24_Transmit_Ok) {
-//					f->transmit_ok_last_time = get_sntp_localtime();
-//				}
-//				//dump_NRF_registers();
-//xNextFAN:
-//				if(++CO2_send_fan_idx >= cfg_glo.fans) CO2_work_flag = 0;
-//				CO2_send_flag = 0;
-//				NRF24_Standby();
-//			}
-//		}
 	}
 }
 
@@ -325,10 +238,6 @@ void  ICACHE_FLASH_ATTR send_fans_speed_now(uint8 fan, uint8 calc_speed)
 {
 	//dump_NRF_registers();
 	if(calc_speed) CO2_set_fans_speed_current(fan);
-	CO2_send_fan_idx = fan;
-	CO2_work_flag = 2;
-	CO2_send_flag = 0;
-	NRF24_Standby();
 }
 
 void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
@@ -409,3 +318,26 @@ bool ICACHE_FLASH_ATTR write_wireless_fans_cfg(void) {
 bool ICACHE_FLASH_ATTR write_global_vars_cfg(void) {
 	return flash_save_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars));
 }
+
+/*
+void dump_NRF_registers(void)
+{
+	uint8 i;
+	uint8 buf[4];
+	dbg_printf("\nNR: ");
+	#if DEBUGSOO > 4
+	os_printf("\nNR: ");
+	#endif
+	for(i = 0; i <= 0x1D; i++) {
+		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
+		dbg_printf("%X=%2x ", i, buf[0]);
+		#if DEBUGSOO > 4
+		os_printf("%X=%2x ", i, buf[0]);
+		#endif
+	}
+	dbg_printf("\n");
+	#if DEBUGSOO > 4
+	os_printf("\n");
+	#endif
+}
+*/

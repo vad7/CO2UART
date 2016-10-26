@@ -13,14 +13,14 @@ uint8_t NRF24_Buffer[NRF24_PAYLOAD_LEN]; // MUST be EQUAL or GREATER than Addres
 
 uint8_t __attribute__((aligned(2))) NRF24_INIT_DATA[] = {
 	NRF24_CMD_W_REGISTER | NRF24_REG_FEATURE,	(1<<NRF24_BIT_EN_DPL) | (1<<NRF24_BIT_EN_ACK_PAY), // Dynamic Payload Length, Enables Payload with ACK
-	NRF24_CMD_W_REGISTER | NRF24_REG_DYNPD,		0b000001, // Dynamic payload
 //	NRF24_CMD_W_REGISTER | NRF24_REG_RF_CH,		NRF24_RF_CHANNEL, // RF channel
 	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_AW,	NRF24_ADDRESS_LEN - 2, // address length
 	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_RETR,(0b0100<<NRF24_BIT_ARD) | (0b0001<<NRF24_BIT_ARC), // Auto Retransmit Delay = 1000uS, 1 Re-Transmit on fail
 	NRF24_CMD_W_REGISTER | NRF24_REG_RF_SETUP,	(0<<NRF24_BIT_RF_DR_LOW) | (0<<NRF24_BIT_RF_DR_HIGH) | 0b111, // Data rate: 1Mbps, Max power (0b111)
+	NRF24_CMD_W_REGISTER | NRF24_REG_RX_PW_P0,	NRF24_PAYLOAD_LEN,
+	NRF24_CMD_W_REGISTER | NRF24_REG_DYNPD,		0b000001, // Dynamic payload
 	NRF24_CMD_W_REGISTER | NRF24_REG_EN_AA,		0b000001, // Enable ‘Auto Acknowledgment’ for pipes 0
-	NRF24_CMD_W_REGISTER | NRF24_REG_EN_RXADDR,	0b000001, // Enable data pipes: 0
-	NRF24_CMD_W_REGISTER | NRF24_REG_RX_PW_P0,	NRF24_PAYLOAD_LEN
+	NRF24_CMD_W_REGISTER | NRF24_REG_EN_RXADDR,	0b000001 // Enable data pipes: 0
 };
 uint8_t NRF24_BASE_ADDR[] = { 0xC8, 0xC8 }; // Address MSBs: 2..3
 
@@ -107,13 +107,20 @@ void ICACHE_FLASH_ATTR NRF24_SetMode(uint8_t mode)
 }
 
 // Receive in payload, return data pipe number + 1 if success
+// payload must be 32 bytes size.
 uint8_t ICACHE_FLASH_ATTR NRF24_Receive(uint8_t *payload)
 {
-	uint8_t pipe = 0, st;
+	uint8_t pipe = NRF24_RX_FIFO_EMPTY, st;
 	if((st = NRF24_SendCommand(NRF24_CMD_NOP)) & (1<<NRF24_BIT_RX_DR))
 	{
+#ifdef NRF24_USE_DYNAMIC_PAYLOAD
+		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
+		if(NRF24_Buffer[0] > 32) return pipe;
+		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, payload, NRF24_Buffer[0]);
+#else
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, payload, NRF24_PAYLOAD_LEN);
-		pipe = ((st >> NRF24_BIT_RX_P_NO) & 0b111) + 1;
+#endif
+		pipe = ((st >> NRF24_BIT_RX_P_NO) & 0b111);
 		NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR)); // Clear RX status
 	}
 	return pipe;

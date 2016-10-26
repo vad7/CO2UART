@@ -20,7 +20,8 @@
 
 //#define NRF24_RF_CHANNEL		2 // default
 #define NRF24_ADDRESS_LEN		3 // 3..5 bytes
-#define NRF24_PAYLOAD_LEN		5 // = sizeof(master_data) - MUST be EQUAL or GREATER than Address field width!!
+#define NRF24_PAYLOAD_LEN		32 // = Max data size - MUST be EQUAL or GREATER than Address field width!!
+#define NRF24_USE_DYNAMIC_PAYLOAD
 
 /* Register map table */
 #define NRF24_REG_CONFIG		0x00
@@ -96,6 +97,7 @@
 
 #define NRF24_ReceiveMode			(1<<NRF24_BIT_PRIM_RX)
 #define NRF24_TransmitMode			0
+#define NRF24_RX_FIFO_EMPTY			0b111
 
 // Enable CRC, CRC 2 bytes, IRQs disabled
 #define NRF24_CONFIG	(1<<NRF24_BIT_EN_CRC) | (1<<NRF24_BIT_CRCO) | (1<<NRF24_BIT_MASK_RX_DR)|(1<<NRF24_BIT_MASK_TX_DS)|(1<<NRF24_BIT_MASK_MAX_RT)
@@ -110,6 +112,7 @@ typedef enum
 
 uint16_t		NRF24_transmit_cnt;
 volatile uint8_t NRF24_transmit_status; // 1 - ok, 2 - max retransmit count reached, 3 - module is not responses.
+extern uint8_t NRF24_Buffer[];
 
 #ifdef SPI_BLOCK
 

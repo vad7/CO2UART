@@ -7,7 +7,7 @@
  * ATtiny44A
  * 
  */ 
-#define F_CPU 8000000UL   // OSCCAL = 0x81 (VCC = 3.3V)
+#define F_CPU 8000000UL
 // Fuses: BODLEVEL = 1V8
 
 #include <stdlib.h>
@@ -48,7 +48,7 @@ int8_t  FanSpeed					= 0; // 0 = off, 1..FanSpeedMax
 int8_t  SpeedSet;
 uint8_t SpeedSetChanged				= 0;
 int8_t  FanSpeedOverride			= 0; // +-
-uint8_t FanSpeedOverrideOff			= 0; // off/on 
+uint8_t FanSpeedOverrideOff			= 0; // off/on state
 uint8_t FanSpeedChange				= 0;
 uint8_t HaltSetFanSpeed				= 0;
 //uint16_t FanSpeedOverrideTimer		= 0;
@@ -67,7 +67,7 @@ uint8_t nrf_last_status				= 0;
 //                                  0xFF
 
 
-uint8_t request_data = 0; // send seted speed or 0x80 + last error
+uint8_t request_data = 0; // send: (Previous error << 5) + (Off/On << 4) + active speed
 
 typedef struct {
 	uint16_t CO2level;
