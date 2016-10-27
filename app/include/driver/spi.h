@@ -78,7 +78,7 @@ void spi_clock(uint16 prediv, uint8 cntdiv) ICACHE_FLASH_ATTR;
 
 #define SPI_SEND 		1
 #define SPI_RECEIVE 	2
-#define SPI_ADDR_BITS 	(8 + 16) // opcode + address
+#define SPI_ADDR_BITS 	(8) // opcode + address
 
 void spi_write_read_block(uint8 sr, uint32 addr, uint8 * data, uint8 data_size);
 

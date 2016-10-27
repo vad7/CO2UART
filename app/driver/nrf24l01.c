@@ -181,7 +181,7 @@ void ICACHE_FLASH_ATTR NRF24_Powerdown(void)
 void ICACHE_FLASH_ATTR NRF24_init(void)
 {
 	ets_intr_lock();
-	spi_init(2000); // SPI clock, kHz
+	spi_init(500); // SPI clock, kHz
 #ifdef NRF24_CE_GPIO
 	SET_PIN_FUNC(NRF24_CE_GPIO, (MUX_FUN_IO_PORT(NRF24_CE_GPIO) )); // установить функцию GPIOx в режим порта i/o
 	SET_PIN_PULLUP_DIS(NRF24_CE_GPIO);

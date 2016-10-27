@@ -202,11 +202,13 @@ int main(void)
 	FanSpeedMax = EEPROM_read(EPROM_FanSpeedMax);
 	if(FanSpeedMax == 0xFF) {
 		EEPROM_write(EPROM_OSCCAL, OSCCAL);
-		EEPROM_write(EPROM_FanSpeedMax, 6);
 		EEPROM_write(EPROM_CurrentSpeedAddr, EPROM_CurrentSpeedAddr + 1);
 		EEPROM_write(EPROM_CurrentSpeedAddr + 1, 0);
+		EEPROM_write(EPROM_FanSpeedMax, 7);
+		EEPROM_write(EPROM_RFAddress, 0xE5);
+		EEPROM_write(EPROM_RF_Channel, 120);
 	}
-	OSCCAL = EEPROM_read(EPROM_OSCCAL);
+	//OSCCAL = EEPROM_read(EPROM_OSCCAL);
 	SpeedSet = EEPROM_read(EEPROM_read(EPROM_CurrentSpeedAddr));
 	NRF24_init(EEPROM_read(EPROM_RF_Channel)); // After init transmit must be delayed
 	KEYS_INTR_INIT;

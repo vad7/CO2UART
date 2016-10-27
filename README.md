@@ -24,4 +24,6 @@ Schematics:
 
 ![SCH](https://github.com/vad7/CO2UART/blob/master/AeropacSN/WirelessCO2Fan_Keys.jpg)
 
+![alt tag](https://github.com/vad7/PowerMeter/blob/master/NodeMCU-v3-esp12e-LoLin.jpg)
+
 Based on [PowerMeter](https://github.com/vad7/PowerMeter.git)
