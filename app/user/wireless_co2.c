@@ -178,6 +178,7 @@ void ICACHE_FLASH_ATTR uart_recvTask(os_event_t *events)
 				p = p2 + 5;
 				Humidity = atoi_fr(p);
 				ProcessIncomingValues();
+				CO2_work_flag = 1;
 				receive_timeout = 0;
 			}
     	}
@@ -199,7 +200,6 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			UART_Buffer_idx = 0;
 			uart_drv_start();
 			uart_tx_buf(AZ_7798_Command_GetValues, sizeof(AZ_7798_Command_GetValues));
-			CO2_work_flag = 1;
 			receive_timeout = AZ_7798_ResponseTimeout;
 		}
 	} else if(CO2_work_flag == 1) { // wait incoming
@@ -215,6 +215,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 					co2_send_data.Pause = global_vars.pause;
 					NRF24_WriteArray(NRF24_CMD_W_ACK_PAYLOAD + fan, (uint8 *)&co2_send_data, sizeof(co2_send_data));
 				}
+				//dump_NRF_registers();
 			}
 			CO2_work_flag = 0;
 			receive_timeout = global_vars.receive_timeout;
@@ -250,8 +251,8 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 		os_memset(&cfg_glo, 0, sizeof(cfg_glo));
 		cfg_glo.page_refresh_time = 5000;
 		cfg_glo.csv_delimiter = ',';
-		cfg_glo.sensor_rf_channel = 2;
-		cfg_glo.address_LSB = 0xC0;
+		cfg_glo.sensor_rf_channel = 120;
+		cfg_glo.address_LSB = 0xE5;
 		cfg_glo.fans = 0;
 		cfg_glo.fans_speed_threshold[0] = 530;
 		cfg_glo.fans_speed_threshold[1] = 590;
@@ -343,4 +344,4 @@ void dump_NRF_registers(void)
 	os_printf("\n");
 	#endif
 }
-*/
+//*/

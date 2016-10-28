@@ -39,7 +39,7 @@ uint8_t PressKeyOffTime				= 0; // *0.1 sec
 uint8_t PressKeyOnTime				= 0; // *0.1 sec
 ISR(PCINT1_vect) {
 	if(PressKeyOnTime == 0 || PressKeyOffTime != 0) { // not in changing process
-		keys = KEYS_PIN & (KEY_PWR | KEY_MINUS | KEY_PLUS);
+		keys = ~KEYS_PIN & (KEY_PWR | KEY_MINUS | KEY_PLUS);
 	}
 }
 
@@ -64,6 +64,7 @@ uint8_t nrf_last_status				= 0;
 #define EPROM_RFAddress				0x01 // = 0xE5, Enhanced ShockBurst address LSB
 #define EPROM_RF_Channel			0x02 // 120
 #define EPROM_FanSpeedMax			0x03 // 7, max value = 127
+#define EPROM_PauseWhenError		0x04 // 10, sec
 #define EPROM_CurrentSpeedAddr		0x80 // 0x81 until end
 //                                  0xFF
 
@@ -199,7 +200,6 @@ int main(void)
  	OCR0A = 97; // OC0A(TOP)=Fclk/prescaller/Freq - 1; Freq=Fclk/(prescaller*(1+TOP))
  	//OCR0B = 0; // 0..OCR0A, Half Duty cycle = ((TOP+1)/2-1)
 	//TCCR0A |= (1<<COM0B1); // Start PWM out
-	LED1_ON;
 	FanSpeedMax = EEPROM_read(EPROM_FanSpeedMax);
 	if(FanSpeedMax == 0xFF) {
 		EEPROM_write(EPROM_OSCCAL, OSCCAL);
@@ -268,18 +268,18 @@ x_save_speed:
 					ATOMIC_BLOCK(ATOMIC_FORCEON) keys &= ~KEY_PLUS;
 				}
 			}
+			LED1_ON;
 			_delay_ms(30);
-		}
-		if(RequestCountdown) {
 			LED1_OFF;
+		}
+		if(RequestCountdown == 0) {
 			if(FanSpeedOverrideOff == 0 || SendOffStasus == 1) {
 				if(send_data == 0) send_data = (nrf_last_status << 5) | (FanSpeedOverrideOff << 4) | (FanSpeedOverride & 0x0F);
 				NRF24_Buffer[0] = send_data;
 				nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
 				if(nrf_last_status) { // some problem
 					FlashLED(nrf_last_status, 3, 3);
-					Delay100ms(10);
-					RequestCountdown = RequestCountdownLast; // sec
+					RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
 				} else {
 					send_data = 0;
 					HaltSetFanSpeed = 1;
@@ -296,5 +296,3 @@ x_save_speed:
 		}
 	}
 }
-
-

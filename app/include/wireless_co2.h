@@ -36,7 +36,7 @@ typedef struct __attribute__((packed)) {
 	char name[16];
 	time_t transmit_ok_last_time;
 	uint32 forced_speed_timeout; // sec
-	uint8 transmit_last_status;	// NRF24_transmit_status
+	uint8 transmit_last_status;	// NRF24 error: 1 - Max retransmit reached, 2 - Payload not returned,  3 - return payload len error, 4 - module not responding.
 	uint8 active_speed;			// (Off/On << 4) | Override speed(-8..+7)
 	uint8 flags;				// CFG_FAN_FLAGS enum
 	uint8 rf_channel;

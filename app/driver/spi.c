@@ -228,7 +228,7 @@ void spi_write_read_block(uint8 sr, uint32 addr, uint8 * data, uint8 data_size)
 
 	if(sr & SPI_RECEIVE) { // receive
 		copy_s4d1(data, (void *)SPI_W0(spi_no), data_size);
-		#if DEBUGSOO > 4
+		#if DEBUGSOO > 5
 			os_printf("SPI_R: ");
 			print_hex_dump(data, data_size, ' ');
 			os_printf("\n");

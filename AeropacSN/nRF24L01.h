@@ -101,15 +101,15 @@ uint8_t NRF24_Buffer[NRF24_PAYLOAD_LEN]; // MUST be EQUAL or GREATER than Addres
 #define NRF24_TransmitMode			0
 
 const uint8_t NRF24_INIT_DATA[] PROGMEM = { // Enhanced	ShockBurst config
-	NRF24_CMD_W_REGISTER | NRF24_REG_FEATURE,	(1<<NRF24_BIT_EN_DPL) | (1<<NRF24_BIT_EN_ACK_PAY), // Dynamic Payload Length, Enables Payload with ACK
-	NRF24_CMD_W_REGISTER | NRF24_REG_DYNPD,		0b000001, // Dynamic payload
-//	NRF24_CMD_W_REGISTER | NRF24_REG_RF_CH,		NRF24_RF_CHANNEL, // RF channel
-	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_AW,	NRF24_ADDRESS_LEN - 2, // address length
-	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_RETR,(0b0100<<NRF24_BIT_ARD) | (0b0001<<NRF24_BIT_ARC), // Auto Retransmit Delay = 1000uS, 1 Re-Transmit on fail
 	NRF24_CMD_W_REGISTER | NRF24_REG_RF_SETUP,	(0<<NRF24_BIT_RF_DR_LOW) | (0<<NRF24_BIT_RF_DR_HIGH) | 0b111, // Data rate: 1Mbps, Max power (0b111)
-	NRF24_CMD_W_REGISTER | NRF24_REG_EN_AA,		0b000001, // Enable ‘Auto Acknowledgment’ for pipes 0
+	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_AW,	NRF24_ADDRESS_LEN - 2, // address length
+	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_RETR,(0b0011<<NRF24_BIT_ARD) | (0b0011<<NRF24_BIT_ARC), // Auto Retransmit Delay = 1000uS, 3 Re-Transmit on fail
+	NRF24_CMD_W_REGISTER | NRF24_REG_FEATURE,	(1<<NRF24_BIT_EN_DPL) | (1<<NRF24_BIT_EN_ACK_PAY), // Dynamic Payload Length, Enables Payload with ACK
+//	NRF24_CMD_W_REGISTER | NRF24_REG_RF_CH,		NRF24_RF_CHANNEL, // RF channel
+//	NRF24_CMD_W_REGISTER | NRF24_REG_RX_PW_P0,	NRF24_PAYLOAD_LEN,
+	NRF24_CMD_W_REGISTER | NRF24_REG_EN_AA,		0b000001, // Enable Auto Acknowledgment for pipes 0
 	NRF24_CMD_W_REGISTER | NRF24_REG_EN_RXADDR,	0b000001, // Enable data pipes: 0
-	NRF24_CMD_W_REGISTER | NRF24_REG_RX_PW_P0,	NRF24_PAYLOAD_LEN
+	NRF24_CMD_W_REGISTER | NRF24_REG_DYNPD,		0b000001 // Dynamic payload
 };
 const uint8_t NRF24_BASE_ADDR[] PROGMEM = { 0xC8, 0xC8 }; // Address MSBs: 2..3
 
@@ -203,7 +203,7 @@ uint8_t NRF24_Transmit(uint8_t *payload) // Transmit payload, return 0 if succes
 }
 
 // Transmit payload, than receive payload.
-// return 0 if success, 1 - Payload not returned,  2 - module not response, 3 - Max retransmit reached, 4 - return payload len error.
+// return 0 if success, 1 - Max retransmit reached, 2 - Payload not returned,  3 - return payload len error, 4 - module not responding.
 uint8_t NRF24_TransmitShockBurst(uint8_t send_len, uint8_t receive_len)
 {
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR) | (1<<NRF24_BIT_TX_DS) | (1<<NRF24_BIT_MAX_RT)); // clear status
@@ -218,15 +218,15 @@ uint8_t NRF24_TransmitShockBurst(uint8_t send_len, uint8_t receive_len)
 		if(st & ((1<<NRF24_BIT_MAX_RT) | (1<<NRF24_BIT_TX_DS))) break; // stop if sent or max retransmit reached
 	}
 	NRF24_SET_CE_LOW;
-	if(i == 0) return 2;
-	if(st & (1<<NRF24_BIT_MAX_RT)) return 3;
+	if(i == 0) return 4;
+	if(st & (1<<NRF24_BIT_MAX_RT)) return 1;
 	if(st & (1<<NRF24_BIT_RX_DR)) {
 		NRF24_Buffer[0] = 0xFF;
 		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
-		if(NRF24_Buffer[0] > 32 || NRF24_Buffer[0] < receive_len) return 4;
+		if(NRF24_Buffer[0] > 32 || NRF24_Buffer[0] < receive_len) return 3;
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, NRF24_Buffer, receive_len); // get RX payload len
 		return  0;
-	} else return 1;
+	} else return 2;
 }
 
 uint8_t NRF24_SetAddresses(uint8_t addr_LSB) // Set addresses: NRF24_BASE_ADDR + addr_LSB, return 1 if success
