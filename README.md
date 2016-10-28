@@ -17,13 +17,13 @@ WiFi модуль esp8266 используется в качестве веб-с
 
 График c зумом строится с помощью open-source библиотеки <a href="http://d3js.org">d3j (Data-Driven Documents)</a> :
 
-![alt tag](https://github.com/vad7/WirelessCO2_esp8266/blob/master/history_screen.jpg)
+![alt tag](https://github.com/vad7/CO2UART/blob/master/history_screen.jpg)
 
 Schematics: 
 ![SCH](https://github.com/vad7/CO2UART/blob/master/WirelessCO2-TTL.jpg)
 
 ![SCH](https://github.com/vad7/CO2UART/blob/master/AeropacSN/WirelessCO2Fan_Keys.jpg)
 
-![alt tag](https://github.com/vad7/PowerMeter/blob/master/NodeMCU-v3-esp12e-LoLin.jpg)
+![alt tag](https://github.com/vad7/CO2UART/blob/master/NodeMCU-v3-esp12e-LoLin.jpg)
 
 Based on [PowerMeter](https://github.com/vad7/PowerMeter.git)
