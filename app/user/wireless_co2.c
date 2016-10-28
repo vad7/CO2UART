@@ -161,20 +161,22 @@ void ICACHE_FLASH_ATTR uart_recvTask(os_event_t *events)
     		os_printf("%s\n", UART_Buffer);
 		#endif
     	if(UART_Buffer_idx >= MIN_Reponse_length) {
+    		UART_Buffer[UART_Buffer_size-1] = 0;
     		uint8 *p = web_strnstr(UART_Buffer, AZ_7798_ResponseEnd, UART_Buffer_idx);
     		if(p == NULL) return;
    			*p = 0;
    			if((p = os_strchr(UART_Buffer, AZ_7798_TempStart)) == NULL) return;
+   			p++;
 			uint8 *p2 = os_strchr(p, AZ_7798_TempEnd);
 			if(p2 == NULL) return;
 			*p2 = 0;
-			Temperature = ahextoul(p);
+			Temperature = atoi_fr(p);
 			p = p2 + 3;
 			if((p2 = os_strchr(p, AZ_7798_CO2End)) != NULL) {
 				*p2 = 0;
-				CO2level = ahextoul(p);
+				CO2level = atoi_fr(p);
 				p = p2 + 5;
-				Humidity = ahextoul(p);
+				Humidity = atoi_fr(p);
 				ProcessIncomingValues();
 				receive_timeout = 0;
 			}
@@ -203,6 +205,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 	} else if(CO2_work_flag == 1) { // wait incoming
 		if(receive_timeout == 0) {
 			if(CO2level) {
+				NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
 				uint8 fan;
 				for(fan = 0; fan < cfg_glo.fans; fan++) {
 					CFG_FAN *f = &cfg_fans[fan];

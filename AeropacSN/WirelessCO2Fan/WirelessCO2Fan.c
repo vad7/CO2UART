@@ -7,7 +7,7 @@
  * ATtiny44A
  * 
  */ 
-#define F_CPU 8000000UL
+#define F_CPU 1000000UL
 // Fuses: BODLEVEL = 1V8
 
 #include <stdlib.h>
@@ -35,8 +35,8 @@
 #define KEYS_INTR_INIT				GIMSK |= (1<<PCIE1); PCMSK1 |= (1<<PCINT10) | (1<<PCINT9) | (1<<PCINT8)  // PCINT8..10
 uint8_t keys						= 0;
 uint8_t PressKey					= 0;
-uint8_t PressKeyOffTime				= 0; // *0.125 sec
-uint8_t PressKeyOnTime				= 0; // *0.125 sec
+uint8_t PressKeyOffTime				= 0; // *0.1 sec
+uint8_t PressKeyOnTime				= 0; // *0.1 sec
 ISR(PCINT1_vect) {
 	if(PressKeyOnTime == 0 || PressKeyOffTime != 0) { // not in changing process
 		keys = KEYS_PIN & (KEY_PWR | KEY_MINUS | KEY_PLUS);
@@ -55,6 +55,7 @@ uint8_t HaltSetFanSpeed				= 0;
 
 uint8_t TimerCntSec					= 0;
 uint8_t RequestCountdown			= 1; // sec
+uint8_t RequestCountdownLast		= 10; // sec
 uint8_t RequestStatus				= 0; // 0 - pause, 1 - need send request, 2 - waiting response
 uint8_t SendOffStasus				= 0;
 uint8_t nrf_last_status				= 0;
@@ -67,7 +68,7 @@ uint8_t nrf_last_status				= 0;
 //                                  0xFF
 
 
-uint8_t request_data = 0; // send: (Previous error << 5) + (Off/On << 4) + active speed
+uint8_t send_data = 0; // send: (Previous error << 5) | (Off/On << 4) | Override speed(-8..+7); or 0xEE - EEPROM cell drained
 
 typedef struct {
 	uint16_t CO2level;
@@ -80,16 +81,16 @@ typedef struct {
 
 #if(1)
 void Delay10us(uint8_t ms) {
-	while(ms-- > 0) _delay_us(10); //wdt_reset();
+	while(ms-- > 0) _delay_us(10); wdt_reset();
 }
 void Delay1ms(uint8_t ms) {
 	while(ms-- > 0) {
-		_delay_ms(1); //wdt_reset();
+		_delay_ms(1); wdt_reset();
 	}
 }
 void Delay100ms(unsigned int ms) {
 	while(ms-- > 0) {
-		_delay_ms(100); //wdt_reset();
+		_delay_ms(100); wdt_reset();
 	}
 }
 
@@ -134,13 +135,12 @@ static void EEPROM_write(uint8_t ucAddress, uint8_t ucData) // ATtiny24A/44A onl
 
 #include "..\nRF24L01.h"
 
-#define SETUP_WATCHDOG WDTCSR = (1<<WDCE) | (1<<WDE); WDTCSR = (1<<WDE) | (1<<WDIE) | (0<<WDP3) | (0<<WDP2) | (1<<WDP1) | (1<<WDP0); //  Watchdog 0.125 s
+#define SETUP_WATCHDOG WDTCSR = (1<<WDCE) | (1<<WDE); WDTCSR = (1<<WDE) | (0<<WDIE) | (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0); //  Watchdog reset 1 s
 //uint8_t LED_Warning = 0, LED_WarningOnCnt = 0, LED_WarningOffCnt = 0;
 
-ISR(WATCHDOG_vect)
+ISR(TIM0_OVF_vect) // 0.10035 sec
 {
-	SETUP_WATCHDOG;
-	if(++TimerCntSec == 8) { // 1 sec
+	if(++TimerCntSec == 10) { // 1 sec
 		TimerCntSec = 0;
 		if(RequestCountdown) RequestCountdown--;
 	}
@@ -155,7 +155,6 @@ ISR(WATCHDOG_vect)
 				if(PressKey == KEY_PWR) SpeedSet = FanSpeed;
 				else if(PressKey == KEY_MINUS) SpeedSet--;
 				else if(PressKey == KEY_PLUS) SpeedSet++;
-				request_data = SpeedSet;
 				SpeedSetChanged = 1;
 			}
 		} else {
@@ -186,7 +185,7 @@ ISR(WATCHDOG_vect)
 
 int main(void)
 {
-	CLKPR = (1<<CLKPCE); CLKPR = (0<<CLKPS3) | (0<<CLKPS2) | (0<<CLKPS1) | (0<<CLKPS0); // Clock prescaler division factor: 1
+	CLKPR = (1<<CLKPCE); CLKPR = (0<<CLKPS3) | (0<<CLKPS2) | (1<<CLKPS1) | (1<<CLKPS0); // Clock prescaler: 8
 	MCUCR = (1<<SE) | (0<<SM1) | (0<<SM0); // Idle sleep enable
 	KEYS_DDR &= ~(KEY_PWR | KEY_MINUS | KEY_PLUS); // In
 	KEYS_PORT &= ~(KEY_PWR | KEY_MINUS | KEY_PLUS); // = 0
@@ -194,11 +193,13 @@ int main(void)
 	PORTA = (1<<PORTA7) | (1<<PORTA0); // pullup not used pins
 	NRF24_DDR |= NRF24_CE | NRF24_CSN | NRF24_SCK | NRF24_MOSI; // Out
 //	// Timer 8 bit
-// 	TCCR0A = (1<<WGM01) | (1<<WGM00);  // Timer0: Fast PWM OCRA
-// 	TCCR0B = (1<<WGM02) | (0 << CS02) | (1 << CS01) | (0 << CS00); // Timer0 prescaller: 8
-// 	TIMSK0 |= (1<<TOIE0); // Timer/Counter0 Overflow Interrupt Enable
-// 	OCR0A = PWM_MAX; // OC0A - Fclk/(prescaller*(1+TOP)) 
-// 	OCR0B = 0; // Half Duty cycle ((TOP+1)/2-1)
+ 	TCCR0A = (1<<WGM01) | (1<<WGM00);  // Timer0: Fast PWM OCRA
+ 	TCCR0B = (1<<WGM02) | (1 << CS02) | (0 << CS01) | (1 << CS00); // Timer0 prescaller: 1024
+ 	TIMSK0 |= (1<<TOIE0); // Timer/Counter0 Overflow Interrupt Enable
+ 	OCR0A = 97; // OC0A(TOP)=Fclk/prescaller/Freq - 1; Freq=Fclk/(prescaller*(1+TOP))
+ 	//OCR0B = 0; // 0..OCR0A, Half Duty cycle = ((TOP+1)/2-1)
+	//TCCR0A |= (1<<COM0B1); // Start PWM out
+	LED1_ON;
 	FanSpeedMax = EEPROM_read(EPROM_FanSpeedMax);
 	if(FanSpeedMax == 0xFF) {
 		EEPROM_write(EPROM_OSCCAL, OSCCAL);
@@ -222,13 +223,14 @@ int main(void)
 	{
 		__asm__ volatile ("" ::: "memory"); // Need memory barrier
 		sleep_cpu();
+		wdt_reset();
 		if(SpeedSetChanged) {
 			uint8_t addr = EEPROM_read(EPROM_CurrentSpeedAddr);
 x_save_speed:			
 			EEPROM_write(addr, SpeedSet);
 			if(EEPROM_read(addr) != SpeedSet) { // EEPROM cell broken
 				FlashLED(10, 2, 2);
-				request_data = 0x88;
+				send_data = 0xEE;
 				if(++addr == 0) { // memory ends
 					EEPROM_write(addr, 0);
 				} else {
@@ -269,23 +271,27 @@ x_save_speed:
 			_delay_ms(30);
 		}
 		if(RequestCountdown) {
+			LED1_OFF;
 			if(FanSpeedOverrideOff == 0 || SendOffStasus == 1) {
-				request_data = (nrf_last_status << 5) | (FanSpeedOverrideOff << 4) | (FanSpeedOverride & 0x0F);
-				nrf_last_status = NRF24_TransmitShockBurst(&request_data, 1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
+				if(send_data == 0) send_data = (nrf_last_status << 5) | (FanSpeedOverrideOff << 4) | (FanSpeedOverride & 0x0F);
+				NRF24_Buffer[0] = send_data;
+				nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
 				if(nrf_last_status) { // some problem
 					FlashLED(nrf_last_status, 3, 3);
-					RequestCountdown = 10; // sec
+					Delay100ms(10);
+					RequestCountdown = RequestCountdownLast; // sec
 				} else {
+					send_data = 0;
 					HaltSetFanSpeed = 1;
 					FanSpeed = ((master_data*) &NRF24_Buffer)->FanSpeed + FanSpeedOverride;
 					if(FanSpeed < 0) FanSpeed = 0;
 					else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
 					HaltSetFanSpeed = 0;
-					RequestCountdown = ((master_data*) &NRF24_Buffer)->Pause;
+					RequestCountdownLast = RequestCountdown = ((master_data*) &NRF24_Buffer)->Pause;
 					SendOffStasus = 0;
 				}
 			} else {
-				RequestCountdown = 3; // sec
+				RequestCountdown = 1; // sec
 			}
 		}
 	}

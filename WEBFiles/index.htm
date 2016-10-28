@@ -8,7 +8,7 @@
 </head><body onload="CreateTable()">
 ~inc:menumain.inc~
 <div class="content">
-<h2 class="title"><span style="font-weight:normal">CO<small><sub>2</sub></small>:</span>&nbsp;&nbsp;<span id="co2">~CO2_current~</span>&nbsp;<span style="font-weight:normal"><small>ppm</small></span></h2>
+<h2 class="title"><span style="font-weight:normal">CO<small><sub>2</sub></small>:</span>&nbsp;&nbsp;<span id="co2">~CO2_current~</span>&nbsp;<span style="font-weight:normal"><small>ppm</small>, &nbsp;~Temperature~°C, ~Humidity~%</span></h2>
 <p class="center"><span id="time_co2">~CO2_last_time~</span></p>
 <p id="now_night" class="center"></p>
 <table id="fans" class="mdbtab">
@@ -30,7 +30,7 @@
 ~inc:time.inc~
 <script type="text/javascript">
 function CreateTable() {
-	for(var i = 0; i < ~cfg_clo_fans~; i++){
+	for(var i = 0; i < ~cfg_glo_fans~; i++){
 		r=document.all.fans.insertRow(-1);
 		(r.insertCell(0)).innerHTML = i+1;
 		r.insertCell(1);

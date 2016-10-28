@@ -1313,11 +1313,13 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         }
         else ifcmp("CO2_") {
         	cstr += 4;
-        	ifcmp("current") tcp_puts("%u", co2_send_data.CO2level);
+        	ifcmp("current") tcp_puts("%u", CO2level);
         	else ifcmp("last_time") tcp_puts("%u", sntp_local_to_UTC_time(CO2_last_time));
         	else ifcmp("r_flags") tcp_puts("%u", co2_send_data.Flags);
         	else ifcmp("r_speed") tcp_puts("%u", co2_send_data.FanSpeed);
         }
+        else ifcmp("Temperature") tcp_puts("%d.%01u", Temperature / 10, Temperature % 10);
+        else ifcmp("Humidity") tcp_puts("%d.%01u", Humidity / 10, Humidity % 10);
         else ifcmp("now_night_override") tcp_puts("%d", now_night_override);
         else ifcmp("now_night") tcp_puts("%d", now_night);
         else ifcmp("fan_speed_") {

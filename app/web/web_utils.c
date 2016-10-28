@@ -30,6 +30,24 @@ int ICACHE_FLASH_ATTR rom_atoi(const char *s)
 		n = 10*n - (*s++ - '0');
 	return neg ? n : -n;
 }
+
+// skip non integer chars until /0
+int ICACHE_FLASH_ATTR atoi_fr(const char *s)
+{
+	int n=0, neg=0;
+	while (*s == ' ') s++;
+	switch (*s) {
+	case '-': neg=1;
+	case '+': s++;
+	}
+	/* Compute n as a negative number to avoid overflow on INT_MIN */
+	while (*s) {
+		if(*s >= '0' && *s <= '9') n = 10*n - (*s - '0');
+		s++;
+	}
+	return neg ? n : -n;
+}
+
 /******************************************************************************
  * copy_align4
  * копирует данные из области кеширования flash и т.д.

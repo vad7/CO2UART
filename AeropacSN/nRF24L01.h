@@ -204,11 +204,11 @@ uint8_t NRF24_Transmit(uint8_t *payload) // Transmit payload, return 0 if succes
 
 // Transmit payload, than receive payload.
 // return 0 if success, 1 - Payload not returned,  2 - module not response, 3 - Max retransmit reached, 4 - return payload len error.
-uint8_t NRF24_TransmitShockBurst(uint8_t *buffer, uint8_t send_len, uint8_t receive_len)
+uint8_t NRF24_TransmitShockBurst(uint8_t send_len, uint8_t receive_len)
 {
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR) | (1<<NRF24_BIT_TX_DS) | (1<<NRF24_BIT_MAX_RT)); // clear status
 	NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
-	NRF24_WriteArray(NRF24_CMD_W_TX_PAYLOAD, buffer, send_len);
+	NRF24_WriteArray(NRF24_CMD_W_TX_PAYLOAD, NRF24_Buffer, send_len);
 	NRF24_SET_CE_HI; // Start transmission
 	uint8_t st = 0, i;
 	for(i = 1; i != 0; i++)
@@ -221,10 +221,10 @@ uint8_t NRF24_TransmitShockBurst(uint8_t *buffer, uint8_t send_len, uint8_t rece
 	if(i == 0) return 2;
 	if(st & (1<<NRF24_BIT_MAX_RT)) return 3;
 	if(st & (1<<NRF24_BIT_RX_DR)) {
-		buffer[0] = 0xFF;
-		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, buffer, 1); // get RX payload len
-		if(buffer[0] > 32 || buffer[0] < receive_len) return 4;
-		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, buffer, receive_len); // get RX payload len
+		NRF24_Buffer[0] = 0xFF;
+		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
+		if(NRF24_Buffer[0] > 32 || NRF24_Buffer[0] < receive_len) return 4;
+		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, NRF24_Buffer, receive_len); // get RX payload len
 		return  0;
 	} else return 1;
 }

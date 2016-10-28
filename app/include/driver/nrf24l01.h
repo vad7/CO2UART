@@ -112,7 +112,7 @@ typedef enum
 
 uint16_t		NRF24_transmit_cnt;
 volatile uint8_t NRF24_transmit_status; // 1 - ok, 2 - max retransmit count reached, 3 - module is not responses.
-extern uint8_t NRF24_Buffer[];
+extern uint8_t NRF24_Buffer[NRF24_PAYLOAD_LEN];
 
 #ifdef SPI_BLOCK
 

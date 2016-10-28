@@ -25,7 +25,13 @@ Update time: <input title="dd.mm.yyyy hh:mm" id="set_time" maxlength="20" value=
 <div class="content">
 <p class="center">
 Power: <span id='syspower'>?</span> V, readvdd33() = ~sys_vdd33~00<br>
-system_adc_read() = ~sys_adc~, system_get_vdd33() = ~sys_vdd~<br><br>
+system_adc_read() = ~sys_adc~, system_get_vdd33() = ~sys_vdd~<br>
+<form method="post" action="" class="center">
+<td class="label">Divided readvdd33():</td>
+<td><input title='100..1000000. Calculate the fixed value = readvdd33()/Upow(V)' name='sys_ucnst_0' maxlength='10' size='5' value='~sys_ucnst_0~'></td>
+<td class="left"><input type="submit" value="Set" class="button"></td>
+</form>
+<br><br>
 <form method='post' action='/fsupload' enctype='multipart/form-data' class="center">
 Select esp_init_data_default.bin file... <br><br>
 <input type='file' name='sysconst'> <input type='submit' value='Upload' class="button"><br><br>

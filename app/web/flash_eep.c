@@ -462,7 +462,7 @@ uint32 ICACHE_FLASH_ATTR read_user_const(uint8 idx) {
 	uint32 ret = 0xFFFFFFFF;
 	if (idx < MAX_IDX_USER_CONST) {
 		if (flash_read_cfg(&ret, ID_CFG_KVDD + idx, 4) != 4) {
-			if(idx == 0) ret = 102400; // константа делителя для ReadVDD
+			if(idx == 0) ret = 83000; // 102400; // константа делителя для ReadVDD
 		}
 	}
 	return ret;

@@ -85,7 +85,7 @@
 #define USE_HSPI	  // дрaйвер  HSPI
 //#define USE_EEPROM	  // работа с EEPROM/FRAM
 
-//#define DEBUG_TO_RAM
+#define DEBUG_TO_RAM
 #define UTC_OFFSET +3 // Moscow time
 #define USE_UART0	  // UART0 in/out
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

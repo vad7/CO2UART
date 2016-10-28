@@ -113,6 +113,9 @@ uint8_t ICACHE_FLASH_ATTR NRF24_Receive(uint8_t *payload)
 	uint8_t pipe = NRF24_RX_FIFO_EMPTY, st;
 	if((st = NRF24_SendCommand(NRF24_CMD_NOP)) & (1<<NRF24_BIT_RX_DR))
 	{
+		#if DEBUGSOO > 4
+			os_printf("NRF Received ST = %X\n", st);
+		#endif
 #ifdef NRF24_USE_DYNAMIC_PAYLOAD
 		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
 		if(NRF24_Buffer[0] > 32) return pipe;
