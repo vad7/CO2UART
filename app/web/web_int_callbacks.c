@@ -154,10 +154,10 @@ void ICACHE_FLASH_ATTR web_fans_xml(TCP_SERV_CONN *ts_conn)
 		web_conn->msgbuflen += htmlcode(&web_conn->msgbuf[web_conn->msgbuflen], f->name, sizeof(f->name) * 6, sizeof(f->name));
 		tcp_puts_fd("</name><fl>%u</fl>"
 				//"<rf>%d</rf><addr>%d</addr><ovd>%d</ovd><ovn>%d</ovn><spmax>%d</spmax><spmin>%d</spmin><spd>%d</spd><spn>%d</spn>"
-				"<fspt>%u</fspt><spc>%d</spc><tst>%d</tst><ttm>%u</ttm></fan>\n",
+				"<fspt>%u</fspt><spc>%d</spc><tst>%d</tst><off>%d</off><adj>%d</adj><ttm>%u</ttm></fan>\n",
 			f->flags,
 			//f->rf_channel, f->address_LSB, f->override_day, f->override_night, f->speed_max, f->speed_min, f->speed_day, f->speed_night,
-			f->forced_speed_timeout, f->speed_current, f->transmit_last_status, sntp_local_to_UTC_time(f->transmit_ok_last_time));
+			f->forced_speed_timeout, f->speed_current, f->transmit_last_status, f->powered_off, f->adjust_speed, sntp_local_to_UTC_time(f->transmit_ok_last_time));
 		if(++web_conn->udata_start >= web_conn->udata_stop) {
 			ClrSCB(SCB_RETRYCB);
 			return;

@@ -170,13 +170,13 @@ void ICACHE_FLASH_ATTR uart_recvTask(os_event_t *events)
 			uint8 *p2 = os_strchr(p, AZ_7798_TempEnd);
 			if(p2 == NULL) return;
 			*p2 = 0;
-			Temperature = atoi_fr(p);
+			Temperature = atoi_z(p, 1);
 			p = p2 + 3;
 			if((p2 = os_strchr(p, AZ_7798_CO2End)) != NULL) {
 				*p2 = 0;
-				CO2level = atoi_fr(p);
+				CO2level = atoi_z(p, 1);
 				p = p2 + 5;
-				Humidity = atoi_fr(p);
+				Humidity = atoi_z(p, 1);
 				ProcessIncomingValues();
 				CO2_work_flag = 1;
 				receive_timeout = 0;
@@ -231,7 +231,8 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			if(pipe < cfg_glo.fans) {
 				CFG_FAN *f = &cfg_fans[pipe];
 				f->transmit_last_status = (NRF24_Buffer[0] >> 5) & 0b111;
-				f->active_speed = NRF24_Buffer[0] & 0b11111;
+				f->adjust_speed = NRF24_Buffer[0] & 0b1111;
+				f->powered_off = (NRF24_Buffer[0] & 0b10000) != 0;
 				f->transmit_ok_last_time = get_sntp_localtime();
 			}
 		}

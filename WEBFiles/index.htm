@@ -62,6 +62,11 @@ function updateStatus(xmlData) {
 		var fl = getXMLValue(f, 'fl');
 		if(fl & 1) r.cells[1].style.color = 'gray';
 		r.cells[2].innerHTML = getXMLValue(f, 'spc');
+		var adj = getXMLValue(f, 'adj');
+		if(adj != 0) {
+			r.cells[2].innerHTML = r.cells[2].innerHTML + '(' + (adj>0 ? '+' : '') + adj + ')';
+		}
+		if(getXMLValue(f, 'off') == 1) r.cells[2].innerHTML = r.cells[2].innerHTML + ' выкл.';
 		r.cells[2].style.color = (fl & 2) ? 'red' : '';
 		if(fl & 2) {
 		    var n = Number(getXMLValue(f, 'fspt'));

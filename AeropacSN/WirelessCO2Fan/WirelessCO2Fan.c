@@ -5,6 +5,10 @@
  *  Author: Vadim Kulakov, vad7@yahoo.com
  *
  * ATtiny44A
+ *
+ * Настройка: 1. Выключить проветриватель, затем нажать одновременно кнопки "+" и "-", светодиод мигнет быстро 5 раз.
+ *			  2. кнопки "+", "-" изменяют текущую скорость проветривателя, после нажатия светодиод ее промигивает.
+ *			  3. Через 30 секунд выход из настройки.
  * 
  */ 
 #define F_CPU 1000000UL
@@ -33,14 +37,14 @@
 #define KEY_MINUS					(1<<PORTB1)
 #define KEY_PLUS					(1<<PORTB2)
 #define KEYS_INTR_INIT				GIMSK |= (1<<PCIE1); PCMSK1 |= (1<<PCINT10) | (1<<PCINT9) | (1<<PCINT8)  // PCINT8..10
-uint8_t keys						= 0;
+volatile uint8_t keys				= 0;
 uint8_t PressKey					= 0;
 uint8_t PressKeyOffTime				= 0; // *0.1 sec
 uint8_t PressKeyOnTime				= 0; // *0.1 sec
 ISR(PCINT1_vect) {
-	if(PressKeyOnTime == 0 || PressKeyOffTime != 0) { // not in changing process
+	if(PressKeyOnTime == 0 && PressKeyOffTime == 0) { // not in changing process
 		keys = ~KEYS_PIN & (KEY_PWR | KEY_MINUS | KEY_PLUS);
-	}
+	} else keys = 0;
 }
 
 uint8_t FanSpeedMax;
@@ -50,7 +54,6 @@ uint8_t SpeedSetChanged				= 0;
 int8_t  FanSpeedOverride			= 0; // +-
 uint8_t FanSpeedOverrideOff			= 0; // off/on state
 uint8_t FanSpeedChange				= 0;
-uint8_t HaltSetFanSpeed				= 0;
 //uint16_t FanSpeedOverrideTimer		= 0;
 
 uint8_t TimerCntSec					= 0;
@@ -59,6 +62,7 @@ uint8_t RequestCountdownLast		= 10; // sec
 uint8_t RequestStatus				= 0; // 0 - pause, 1 - need send request, 2 - waiting response
 uint8_t SendOffStasus				= 0;
 uint8_t nrf_last_status				= 0;
+uint8_t setup_mode					= 0;
 
 #define EPROM_OSCCAL				0x00
 #define EPROM_RFAddress				0x01 // = 0xE5, Enhanced ShockBurst address LSB
@@ -145,7 +149,7 @@ ISR(TIM0_OVF_vect) // 0.10035 sec
 		TimerCntSec = 0;
 		if(RequestCountdown) RequestCountdown--;
 	}
-	if(HaltSetFanSpeed == 0 && FanSpeed != SpeedSet) {
+	if(FanSpeed != SpeedSet) {
 		if(PressKeyOffTime) {
 			if(--PressKeyOffTime == 0) {
 				KEYS_DDR |= PressKey; // set Out, level 0
@@ -156,6 +160,8 @@ ISR(TIM0_OVF_vect) // 0.10035 sec
 				if(PressKey == KEY_PWR) SpeedSet = FanSpeed;
 				else if(PressKey == KEY_MINUS) SpeedSet--;
 				else if(PressKey == KEY_PLUS) SpeedSet++;
+				if(SpeedSet < 0) SpeedSet = 0;
+				else if(SpeedSet > FanSpeedMax) SpeedSet = FanSpeedMax;
 				SpeedSetChanged = 1;
 			}
 		} else {
@@ -227,71 +233,102 @@ int main(void)
 		if(SpeedSetChanged) {
 			uint8_t addr = EEPROM_read(EPROM_CurrentSpeedAddr);
 x_save_speed:			
-			EEPROM_write(addr, SpeedSet);
-			if(EEPROM_read(addr) != SpeedSet) { // EEPROM cell broken
-				FlashLED(10, 2, 2);
-				send_data = 0xEE;
-				if(++addr == 0) { // memory ends
-					EEPROM_write(addr, 0);
-				} else {
-					EEPROM_write(EPROM_CurrentSpeedAddr, addr);
-					goto x_save_speed;
+			if(EEPROM_read(addr) != SpeedSet) {
+				EEPROM_write(addr, SpeedSet);
+				if(EEPROM_read(addr) != SpeedSet) { // EEPROM cell broken
+					FlashLED(10, 2, 2);
+					send_data = 0xEE;
+					if(++addr == 0) { // memory ends
+						EEPROM_write(addr, 0);
+						} else {
+						EEPROM_write(EPROM_CurrentSpeedAddr, addr);
+						goto x_save_speed;
+					}
 				}
 			}
 			SpeedSetChanged = 0;
 		}
 		if(keys) {
-			if(keys | KEY_PWR) {
+			if(keys & KEY_PWR) {
 				FanSpeedOverrideOff ^= 1;
+				if(FanSpeedOverrideOff == 0 && setup_mode) setup_mode = 0;
 				SendOffStasus = 1;
-				ATOMIC_BLOCK(ATOMIC_FORCEON) keys &= ~KEY_PWR;
 			}
 			if(FanSpeedOverrideOff == 0) {
-				if(keys | KEY_MINUS) {
+				if(keys & KEY_MINUS) {
 					if(FanSpeedOverride > -8) {
 						FanSpeedOverride--;
-						HaltSetFanSpeed = 1;
-						if(FanSpeed > 0) FanSpeed--;
-						if(SpeedSet > 0) SpeedSet--;
-						HaltSetFanSpeed = 0;
+						ATOMIC_BLOCK(ATOMIC_FORCEON) {
+							if(FanSpeed > 0) FanSpeed--;
+							if(SpeedSet > 0) SpeedSet--;
+						}
 					}
-					ATOMIC_BLOCK(ATOMIC_FORCEON) keys &= ~KEY_MINUS;
 				}
-				if(keys | KEY_PLUS) {
+				if(keys & KEY_PLUS) {
 					if(FanSpeedOverride < 7) {
 						FanSpeedOverride++;
-						HaltSetFanSpeed = 1;
-						if(FanSpeed < FanSpeedMax) FanSpeed++;
-						if(SpeedSet < FanSpeedMax) SpeedSet++;
-						HaltSetFanSpeed = 0;
+						ATOMIC_BLOCK(ATOMIC_FORCEON) {
+							if(FanSpeed < FanSpeedMax) FanSpeed++;
+							if(SpeedSet < FanSpeedMax) SpeedSet++;
+						}
 					}
-					ATOMIC_BLOCK(ATOMIC_FORCEON) keys &= ~KEY_PLUS;
+				}
+			} else if(setup_mode) {
+				if(keys & KEY_MINUS) {
+					SpeedSet--;
+				}
+				if(keys & KEY_PLUS) {
+					SpeedSet++;
+				}
+				if(SpeedSet < 0) SpeedSet = 0;
+				else if(SpeedSet > FanSpeedMax) SpeedSet = FanSpeedMax;
+				FlashLED(SpeedSet, 5, 5);
+				RequestCountdown = 30;
+				SpeedSetChanged = 1;
+			} else if((keys & KEY_MINUS) || (keys & KEY_PLUS)) {
+				if(PressKeyOnTime == 0 && PressKeyOffTime == 0) { // not in changing process
+					LED1_ON;
+					while(keys) {
+						wdt_reset(); // wait keys release
+						if((keys & KEY_MINUS) && (keys & KEY_PLUS)) {
+							setup_mode = 1;
+							FlashLED(5, 2, 2);
+							Delay100ms(30);
+							RequestCountdown = 30;
+							break;
+						}
+					}
 				}
 			}
 			LED1_ON;
+			while(keys) wdt_reset(); // wait keys release
 			_delay_ms(30);
 			LED1_OFF;
 		}
 		if(RequestCountdown == 0) {
-			if(FanSpeedOverrideOff == 0 || SendOffStasus == 1) {
-				if(send_data == 0) send_data = (nrf_last_status << 5) | (FanSpeedOverrideOff << 4) | (FanSpeedOverride & 0x0F);
-				NRF24_Buffer[0] = send_data;
-				nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
-				if(nrf_last_status) { // some problem
-					FlashLED(nrf_last_status, 3, 3);
-					RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
-				} else {
-					send_data = 0;
-					HaltSetFanSpeed = 1;
-					FanSpeed = ((master_data*) &NRF24_Buffer)->FanSpeed + FanSpeedOverride;
-					if(FanSpeed < 0) FanSpeed = 0;
-					else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
-					HaltSetFanSpeed = 0;
-					RequestCountdownLast = RequestCountdown = ((master_data*) &NRF24_Buffer)->Pause;
-					SendOffStasus = 0;
+			if(setup_mode == 0) {
+				if(FanSpeedOverrideOff == 0 || SendOffStasus == 1) {
+					if(send_data == 0) send_data = (nrf_last_status << 5) | (FanSpeedOverrideOff << 4) | (FanSpeedOverride & 0x0F);
+					NRF24_Buffer[0] = send_data;
+					nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
+					if(nrf_last_status) { // some problem
+						FlashLED(nrf_last_status, 3, 3);
+						RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
+						} else {
+						send_data = 0;
+						ATOMIC_BLOCK(ATOMIC_FORCEON) {
+							FanSpeed = ((master_data*) &NRF24_Buffer)->FanSpeed + FanSpeedOverride;
+							if(FanSpeed < 0) FanSpeed = 0;
+							else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
+						}
+						RequestCountdownLast = RequestCountdown = ((master_data*) &NRF24_Buffer)->Pause;
+						SendOffStasus = 0;
+					}
+					} else {
+					RequestCountdown = 1; // sec
 				}
-			} else {
-				RequestCountdown = 1; // sec
+			} else { // setup mode timeout
+				setup_mode = 0;
 			}
 		}
 	}
