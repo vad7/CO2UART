@@ -60,7 +60,7 @@ uint8_t TimerCntSec					= 0;
 uint8_t RequestCountdown			= 1; // sec
 uint8_t RequestCountdownLast		= 10; // sec
 uint8_t RequestStatus				= 0; // 0 - pause, 1 - need send request, 2 - waiting response
-uint8_t SendOffStasus				= 0;
+uint8_t SendOffStatus				= 0;
 uint8_t nrf_last_status				= 0;
 uint8_t setup_mode					= 0;
 
@@ -149,14 +149,14 @@ ISR(TIM0_OVF_vect) // 0.10035 sec
 		TimerCntSec = 0;
 		if(RequestCountdown) RequestCountdown--;
 	}
-	if(FanSpeed != SpeedSet) {
+	if(FanSpeed != SpeedSet && setup_mode == 0) {
 		if(PressKeyOffTime) {
 			if(--PressKeyOffTime == 0) {
-				KEYS_DDR |= PressKey; // set Out, level 0
+				KEYS_DDR |= PressKey; // set Out, level 0 - key pressed
 			}
 		} else if(PressKeyOnTime) {
 			if(--PressKeyOnTime == 0) {
-				KEYS_DDR &= ~PressKey; // set In
+				KEYS_DDR &= ~PressKey; // set In - key released
 				if(PressKey == KEY_PWR) SpeedSet = FanSpeed;
 				else if(PressKey == KEY_MINUS) SpeedSet--;
 				else if(PressKey == KEY_PLUS) SpeedSet++;
@@ -252,7 +252,7 @@ x_save_speed:
 			if(keys & KEY_PWR) {
 				FanSpeedOverrideOff ^= 1;
 				if(FanSpeedOverrideOff == 0 && setup_mode) setup_mode = 0;
-				SendOffStasus = 1;
+				SendOffStatus = 1;
 			}
 			if(FanSpeedOverrideOff == 0) {
 				if(keys & KEY_MINUS) {
@@ -288,6 +288,7 @@ x_save_speed:
 			} else if((keys & KEY_MINUS) || (keys & KEY_PLUS)) {
 				if(PressKeyOnTime == 0 && PressKeyOffTime == 0) { // not in changing process
 					LED1_ON;
+					Delay100ms(10);
 					while(keys) {
 						wdt_reset(); // wait keys release
 						if((keys & KEY_MINUS) && (keys & KEY_PLUS)) {
@@ -307,24 +308,26 @@ x_save_speed:
 		}
 		if(RequestCountdown == 0) {
 			if(setup_mode == 0) {
-				if(FanSpeedOverrideOff == 0 || SendOffStasus == 1) {
-					if(send_data == 0) send_data = (nrf_last_status << 5) | (FanSpeedOverrideOff << 4) | (FanSpeedOverride & 0x0F);
+				if(FanSpeedOverrideOff == 0 || SendOffStatus == 1) {
+					if(send_data != 0xEE) send_data = (nrf_last_status << 5) | (FanSpeedOverrideOff << 4) | (FanSpeedOverride & 0x0F);
 					NRF24_Buffer[0] = send_data;
 					nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
 					if(nrf_last_status) { // some problem
 						FlashLED(nrf_last_status, 3, 3);
 						RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
-						} else {
-						send_data = 0;
+					} else {
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
 							FanSpeed = ((master_data*) &NRF24_Buffer)->FanSpeed + FanSpeedOverride;
 							if(FanSpeed < 0) FanSpeed = 0;
 							else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
 						}
 						RequestCountdownLast = RequestCountdown = ((master_data*) &NRF24_Buffer)->Pause;
-						SendOffStasus = 0;
 					}
-					} else {
+					if(nrf_last_status <= 1) { // Status was send successfully
+						SendOffStatus = 0;
+						send_data = 0;
+					}
+				} else {
 					RequestCountdown = 1; // sec
 				}
 			} else { // setup mode timeout

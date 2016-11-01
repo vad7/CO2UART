@@ -36,11 +36,12 @@ typedef struct __attribute__((packed)) {
 	char name[16];
 	time_t transmit_ok_last_time;
 	uint32 forced_speed_timeout; // sec
-	uint8 transmit_last_status;	// NRF24 error: 1 - Max retransmit reached, 2 - Payload not returned,  3 - return payload len error, 4 - module not responding.
-	uint8 adjust_speed;			// Override speed(-8..+7)
+	uint8 transmit_last_status;	// NRF24 status: 1-Payload not returned, 2-Max retransmit reached, 3-return payload len error, 4-module not responding.
+	int8  adjust_speed;			// Override speed(-8..+7)
 	uint8 powered_off;			// Off/On
 	uint8 flags;				// CFG_FAN_FLAGS enum
-	uint8 rf_channel;
+	uint8 pause;				// sec, pause between next NRF request
+//	uint8 rf_channel;
 	uint8 address_LSB;
 	int8  speed_min;
 	int8  speed_max;
@@ -49,6 +50,7 @@ typedef struct __attribute__((packed)) {
 	uint8 override_night;		// 0 - no, 1 - set =speed_night, 2 - set +speed_night
 	int8  speed_night;
 	uint8 speed_current;
+	time_t broken_cell_last_time;
 } CFG_FAN;
 CFG_FAN __attribute__((aligned(4))) cfg_fans[FANS_MAX]; // Actual number of fans stored in cfg_co2.fans
 
@@ -62,7 +64,6 @@ CO2_SEND_DATA __attribute__((aligned(4))) co2_send_data;
 
 typedef struct __attribute__ ((packed)) {
 	uint16 receive_timeout;		// sec, timeout before get CO2
-	uint16 pause;				// pause between next NRF request
 	int8   fans_speed_override;	// +- total speed
 } GLOBAL_VARS;
 GLOBAL_VARS __attribute__((aligned(4))) global_vars;

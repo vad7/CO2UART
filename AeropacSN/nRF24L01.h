@@ -203,7 +203,7 @@ uint8_t NRF24_Transmit(uint8_t *payload) // Transmit payload, return 0 if succes
 }
 
 // Transmit payload, than receive payload.
-// return 0 if success, 1 - Max retransmit reached, 2 - Payload not returned,  3 - return payload len error, 4 - module not responding.
+// return 0 if success, 1 - Payload not returned, 2 - Max retransmit reached, 3 - return payload len error, 4 - module not responding.
 uint8_t NRF24_TransmitShockBurst(uint8_t send_len, uint8_t receive_len)
 {
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR) | (1<<NRF24_BIT_TX_DS) | (1<<NRF24_BIT_MAX_RT)); // clear status
@@ -219,14 +219,14 @@ uint8_t NRF24_TransmitShockBurst(uint8_t send_len, uint8_t receive_len)
 	}
 	NRF24_SET_CE_LOW;
 	if(i == 0) return 4;
-	if(st & (1<<NRF24_BIT_MAX_RT)) return 1;
+	if(st & (1<<NRF24_BIT_MAX_RT)) return 2;
 	if(st & (1<<NRF24_BIT_RX_DR)) {
 		NRF24_Buffer[0] = 0xFF;
 		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
 		if(NRF24_Buffer[0] > 32 || NRF24_Buffer[0] < receive_len) return 3;
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, NRF24_Buffer, receive_len); // get RX payload len
 		return  0;
-	} else return 2;
+	} else return 1;
 }
 
 uint8_t NRF24_SetAddresses(uint8_t addr_LSB) // Set addresses: NRF24_BASE_ADDR + addr_LSB, return 1 if success

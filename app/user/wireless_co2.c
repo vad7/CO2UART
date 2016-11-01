@@ -212,7 +212,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 					if(f->flags & (1<<FAN_SKIP_BIT)) continue;
 					co2_send_data.FanSpeed = f->speed_current;
 					co2_send_data.CO2level = CO2level;
-					co2_send_data.Pause = global_vars.pause;
+					co2_send_data.Pause = f->pause;
 					NRF24_WriteArray(NRF24_CMD_W_ACK_PAYLOAD + fan, (uint8 *)&co2_send_data, sizeof(co2_send_data));
 				}
 				//dump_NRF_registers();
@@ -221,7 +221,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			receive_timeout = global_vars.receive_timeout;
 		}
 	}
-	if(CO2level) {
+	//if(CO2level) {
 		//dbg_printf(" %x", NRF24_SendCommand(NRF24_CMD_NOP));
 		uint8 pipe;
 		if((pipe = NRF24_Receive(NRF24_Buffer)) != NRF24_RX_FIFO_EMPTY) { // check request
@@ -230,13 +230,20 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			#endif
 			if(pipe < cfg_glo.fans) {
 				CFG_FAN *f = &cfg_fans[pipe];
-				f->transmit_last_status = (NRF24_Buffer[0] >> 5) & 0b111;
-				f->adjust_speed = NRF24_Buffer[0] & 0b1111;
-				f->powered_off = (NRF24_Buffer[0] & 0b10000) != 0;
+				uint8_t st = NRF24_Buffer[0];
 				f->transmit_ok_last_time = get_sntp_localtime();
+				if(st == 0xEE) { // broken EEPROM cell
+					f->broken_cell_last_time = f->transmit_ok_last_time;
+					write_wireless_fans_cfg();
+				} else {
+					f->transmit_last_status = (st >> 5) & 0b111;
+					f->adjust_speed = st & 0b1111;
+					if(f->adjust_speed & 0b1000) f->adjust_speed |= 0xF0; // negative number
+					f->powered_off = (st & 0b10000) != 0;
+				}
 			}
 		}
-	}
+	//}
 }
 
 void  ICACHE_FLASH_ATTR send_fans_speed_now(uint8 fan, uint8 calc_speed)
@@ -275,7 +282,6 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	if(flash_read_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars)) <= 0) {
 		os_memset(&global_vars, 0, sizeof(global_vars));
 		global_vars.receive_timeout = 5;
-		global_vars.pause = 10;
 	}
 	receive_timeout = global_vars.receive_timeout;
 	fan_speed_previous = 0;

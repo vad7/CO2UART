@@ -206,7 +206,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x7b4
+.text           0x00000000      0x7cc
  *(.vectors)
  .vectors       0x00000000       0x22 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
                 0x00000000                __vector_default
@@ -330,19 +330,19 @@ END GROUP
                 0x000002e0       0x2e WirelessCO2Fan.o
                 0x000002e0                NRF24_init
  .text.__vector_11
-                0x0000030e      0x10c WirelessCO2Fan.o
+                0x0000030e      0x114 WirelessCO2Fan.o
                 0x0000030e                __vector_11
  .text.startup.main
-                0x0000041a      0x384 WirelessCO2Fan.o
-                0x0000041a                main
+                0x00000422      0x394 WirelessCO2Fan.o
+                0x00000422                main
  .text.avr-libc
-                0x0000079e       0x12 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25\libc.a(memcpy_P.o)
-                0x0000079e                memcpy_P
-                0x000007b0                . = ALIGN (0x2)
+                0x000007b6       0x12 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25\libc.a(memcpy_P.o)
+                0x000007b6                memcpy_P
+                0x000007c8                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000007b0        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
-                0x000007b0                _exit
-                0x000007b0                exit
+ .fini9         0x000007c8        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
+                0x000007c8                _exit
+                0x000007c8                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -361,11 +361,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000007b0        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
+ .fini0         0x000007c8        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
  *(.fini0)
-                0x000007b4                _etext = .
+                0x000007cc                _etext = .
 
-.data           0x00800060        0x2 load address 0x000007b4
+.data           0x00800060        0x2 load address 0x000007cc
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -395,9 +395,9 @@ END GROUP
  .bss.nrf_last_status
                 0x00800064        0x1 WirelessCO2Fan.o
                 0x00800064                nrf_last_status
- .bss.SendOffStasus
+ .bss.SendOffStatus
                 0x00800065        0x1 WirelessCO2Fan.o
-                0x00800065                SendOffStasus
+                0x00800065                SendOffStatus
  .bss.TimerCntSec
                 0x00800066        0x1 WirelessCO2Fan.o
                 0x00800066                TimerCntSec
@@ -428,8 +428,8 @@ END GROUP
                 0x00800070                SpeedSet
                 0x00800071                NRF24_Buffer
                 0x00800076                PROVIDE (__bss_end, .)
-                0x000007b4                __data_load_start = LOADADDR (.data)
-                0x000007b6                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x000007cc                __data_load_start = LOADADDR (.data)
+                0x000007ce                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800076        0x0
                 0x00800076                PROVIDE (__noinit_start, .)
@@ -503,17 +503,17 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x10d1
+.debug_info     0x00000000     0x10e9
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000     0x10d1 WirelessCO2Fan.o
+ .debug_info    0x00000000     0x10e9 WirelessCO2Fan.o
 
 .debug_abbrev   0x00000000      0x2e7
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x2e7 WirelessCO2Fan.o
 
-.debug_line     0x00000000      0x63f
+.debug_line     0x00000000      0x644
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x00000000      0x63f WirelessCO2Fan.o
+ .debug_line    0x00000000      0x644 WirelessCO2Fan.o
 
 .debug_frame    0x00000000      0x284
  *(.debug_frame)

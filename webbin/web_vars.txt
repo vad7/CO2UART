@@ -181,11 +181,13 @@ cfg_fan_min
 cfg_fan_max
 cfg_fan_day
 cfg_fan_night
+cfg_fan_broken
 inc:footer.inc
 cfg_glo_fans
 cfg_fan_override_day
 cfg_fan_override_night
 cfg_fan_flags
+inc:time.inc
 inc:menumain.inc
 cfg_vars_fans_speed_ov
 cfg_vars_receive_timeout

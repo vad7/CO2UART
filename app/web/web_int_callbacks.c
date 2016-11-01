@@ -875,6 +875,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 		        else ifcmp("day") tcp_puts("%d", f->speed_day);
 		        else ifcmp("night") tcp_puts("%d", f->speed_night);
 		        else ifcmp("flags") tcp_puts("%d", f->flags);
+		        else ifcmp("broken") tcp_puts("%u", f->broken_cell_last_time);
 		    }
 			else ifcmp("vars_") { // cfg_
 				cstr += 5;
