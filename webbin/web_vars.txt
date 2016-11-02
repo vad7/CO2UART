@@ -175,9 +175,11 @@ wifi_st_aucn
 wifi_scan
 inc:menumain.inc
 cfg_fan_name
-cfg_fan_rf_ch
 cfg_fan_addr_LSB
+cfg_fan_pause
+cfg_glo_FSPM
 cfg_fan_min
+cfg_glo_FSPM
 cfg_fan_max
 cfg_fan_day
 cfg_fan_night
@@ -192,7 +194,6 @@ inc:menumain.inc
 cfg_vars_fans_speed_ov
 cfg_vars_receive_timeout
 cfg_glo_rf_ch
-cfg_glo_addr_LSB
 cfg_glo_fans
 cfg_glo_fans_speed_th
 cfg_glo_fans_speed_delta

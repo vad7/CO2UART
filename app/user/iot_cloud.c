@@ -122,6 +122,14 @@ err_t ICACHE_FLASH_ATTR tc_recv(TCP_SERV_CONN *ts_conn) {
 	        	}
 	        }
 		}
+	#ifdef DEBUG_TO_RAM
+	} else {
+		if(Debug_RAM_addr != NULL) {
+			struct tm tm;
+			_localtime(&CO2_last_time, &tm);
+			dbg_printf("%d %d:%d:%d IoT:%s\n", iot_last_status);
+		}
+	#endif
 	}
 	//ts_conn->flag.rx_null = 1; // stop receiving data
    	tc_close();
@@ -315,6 +323,13 @@ void tc_go_next(void)
 		os_printf("iot_go_next(%d): %u: %x %x\n", tc_init_flg, system_get_time(), iot_data_first, iot_data_processing);
 	#endif
 	if(tc_init_flg & TC_RUNNING) { // Process timeout
+		#ifdef DEBUG_TO_RAM
+			if(Debug_RAM_addr != NULL) {
+				struct tm tm;
+				_localtime(&CO2_last_time, &tm);
+				dbg_printf("%d %d:%d:%d IoT timeout\n");
+			}
+		#endif
 		close_dns_finding();
 		tc_init_flg &= ~TC_RUNNING; // clear
 		if(iot_data_processing != NULL) iot_data_processing = iot_data_processing->next;
@@ -367,6 +382,7 @@ void ICACHE_FLASH_ATTR iot_data_clear(void)
 // 1 - start, 0 - end
 void ICACHE_FLASH_ATTR iot_cloud_send(uint8 fwork)
 {
+	if(!cfg_glo.iot_cloud_enable) return; // iot cloud disabled
 	#if DEBUGSOO > 4
 		os_printf("iot_send: %d, %d: %x %x, IP%d(%d)\n", tc_init_flg, fwork, iot_data_first, iot_data_processing, wifi_station_get_connect_status(), flg_open_all_service);
 	#endif
@@ -379,6 +395,9 @@ void ICACHE_FLASH_ATTR iot_cloud_send(uint8 fwork)
 	if(wifi_station_get_connect_status() != STATION_GOT_IP) return; // st connected?
 	if(!flg_open_all_service) {// some problem with WiFi here
 		wifi_station_connect();
+		#ifdef DEBUG_TO_RAM
+			dbg_printf("WiFi reconnect\n");
+		#endif
 	}
 	if(iot_data_first != NULL) {
 		if(iot_data_processing == NULL) iot_data_processing = iot_data_first;

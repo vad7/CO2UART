@@ -143,7 +143,7 @@ void ICACHE_FLASH_ATTR web_fans_xml(TCP_SERV_CONN *ts_conn)
     	tcp_puts_fd("<night>%d</night>", now_night);
     	tcp_puts_fd("<night_ov>%d</night_ov>", now_night_override);
     	tcp_puts_fd("<sp_ov>%d</sp_ov>", global_vars.fans_speed_override);
-    	tcp_puts_fd("<co2>%d</co2>", co2_send_data.CO2level);
+    	tcp_puts_fd("<co2>%d</co2>", CO2level);
     	tcp_puts_fd("<time_co2>%u</time_co2>", sntp_local_to_UTC_time(CO2_last_time));
     	tcp_puts_fd("<time_sntp>%u</time_sntp>", get_sntp_time());
 	}
@@ -832,7 +832,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 	        	cstr += 4;
 		        ifcmp("csv_delim") tcp_puts("%c", cfg_glo.csv_delimiter);
 		        else ifcmp("rf_ch") tcp_puts("%d", cfg_glo.sensor_rf_channel);
-		        else ifcmp("addr_LSB") tcp_puts("0x%X", cfg_glo.address_LSB);
+//		        else ifcmp("addr_LSB") tcp_puts("0x%X", cfg_glo.address_LSB);
 		        else ifcmp("fans") {
 		        	cstr += 4;
 		        	ifcmp("_speed_th") {
@@ -858,12 +858,13 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 		        }
 		        else ifcmp("refresh_t") tcp_puts("%u", cfg_glo.page_refresh_time);
 		        else ifcmp("history_size") tcp_puts("%u", cfg_glo.history_size);
+		        else ifcmp("FSPM") tcp_puts("%d", FAN_SPEED_MAX);
 		    }
 		    else ifcmp("fan_") { // cfg_
 	        	cstr += 4;
 	        	CFG_FAN *f = &cfg_fans[Web_cfg_fan_];
-		        ifcmp("rf_ch") tcp_puts("%d", f->rf_channel);
-		        else ifcmp("name") tcp_puts("%s", f->name);
+		        ifcmp("name") tcp_puts("%s", f->name);
+//		        else ifcmp("rf_ch") tcp_puts("%d", f->rf_channel);
 		        else ifcmp("addr_LSB") tcp_puts("0x%X", f->address_LSB);
 		        else ifcmp("min") tcp_puts("%d", f->speed_min);
 		        else ifcmp("max") tcp_puts("%d", f->speed_max);
@@ -876,6 +877,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 		        else ifcmp("night") tcp_puts("%d", f->speed_night);
 		        else ifcmp("flags") tcp_puts("%d", f->flags);
 		        else ifcmp("broken") tcp_puts("%u", f->broken_cell_last_time);
+		        else ifcmp("pause") tcp_puts("%u", f->pause);
 		    }
 			else ifcmp("vars_") { // cfg_
 				cstr += 5;
@@ -1316,8 +1318,6 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         	cstr += 4;
         	ifcmp("current") tcp_puts("%u", CO2level);
         	else ifcmp("last_time") tcp_puts("%u", sntp_local_to_UTC_time(CO2_last_time));
-        	else ifcmp("r_flags") tcp_puts("%u", co2_send_data.Flags);
-        	else ifcmp("r_speed") tcp_puts("%u", co2_send_data.FanSpeed);
         }
         else ifcmp("Temperature") tcp_puts("%d.%01u", Temperature / 10, Temperature % 10);
         else ifcmp("Humidity") tcp_puts("%d.%01u", Humidity / 10, Humidity % 10);

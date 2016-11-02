@@ -336,12 +336,15 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 			cstr += 4;
 			ifcmp("csv_delim") cfg_glo.csv_delimiter = pvar[0];
 			else ifcmp("rf_ch") cfg_glo.sensor_rf_channel = val;
-	        else ifcmp("addr_LSB") cfg_glo.address_LSB = val;
+//	        else ifcmp("addr_LSB") cfg_glo.address_LSB = val;
 	        else ifcmp("fans") {
 	        	cstr += 4;
 	        	ifcmp("_speed_th") str_array_w(pvar, cfg_glo.fans_speed_threshold, FAN_SPEED_MAX);
 	        	else ifcmp("_speed_delta") cfg_glo.fans_speed_delta = val;
-	        	else cfg_glo.fans = val == 0 ? 1 : val;
+	        	else {
+	        		cfg_glo.fans = val == 0 ? 1 : val;
+	        		if(cfg_glo.fans > FANS_MAX) cfg_glo.fans = FANS_MAX;
+	        	}
 	        }
 	        else ifcmp("night_") {
 	        	cstr += 6;
@@ -382,8 +385,8 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 		else ifcmp("fan_") { // cfg_
 			cstr += 4;
         	CFG_FAN *f = &cfg_fans[Web_cfg_fan_];
-	        ifcmp("rf_ch") f->rf_channel = val;
-	        else ifcmp("name") os_memcpy(f->name, pvar, os_strlen(pvar) + 1);
+	        ifcmp("name") os_memcpy(f->name, pvar, os_strlen(pvar) + 1);
+//	        else ifcmp("rf_ch") f->rf_channel = val;
 	        else ifcmp("addr_LSB") f->address_LSB = val;
 	        else ifcmp("min") f->speed_min = val;
 	        else ifcmp("max") f->speed_max = val;
@@ -410,6 +413,8 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 	        else ifcmp("day") f->speed_day = val;
 	        else ifcmp("night") f->speed_night = val;
 	        else ifcmp("flags") f->flags = val;
+	        else ifcmp("broken") { if(val) f->broken_cell_last_time = 0; }
+	        else ifcmp("pause") f->pause = val;
 	        else Web_cfg_fan_ = val < cfg_glo.fans ? val : 0; // "cfg_fan_"
 		}
 		else ifcmp("vars_") { // cfg_

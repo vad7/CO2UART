@@ -47,7 +47,7 @@ return ("0" + n).slice(-2);
 }
 function SetOnChange() {
 	var s = document.getElementById('set_time').value;
-	var d = new Date(Number(s.substr(6,4)), Number(s.substr(3,2)), Number(s.substr(0,2)), Number(s.substr(11,2)), Number(s.substr(14,2)), 0, 0);
+	var d = new Date(Number(s.substr(6,4)), Number(s.substr(3,2))-1, Number(s.substr(0,2)), Number(s.substr(11,2)), Number(s.substr(14,2)), 0, 0);
 	newAJAXCommand('?cfg_sntp_time='+(d.valueOf()/1000));
 }
 var f = document.getElementById('set_time');

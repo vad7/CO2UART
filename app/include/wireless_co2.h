@@ -4,7 +4,7 @@
 #include "sntp.h"
 #include "debug_ram.h"
 
-#define FANS_MAX 					1
+#define FANS_MAX 					3
 #define FAN_SPEED_MAX				7
 
 typedef struct __attribute__((packed)) {
@@ -16,7 +16,7 @@ typedef struct __attribute__((packed)) {
 	uint16	night_end_wd;			// hh,mm at weekend
 	uint8	fans;					// numbers of fans
 	uint8 	sensor_rf_channel;		// 0..126 nrf24l01 channel
-	uint8	address_LSB;			// Address LSB for receiving
+//	uint8	address_LSB;			// Address LSB for receiving
 	uint8	iot_cloud_enable;		// use "protect/iot_cloud.ini" to send data to IoT cloud
 	char	csv_delimiter; 			// ','
 	uint8	fans_speed_night_max;	// speed max at night
@@ -57,7 +57,6 @@ CFG_FAN __attribute__((aligned(4))) cfg_fans[FANS_MAX]; // Actual number of fans
 typedef struct __attribute__ ((packed)) {
 	uint16_t CO2level;
 	uint8_t FanSpeed;
-	uint8_t Flags; // Mask: 0x80 - Setup command, 0x01 - Lowlight
 	uint8_t Pause; // sec, between next scan
 } CO2_SEND_DATA;
 CO2_SEND_DATA __attribute__((aligned(4))) co2_send_data;

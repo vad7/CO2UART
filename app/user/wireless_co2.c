@@ -18,15 +18,17 @@
 
 os_timer_t user_loop_timer DATA_IRAM_ATTR;
 
-char AZ_7798_Command_Info[] = 		{ 'I', 0x0D };
-char AZ_7798_Command_GetValues[] = 	{ ':', 0x0D };
+char AZ_7798_Command_Info[] = 		{ "I\r" };
+char AZ_7798_Command_SetTime[] =	{ "C 1234567890\r" }; // number of seconds from 1 jan 2000 (946674000)
+#define AZ_7798_Command_SetTimeOffset 946674000
+//char AZ_7798_Command_SetTimeOk =	'>';
+char AZ_7798_Command_GetValues[] = 	{ ":\r" };
 // : T20.4C:C1753ppm:H47.5%
 #define MIN_Reponse_length 			20
 #define AZ_7798_TempStart 			'T'
 #define AZ_7798_TempEnd 			'C'
 #define AZ_7798_CO2End				'p'
-char AZ_7798_ResponseEnd[] = 		{ '%', 0x0D, 0 };
-#define AZ_7798_ResponseTimeout		2 // sec
+char AZ_7798_ResponseEnd[] = 		{ "%\r\0" };
 
 uint8 CO2_work_flag = 0; // 0 - not inited, 1 - wait incoming, 2 - send
 uint8 CO2_send_flag;		// 0 - ready to send, 1 - sending
@@ -144,10 +146,10 @@ void ICACHE_FLASH_ATTR ProcessIncomingValues(void)
 		os_printf("Received at %u, CO2: %u, T: %d, H: %u\n", CO2_last_time, CO2level, Temperature, Humidity);
 	#endif
 	#ifdef DEBUG_TO_RAM
-		if(Debug_RAM_addr != NULL && CO2level > 1100) {
+		if(Debug_RAM_addr != NULL && CO2level > 1200) {
 			struct tm tm;
 			_localtime(&CO2_last_time, &tm);
-			dbg_printf("%d.%d %d:%d:%d=%u\n", tm.tm_mday, 1+tm.tm_mon, tm.tm_hour, tm.tm_min, tm.tm_sec, co2_send_data.CO2level);
+			dbg_printf("%d %d:%d:%d=%u\n", tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, CO2level);
 		}
 	#endif
 	CO2_set_fans_speed_current(255);
@@ -193,17 +195,20 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			if(cfg_fans[fan].forced_speed_timeout) if(--cfg_fans[fan].forced_speed_timeout == 0) cfg_fans[fan].flags &= ~(1<<FAN_SPEED_FORCED_BIT);
 		}
 	}
-	if(receive_timeout) receive_timeout--;
-	if(CO2_work_flag == 0) { // init
-		if(receive_timeout == 0) {
+	if(sntp_status == 1) { // New time - send to CO2 meter
+		sntp_status = 2;
+		uart_drv_start();
+		uart_tx_buf(AZ_7798_Command_SetTime, 2 + ets_sprintf(&AZ_7798_Command_SetTime[2], "%u\r", get_sntp_localtime() - AZ_7798_Command_SetTimeOffset));
+		return;
+	}
+	if(receive_timeout)	receive_timeout--;
+	if(receive_timeout == 0) {
+		if(CO2_work_flag == 0) { // init
 			os_memset(UART_Buffer, 0, UART_Buffer_size);
 			UART_Buffer_idx = 0;
 			uart_drv_start();
 			uart_tx_buf(AZ_7798_Command_GetValues, sizeof(AZ_7798_Command_GetValues));
-			receive_timeout = AZ_7798_ResponseTimeout;
-		}
-	} else if(CO2_work_flag == 1) { // wait incoming
-		if(receive_timeout == 0) {
+		} else if(CO2_work_flag == 1) { // wait incoming
 			if(CO2level) {
 				NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
 				uint8 fan;
@@ -218,8 +223,8 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 				//dump_NRF_registers();
 			}
 			CO2_work_flag = 0;
-			receive_timeout = global_vars.receive_timeout;
 		}
+		receive_timeout = global_vars.receive_timeout;
 	}
 	//if(CO2level) {
 		//dbg_printf(" %x", NRF24_SendCommand(NRF24_CMD_NOP));
@@ -241,6 +246,13 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 					if(f->adjust_speed & 0b1000) f->adjust_speed |= 0xF0; // negative number
 					f->powered_off = (st & 0b10000) != 0;
 				}
+				#ifdef DEBUG_TO_RAM
+					if(Debug_RAM_addr != NULL && f->transmit_last_status) {
+						struct tm tm;
+						_localtime(&CO2_last_time, &tm);
+						dbg_printf("%d %d:%d:%d NRF%d=%X\n", tm.tm_mday, 1+tm.tm_mon, tm.tm_hour, tm.tm_min, tm.tm_sec, pipe, st);
+					}
+				#endif
 			}
 		}
 	//}
@@ -260,7 +272,6 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 		cfg_glo.page_refresh_time = 5000;
 		cfg_glo.csv_delimiter = ',';
 		cfg_glo.sensor_rf_channel = 120;
-		cfg_glo.address_LSB = 0xE5;
 		cfg_glo.fans = 0;
 		cfg_glo.fans_speed_threshold[0] = 530;
 		cfg_glo.fans_speed_threshold[1] = 590;
@@ -281,7 +292,7 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	}
 	if(flash_read_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars)) <= 0) {
 		os_memset(&global_vars, 0, sizeof(global_vars));
-		global_vars.receive_timeout = 5;
+		global_vars.receive_timeout = 20;
 	}
 	receive_timeout = global_vars.receive_timeout;
 	fan_speed_previous = 0;
@@ -291,7 +302,13 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	receive_timeout = 1;
 	NRF24_init(); // After init transmit must be delayed
 	set_new_rf_channel(cfg_glo.sensor_rf_channel);
-	if(NRF24_SetAddresses(cfg_glo.address_LSB)) {
+	uint8 fan, ok = 0;
+	for(fan = 0; fan < cfg_glo.fans; fan++) {
+		CFG_FAN *f = &cfg_fans[fan];
+		if(f->address_LSB == 0 || f->flags & (1<<FAN_SKIP_BIT)) continue;
+		if((ok = NRF24_SetRXAddress(fan, f->address_LSB)) == 0) break;
+	}
+	if(ok) {
 		NRF24_SetMode(NRF24_ReceiveMode);
 		#if DEBUGSOO > 4
 	} else {

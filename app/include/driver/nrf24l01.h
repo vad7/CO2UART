@@ -135,7 +135,8 @@ uint8_t NRF24_SendCommand(uint8_t cmd) ICACHE_FLASH_ATTR; // Send command & rece
 void NRF24_SetMode(uint8_t mode) ICACHE_FLASH_ATTR; // Set mode in CONFIG reg
 uint8_t NRF24_Receive(uint8_t *payload) ICACHE_FLASH_ATTR; // Receive in payload, return data pipe number + 1 if success
 void NRF24_Transmit(uint8_t *payload) ICACHE_FLASH_ATTR; // Transmit payload, return 0 if success, 1 - max retransmit count reached, 2 - module not response.
-uint8_t NRF24_SetAddresses(uint8_t addr_LSB) ICACHE_FLASH_ATTR; // Set addresses: NRF24_BASE_ADDR + addr_LSB, return 1 if success
+uint8_t NRF24_SetTXAddress(uint8_t addr_LSB) ICACHE_FLASH_ATTR; // NRF24_BASE_ADDR + addr_LSB, return 1 if success
+uint8_t NRF24_SetRXAddress(uint8_t pipe, uint8_t addr_LSB) ICACHE_FLASH_ATTR; // NRF24_BASE_ADDR + addr_LSB, return 1 if success
 void NRF24_init(void) ICACHE_FLASH_ATTR; // After init transmit must be delayed
 #define NRF24_Standby() NRF24_SET_CE_LOW
 //void NRF24_Powerdown(void) ICACHE_FLASH_ATTR;

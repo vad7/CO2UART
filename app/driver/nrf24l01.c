@@ -163,12 +163,11 @@ void ICACHE_FLASH_ATTR NRF24_Transmit(uint8_t *payload)
 	ets_timer_arm_new(&NRF24_timer, 1, 1, 1); // 1 ms, repeat
 }
 
-// Set addresses: NRF24_BASE_ADDR + addr_LSB, return 1 if success
-uint8_t ICACHE_FLASH_ATTR NRF24_SetAddresses(uint8_t addr_LSB)
+// Set TX address: NRF24_BASE_ADDR + addr_LSB, return 1 if success
+uint8_t ICACHE_FLASH_ATTR NRF24_SetTXAddress(uint8_t addr_LSB)
 {
 	NRF24_Buffer[0] = addr_LSB;
 	os_memcpy(NRF24_Buffer + 1, NRF24_BASE_ADDR, sizeof(NRF24_BASE_ADDR)/sizeof(NRF24_BASE_ADDR[0]));
-	NRF24_WriteArray(NRF24_CMD_W_REGISTER | NRF24_REG_RX_ADDR_P0, NRF24_Buffer, NRF24_ADDRESS_LEN);
 	NRF24_WriteArray(NRF24_CMD_W_REGISTER | NRF24_REG_TX_ADDR, NRF24_Buffer, NRF24_ADDRESS_LEN);
 	NRF24_ReadArray(NRF24_CMD_R_REGISTER | NRF24_REG_TX_ADDR, NRF24_Buffer, NRF24_ADDRESS_LEN);
 #if DEBUGSOO > 4
@@ -179,6 +178,23 @@ uint8_t ICACHE_FLASH_ATTR NRF24_SetAddresses(uint8_t addr_LSB)
 #endif
 	return NRF24_Buffer[0] == addr_LSB;
 }
+
+// Set RX address to pipe: NRF24_BASE_ADDR + addr_LSB, return 1 if success
+uint8_t ICACHE_FLASH_ATTR NRF24_SetRXAddress(uint8_t pipe, uint8_t addr_LSB)
+{
+	NRF24_Buffer[0] = addr_LSB;
+	os_memcpy(NRF24_Buffer + 1, NRF24_BASE_ADDR, sizeof(NRF24_BASE_ADDR)/sizeof(NRF24_BASE_ADDR[0]));
+	NRF24_WriteArray(NRF24_CMD_W_REGISTER | (NRF24_REG_RX_ADDR_P0 + pipe), NRF24_Buffer, NRF24_ADDRESS_LEN);
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER | (NRF24_REG_RX_ADDR_P0 + pipe), NRF24_Buffer, NRF24_ADDRESS_LEN);
+#if DEBUGSOO > 4
+	os_printf("NRF RX_Addr: ");
+	uint8 i;
+	for(i = 0; i < NRF24_ADDRESS_LEN; i++) os_printf("%X ", NRF24_Buffer[i]);
+	os_printf("\n");
+#endif
+	return NRF24_Buffer[0] == addr_LSB;
+}
+
 /*
 void ICACHE_FLASH_ATTR NRF24_Powerdown(void)
 {

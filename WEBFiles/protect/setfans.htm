@@ -21,20 +21,20 @@
 					<td><input name='cfg_fan_name' maxlength='16' value='~cfg_fan_name~'></td>
 				</tr>
 				<tr>
-					<td class="label">Fan RF channel:</td>
-					<td><input title='0..126' name='cfg_fan_rf_ch' maxlength='4' value='~cfg_fan_rf_ch~'></td>
-				</tr>
-				<tr>
 					<td class="label">Receive address:</td>
 					<td><input title='0x00..0xFF' name='cfg_fan_addr_LSB' maxlength='4' value='~cfg_fan_addr_LSB~'></td>
 				</tr>
 				<tr>
-					<td class="label">Speed Min:</td>
-					<td><input title='0..6' name='cfg_fan_min' maxlength='4' value='~cfg_fan_min~'></td>
+					<td class="label">Pause between requests, sec:</td>
+					<td><input title='0..255' name='cfg_fan_pause' maxlength='3' value='~cfg_fan_pause~'></td>
 				</tr>
 				<tr>
-					<td class="label">Speed Max:</td>
-					<td><input title='0..6' name='cfg_fan_max' maxlength='4' value='~cfg_fan_max~'></td>
+					<td class="label">Speed Min (0..~cfg_glo_FSPM~):</td>
+					<td><input name='cfg_fan_min' maxlength='4' value='~cfg_fan_min~'></td>
+				</tr>
+				<tr>
+					<td class="label">Speed Max (0..~cfg_glo_FSPM~):</td>
+					<td><input name='cfg_fan_max' maxlength='4' value='~cfg_fan_max~'></td>
 				</tr>
 				<tr>
 					<td class="label">Override day:</td>
