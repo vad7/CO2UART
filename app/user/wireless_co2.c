@@ -210,7 +210,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			uart_tx_buf(AZ_7798_Command_GetValues, sizeof(AZ_7798_Command_GetValues));
 		} else if(CO2_work_flag == 1) { // wait incoming
 			if(CO2level) {
-				NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
+				//NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
 				uint8 fan;
 				for(fan = 0; fan < cfg_glo.fans; fan++) {
 					CFG_FAN *f = &cfg_fans[fan];
@@ -219,6 +219,9 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 					co2_send_data.CO2level = CO2level;
 					co2_send_data.Pause = f->pause;
 					NRF24_WriteArray(NRF24_CMD_W_ACK_PAYLOAD + fan, (uint8 *)&co2_send_data, sizeof(co2_send_data));
+					#if DEBUGSOO > 4
+						os_printf("NRF%d->%d, %d\n", fan, co2_send_data.FanSpeed, co2_send_data.Pause);
+					#endif
 				}
 				//dump_NRF_registers();
 			}

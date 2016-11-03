@@ -34,8 +34,6 @@ Discarded input sections
                 0x00000000       0x34 WirelessCO2Fan.o
  .text.NRF24_Transmit
                 0x00000000       0x44 WirelessCO2Fan.o
- .text.NRF24_Powerdown
-                0x00000000        0x8 WirelessCO2Fan.o
  .bss.RequestStatus
                 0x00000000        0x1 WirelessCO2Fan.o
  .bss.FanSpeedChange
@@ -207,7 +205,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x852
+.text           0x00000000      0x85c
  *(.vectors)
  .vectors       0x00000000       0x22 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
                 0x00000000                __vector_default
@@ -225,37 +223,37 @@ END GROUP
                 0x00000022        0x2 WirelessCO2Fan.o
                 0x00000022                NRF24_BASE_ADDR
  .progmem.data.NRF24_INIT_DATA
-                0x00000024        0xe WirelessCO2Fan.o
+                0x00000024       0x10 WirelessCO2Fan.o
                 0x00000024                NRF24_INIT_DATA
-                0x00000032                . = ALIGN (0x2)
+                0x00000034                . = ALIGN (0x2)
  *(.jumptables)
  *(.jumptables*)
  *(.lowtext)
  *(.lowtext*)
-                0x00000032                __ctors_start = .
+                0x00000034                __ctors_start = .
  *(.ctors)
-                0x00000032                __ctors_end = .
-                0x00000032                __dtors_start = .
+                0x00000034                __ctors_end = .
+                0x00000034                __dtors_start = .
  *(.dtors)
-                0x00000032                __dtors_end = .
+                0x00000034                __dtors_end = .
  SORT(*)(.ctors)
  SORT(*)(.dtors)
  *(.init0)
- .init0         0x00000032        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
-                0x00000032                __init
+ .init0         0x00000034        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
+                0x00000034                __init
  *(.init0)
  *(.init1)
  *(.init1)
  *(.init2)
- .init2         0x00000032        0xc d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
+ .init2         0x00000034        0xc d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
  *(.init2)
  *(.init3)
  *(.init3)
  *(.init4)
- .init4         0x0000003e       0x16 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
-                0x0000003e                __do_copy_data
- .init4         0x00000054       0x10 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_clear_bss.o)
-                0x00000054                __do_clear_bss
+ .init4         0x00000040       0x16 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
+                0x00000040                __do_copy_data
+ .init4         0x00000056       0x10 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_clear_bss.o)
+                0x00000056                __do_clear_bss
  *(.init4)
  *(.init5)
  *(.init5)
@@ -266,84 +264,87 @@ END GROUP
  *(.init8)
  *(.init8)
  *(.init9)
- .init9         0x00000064        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
+ .init9         0x00000066        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
  *(.init9)
  *(.text)
- .text          0x00000068        0x2 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
-                0x00000068                __vector_1
-                0x00000068                __vector_12
-                0x00000068                __bad_interrupt
-                0x00000068                __vector_6
-                0x00000068                __vector_13
-                0x00000068                __vector_7
-                0x00000068                __vector_5
-                0x00000068                __vector_4
-                0x00000068                __vector_9
-                0x00000068                __vector_2
-                0x00000068                __vector_15
-                0x00000068                __vector_8
-                0x00000068                __vector_14
-                0x00000068                __vector_10
-                0x00000068                __vector_16
-                0x0000006a                . = ALIGN (0x2)
+ .text          0x0000006a        0x2 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
+                0x0000006a                __vector_1
+                0x0000006a                __vector_12
+                0x0000006a                __bad_interrupt
+                0x0000006a                __vector_6
+                0x0000006a                __vector_13
+                0x0000006a                __vector_7
+                0x0000006a                __vector_5
+                0x0000006a                __vector_4
+                0x0000006a                __vector_9
+                0x0000006a                __vector_2
+                0x0000006a                __vector_15
+                0x0000006a                __vector_8
+                0x0000006a                __vector_14
+                0x0000006a                __vector_10
+                0x0000006a                __vector_16
+                0x0000006c                . = ALIGN (0x2)
  *(.text.*)
  .text.EEPROM_read
-                0x0000006a       0x10 WirelessCO2Fan.o
+                0x0000006c       0x10 WirelessCO2Fan.o
  .text.EEPROM_write
-                0x0000007a       0x18 WirelessCO2Fan.o
+                0x0000007c       0x18 WirelessCO2Fan.o
  .text.__vector_3
-                0x00000092       0x38 WirelessCO2Fan.o
-                0x00000092                __vector_3
+                0x00000094       0x38 WirelessCO2Fan.o
+                0x00000094                __vector_3
  .text.Delay10us
-                0x000000ca       0x14 WirelessCO2Fan.o
-                0x000000ca                Delay10us
+                0x000000cc       0x14 WirelessCO2Fan.o
+                0x000000cc                Delay10us
  .text.Delay100ms
-                0x000000de       0x18 WirelessCO2Fan.o
-                0x000000de                Delay100ms
+                0x000000e0       0x18 WirelessCO2Fan.o
+                0x000000e0                Delay100ms
  .text.FlashLED
-                0x000000f6       0x34 WirelessCO2Fan.o
-                0x000000f6                FlashLED
+                0x000000f8       0x34 WirelessCO2Fan.o
+                0x000000f8                FlashLED
  .text.SPI_WriteReadByte
-                0x0000012a       0x12 WirelessCO2Fan.o
-                0x0000012a                SPI_WriteReadByte
+                0x0000012c       0x12 WirelessCO2Fan.o
+                0x0000012c                SPI_WriteReadByte
  .text.NRF24_ReadArray
-                0x0000013c       0x46 WirelessCO2Fan.o
-                0x0000013c                NRF24_ReadArray
+                0x0000013e       0x46 WirelessCO2Fan.o
+                0x0000013e                NRF24_ReadArray
  .text.NRF24_WriteByte
-                0x00000182       0x20 WirelessCO2Fan.o
-                0x00000182                NRF24_WriteByte
+                0x00000184       0x20 WirelessCO2Fan.o
+                0x00000184                NRF24_WriteByte
  .text.NRF24_WriteArray
-                0x000001a2       0x44 WirelessCO2Fan.o
-                0x000001a2                NRF24_WriteArray
+                0x000001a4       0x44 WirelessCO2Fan.o
+                0x000001a4                NRF24_WriteArray
  .text.NRF24_SendCommand
-                0x000001e6        0x8 WirelessCO2Fan.o
-                0x000001e6                NRF24_SendCommand
+                0x000001e8        0x8 WirelessCO2Fan.o
+                0x000001e8                NRF24_SendCommand
  .text.NRF24_SetMode
-                0x000001ee       0x1c WirelessCO2Fan.o
-                0x000001ee                NRF24_SetMode
+                0x000001f0       0x1c WirelessCO2Fan.o
+                0x000001f0                NRF24_SetMode
  .text.NRF24_TransmitShockBurst
-                0x0000020a       0x90 WirelessCO2Fan.o
-                0x0000020a                NRF24_TransmitShockBurst
+                0x0000020c       0x90 WirelessCO2Fan.o
+                0x0000020c                NRF24_TransmitShockBurst
  .text.NRF24_SetAddresses
-                0x0000029a       0x42 WirelessCO2Fan.o
-                0x0000029a                NRF24_SetAddresses
+                0x0000029c       0x42 WirelessCO2Fan.o
+                0x0000029c                NRF24_SetAddresses
+ .text.NRF24_Powerdown
+                0x000002de        0x8 WirelessCO2Fan.o
+                0x000002de                NRF24_Powerdown
  .text.NRF24_init
-                0x000002dc       0x2e WirelessCO2Fan.o
-                0x000002dc                NRF24_init
+                0x000002e6       0x2e WirelessCO2Fan.o
+                0x000002e6                NRF24_init
  .text.__vector_11
-                0x0000030a      0x178 WirelessCO2Fan.o
-                0x0000030a                __vector_11
+                0x00000314      0x178 WirelessCO2Fan.o
+                0x00000314                __vector_11
  .text.startup.main
-                0x00000482      0x3ba WirelessCO2Fan.o
-                0x00000482                main
+                0x0000048c      0x3ba WirelessCO2Fan.o
+                0x0000048c                main
  .text.avr-libc
-                0x0000083c       0x12 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25\libc.a(memcpy_P.o)
-                0x0000083c                memcpy_P
-                0x0000084e                . = ALIGN (0x2)
+                0x00000846       0x12 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25\libc.a(memcpy_P.o)
+                0x00000846                memcpy_P
+                0x00000858                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000084e        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
-                0x0000084e                _exit
-                0x0000084e                exit
+ .fini9         0x00000858        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
+                0x00000858                _exit
+                0x00000858                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -362,11 +363,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000084e        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
+ .fini0         0x00000858        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000852                _etext = .
+                0x0000085c                _etext = .
 
-.data           0x00800060        0x2 load address 0x00000852
+.data           0x00800060        0x2 load address 0x0000085c
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -435,8 +436,8 @@ END GROUP
                 0x00800073                FanSpeed
                 0x00800074                NRF24_Buffer
                 0x00800078                PROVIDE (__bss_end, .)
-                0x00000852                __data_load_start = LOADADDR (.data)
-                0x00000854                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x0000085c                __data_load_start = LOADADDR (.data)
+                0x0000085e                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800078        0x0
                 0x00800078                PROVIDE (__noinit_start, .)
@@ -510,9 +511,9 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1121
+.debug_info     0x00000000     0x112e
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000     0x1121 WirelessCO2Fan.o
+ .debug_info    0x00000000     0x112e WirelessCO2Fan.o
 
 .debug_abbrev   0x00000000      0x303
  *(.debug_abbrev)

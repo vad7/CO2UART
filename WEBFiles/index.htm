@@ -75,7 +75,9 @@ function updateStatus(xmlData) {
 		}
 		var du = getXMLValue(f, 'ttm') * 1000; d = new Date(du);
 		r.cells[3].innerHTML = du == 0 ? '---' : d.toTimeString().substr(0,8);
-		r.cells[3].style.color = (getXMLValue(f, 'tst') > 1) ? 'red' : '';
+		var err = getXMLValue(f, 'tst');
+		r.cells[3].style.color = (err > 0) ? 'red' : '';
+		r.cells[3].title = err;
 	}
 	updTime();
 	nextimeout = ~cfg_glo_refresh_t~;

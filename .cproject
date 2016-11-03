@@ -43,7 +43,6 @@
 									<listOptionValue builtIn="false" value="PBUF_RSV_FOR_WLAN"/>
 									<listOptionValue builtIn="false" value="LWIP_OPEN_SRC"/>
 									<listOptionValue builtIn="false" value="EBUF_LWIP"/>
-									<listOptionValue builtIn="false" value="USE_FIX_QSPI_FLASH=80"/>
 									<listOptionValue builtIn="false" value="__ets__"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1928339413" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>

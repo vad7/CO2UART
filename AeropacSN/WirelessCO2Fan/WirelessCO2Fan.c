@@ -78,7 +78,7 @@ typedef struct {
 	uint16_t CO2level;
 	uint8_t FanSpeed; // 0 = off, Speed = 1..FanSpeedMax
 	uint8_t Pause; // sec, between next scan
-} __attribute__ ((packed)) master_data; // = 5 bytes
+} __attribute__ ((packed)) master_data; // = 4 bytes
 
 #define FLAG_LowLight				0x01
 
@@ -156,7 +156,7 @@ ISR(TIM0_OVF_vect) // 0.10035 sec
 	} else if(LED_Warning) { // short flashes
 	 	LED_WarningOffCnt = 3;
 	 	LED_WarningOnCnt = 3;
-	 	if(--LED_Warning == 0) LED_WarningOffCnt = 15;
+	 	if(--LED_Warning == 0) LED_WarningOffCnt = 5;
  	}
 	if(FanSpeed != SpeedSet && setup_mode == 0) {
 		if(PressKeyOffTime) {
@@ -236,7 +236,6 @@ int main(void)
  	while(!NRF24_SetAddresses(EEPROM_read(EPROM_RFAddress))) {
  		FlashLED(1, 50, 20);
  	}
-	NRF24_SetMode(NRF24_TransmitMode);
 	while(1)
 	{
 		__asm__ volatile ("" ::: "memory"); // Need memory barrier
@@ -326,24 +325,26 @@ x_save_speed:
 				if(FanSpeedOff == 0 || SendOffStatus == 1) {
 					if(send_data != 0xEE) send_data = (nrf_last_status << 5) | (FanSpeedOff << 4) | (FanSpeedOverride & 0x0F); // 11123333
 					NRF24_Buffer[0] = send_data;
+					NRF24_SetMode(NRF24_TransmitMode);
 					nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
 					if(nrf_last_status) { // some problem
 						LED_Warning = nrf_last_status;
 						RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
 					} else {
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
-							FanSpeed = ((master_data*) &NRF24_Buffer)->FanSpeed + 1 + FanSpeedOverride;
+							FanSpeed = ((master_data*) NRF24_Buffer)->FanSpeed + 1 + FanSpeedOverride;
 							if(FanSpeed < 1) { // off
 								FanSpeed = 0;
 							} else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
 						}
-						RequestCountdown = ((master_data*) &NRF24_Buffer)->Pause;
-						FlashLED(FanSpeed, 3, 6);
+						RequestCountdown = ((master_data*) NRF24_Buffer)->Pause;
+						FlashLED(FanSpeed, 5, 10);
 					}
 					if(nrf_last_status <= 1) { // Status was send successfully
 						SendOffStatus = 0;
 						send_data = 0;
 					}
+					NRF24_Powerdown();
 				} else {
 					RequestCountdown = 1; // sec
 				}
