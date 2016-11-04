@@ -27,7 +27,6 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.2143701472" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base">
 								<option id="gnu.cpp.compiler.option.include.paths.482671622" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1498770087" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="USE_FIX_QSPI_FLASH=80"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1385178936" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -105,7 +104,6 @@
 									<listOptionValue builtIn="false" value="EBUF_LWIP"/>
 									<listOptionValue builtIn="false" value="USE_OPEN_LWIP"/>
 									<listOptionValue builtIn="false" value="USE_OPEN_DHCPS"/>
-									<listOptionValue builtIn="false" value="USE_FIX_QSPI_FLASH=80"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.1492620093" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-Wno-pointer-sign -mtarget-align -mlongcalls -mno-serialize-volatile -mtext-section-literals -fno-tree-ccp -foptimize-register-move -fno-inline-functions -Wl,-EL -nostdlib" valueType="string"/>
 								<option id="gnu.c.compiler.option.warnings.toerrors.442345441" name="Warnings as errors (-Werror)" superClass="gnu.c.compiler.option.warnings.toerrors" useByScannerDiscovery="false" value="true" valueType="boolean"/>
@@ -118,7 +116,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/app/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/app/web/include}&quot;"/>
 								</option>
-								<option id="gnu.both.asm.option.flags.1561512113" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="-std=gnu90 -DICACHE_FLASH -DPBUF_RSV_FOR_WLAN -DLWIP_OPEN_SRC -DEBUF_LWIP -DUSE_OPEN_LWIP -DUSE_OPEN_DHCPS -DUSE_FIX_QSPI_FLASH=80  -Os -Wall -Werror -Wno-pointer-sign -mtarget-align -mlongcalls -mno-serialize-volatile -mtext-section-literals -fno-tree-ccp -foptimize-register-move -fno-inline-functions -Wl,-EL -nostdlib" valueType="string"/>
+								<option id="gnu.both.asm.option.flags.1561512113" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="-std=gnu90 -DICACHE_FLASH -DPBUF_RSV_FOR_WLAN -DLWIP_OPEN_SRC -DEBUF_LWIP -DUSE_OPEN_LWIP -DUSE_OPEN_DHCPS -Os -Wall -Werror -Wno-pointer-sign -mtarget-align -mlongcalls -mno-serialize-volatile -mtext-section-literals -fno-tree-ccp -foptimize-register-move -fno-inline-functions -Wl,-EL -nostdlib" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1121711309" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1151397103" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
@@ -199,7 +197,6 @@
 									<listOptionValue builtIn="false" value="EBUF_LWIP"/>
 									<listOptionValue builtIn="false" value="USE_OPEN_LWIP"/>
 									<listOptionValue builtIn="false" value="USE_OPEN_DHCPS"/>
-									<listOptionValue builtIn="false" value="USE_FIX_QSPI_FLASH=80"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.192966457" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -Wno-pointer-sign -mtarget-align -mlongcalls -mno-serialize-volatile -mtext-section-literals -fno-tree-ccp -foptimize-register-move -fno-inline-functions -Wl,-EL -nostdlib" valueType="string"/>
 								<option id="gnu.c.compiler.option.warnings.toerrors.159767114" name="Warnings as errors (-Werror)" superClass="gnu.c.compiler.option.warnings.toerrors" useByScannerDiscovery="false" value="true" valueType="boolean"/>

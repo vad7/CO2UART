@@ -35,6 +35,8 @@
 		80 - 80 MHz QSPI 
   		другое значение - 40 MHz QSPI */
 //#define USE_FIX_QSPI_FLASH 80 // назначается в MakeFile -DUSE_FIX_QSPI_FLASH=$(SPI_SPEED)
+// уже нет
+#define USE_FIX_QSPI_FLASH 40
 
 #ifdef USE_FIX_QSPI_FLASH
 	#define USE_FIX_SDK_FLASH_SIZE  

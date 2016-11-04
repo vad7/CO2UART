@@ -4,7 +4,7 @@
 #
 #############################################################
 
-ESPOPTION ?= -p COM5 -b 460800
+ESPOPTION ?= -p COM3 -b 460800
 #115200
 
 UPLOADADDR = http://aesp8266/fsupload
@@ -12,7 +12,9 @@ UPLOADADDR = http://aesp8266/fsupload
 UPLOADOVL = ./ovls/bin/10dof.ovl
 
 # SPI_SPEED = 40MHz or 80MHz
-SPI_SPEED?=40
+#SPI_SPEED?=80
+# SET USE_FIX_QSPI_FLASH in "include\sdk\sdk_config.h"
+SPI_SPEED=$(USE_FIX_QSPI_FLASH)
 # SPI_MODE: QIO, DIO, QOUT, DOUT
 SPI_MODE?=QIO
 # SPI_SIZE: 512KB for all size Flash ! (512 kbytes .. 16 Mbytes Flash autodetect)
@@ -169,7 +171,7 @@ else
     endif
 endif
 
-CCFLAGS += -DUSE_FIX_QSPI_FLASH=$(SPI_SPEED)
+#CCFLAGS += -DUSE_FIX_QSPI_FLASH=$(SPI_SPEED)
 
 CFLAGS = $(CCFLAGS) $(DEFINES) $(INCLUDES)
 DFLAGS = $(CCFLAGS) $(DDEFINES) $(INCLUDES)

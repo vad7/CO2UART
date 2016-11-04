@@ -12,12 +12,12 @@
 uint8_t NRF24_Buffer[NRF24_PAYLOAD_LEN]; // MUST be EQUAL or GREATER than Address field width!!!
 
 uint8_t __attribute__((aligned(2))) NRF24_INIT_DATA[] = {
-	NRF24_CMD_W_REGISTER | NRF24_REG_FEATURE,	(1<<NRF24_BIT_EN_DPL) | (1<<NRF24_BIT_EN_ACK_PAY), // Dynamic Payload Length, Enables Payload with ACK
 	NRF24_CMD_W_REGISTER | NRF24_REG_RF_SETUP,	(0<<NRF24_BIT_RF_DR_LOW) | (0<<NRF24_BIT_RF_DR_HIGH) | 0b111, // Data rate: 1Mbps, Max power (0b111)
 	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_AW,	NRF24_ADDRESS_LEN - 2, // address length
 	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_RETR,(0b011<<NRF24_BIT_ARD) | (0b0011<<NRF24_BIT_ARC), // Auto Retransmit Delay = 1000uS, 3 Re-Transmit on fail (must be > 0 for ACK)
 //	NRF24_CMD_W_REGISTER | NRF24_REG_RF_CH,		NRF24_RF_CHANNEL, // RF channel
-	NRF24_CMD_W_REGISTER | NRF24_REG_RX_PW_P0,	NRF24_PAYLOAD_LEN,
+//	NRF24_CMD_W_REGISTER | NRF24_REG_RX_PW_P0,	NRF24_PAYLOAD_LEN,
+	NRF24_CMD_W_REGISTER | NRF24_REG_FEATURE,	(1<<NRF24_BIT_EN_DPL) | (1<<NRF24_BIT_EN_ACK_PAY), // Dynamic Payload Length, Enables Payload with ACK
 	NRF24_CMD_W_REGISTER | NRF24_REG_EN_AA,		0b000001, // Enable ‘Auto Acknowledgment’ for pipes 0
 	NRF24_CMD_W_REGISTER | NRF24_REG_EN_RXADDR,	0b000001, // Enable data pipes: 0
 	NRF24_CMD_W_REGISTER | NRF24_REG_DYNPD,		0b000001  // Dynamic payload
@@ -207,7 +207,7 @@ void ICACHE_FLASH_ATTR NRF24_Powerdown(void)
 void ICACHE_FLASH_ATTR NRF24_init(void)
 {
 	ets_intr_lock();
-	spi_init(1000); // SPI clock, kHz
+	spi_init(500); // SPI clock, kHz
 #ifdef NRF24_CE_GPIO
 	SET_PIN_FUNC(NRF24_CE_GPIO, (MUX_FUN_IO_PORT(NRF24_CE_GPIO) )); // установить функцию GPIOx в режим порта i/o
 	SET_PIN_PULLUP_DIS(NRF24_CE_GPIO);

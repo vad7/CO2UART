@@ -322,8 +322,13 @@ x_save_speed:
 		}
 		if(RequestCountdown == 0) {
 			if(setup_mode == 0) {
-				if(FanSpeedOff == 0 || SendOffStatus == 1) {
+				if(1) {
+				//if(FanSpeedOff == 0 || SendOffStatus == 1) {
 					if(send_data != 0xEE) send_data = (nrf_last_status << 5) | (FanSpeedOff << 4) | (FanSpeedOverride & 0x0F); // 11123333
+					
+					if(FanSpeedOff) send_data = NRF24_SendCommand(NRF24_CMD_NOP);
+					else if(FanSpeedOverride == 1) send_data = NRF24_SendCommand(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS);
+					
 					NRF24_Buffer[0] = send_data;
 					NRF24_SetMode(NRF24_TransmitMode);
 					nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
@@ -332,10 +337,9 @@ x_save_speed:
 						RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
 					} else {
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
-							FanSpeed = ((master_data*) NRF24_Buffer)->FanSpeed + 1 + FanSpeedOverride;
-							if(FanSpeed < 1) { // off
-								FanSpeed = 0;
-							} else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
+							FanSpeed = ((master_data*) NRF24_Buffer)->FanSpeed + FanSpeedOverride;
+							if(FanSpeed < 0) FanSpeed = 0; // off
+							else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
 						}
 						RequestCountdown = ((master_data*) NRF24_Buffer)->Pause;
 						FlashLED(FanSpeed, 5, 10);
