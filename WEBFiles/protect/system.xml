@@ -25,6 +25,7 @@
  <sdkver>~sys_sdkver~</sdkver>
  <webver>~sys_webver~</webver>
  <clk_cpu_mhz>~sys_clkcpu~</clk_cpu_mhz>
+ <clk_spi>~sys_clkspi~</clk_spi>
  <adc>~sys_adc~</adc>
  <adc_vdd3v3>~sys_vdd33~</adc_vdd3v3>
  <adc_vdd3v3_div>~sys_ucnst_0~</adc_vdd3v3_div>

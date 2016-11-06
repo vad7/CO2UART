@@ -92,7 +92,7 @@ void ICACHE_FLASH_ATTR spi_init(uint32 freq){
 #endif
 #endif
 
-	spi_clock(USE_FIX_QSPI_FLASH * (1000/2) / freq, 2); // USE_FIX_QSPI_FLASH: 20, 26, 40, 80
+	spi_clock(ets_get_cpu_frequency() * (1000/2) / freq, 2);
 
 #ifndef SPI_TINY
 #ifndef SPI_BLOCK

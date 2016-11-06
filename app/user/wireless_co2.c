@@ -266,6 +266,7 @@ void  ICACHE_FLASH_ATTR send_fans_speed_now(uint8 fan, uint8 calc_speed)
 {
 	//dump_NRF_registers();
 	if(calc_speed) CO2_set_fans_speed_current(fan);
+	CO2_work_flag = 1;
 }
 
 void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
@@ -316,7 +317,7 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 		NRF24_SetMode(NRF24_ReceiveMode);
 		#if DEBUGSOO > 4
 	} else {
-			os_printf("NRF-SetAddr error\n");
+			os_printf("NRF-SetAddr failed\n");
 		#endif
 	}
 	iot_cloud_init();

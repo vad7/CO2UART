@@ -207,7 +207,7 @@ void ICACHE_FLASH_ATTR NRF24_Powerdown(void)
 void ICACHE_FLASH_ATTR NRF24_init(void)
 {
 	ets_intr_lock();
-	spi_init(500); // SPI clock, kHz
+	spi_init(1000); // SPI clock, kHz
 #ifdef NRF24_CE_GPIO
 	SET_PIN_FUNC(NRF24_CE_GPIO, (MUX_FUN_IO_PORT(NRF24_CE_GPIO) )); // установить функцию GPIOx в режим порта i/o
 	SET_PIN_PULLUP_DIS(NRF24_CE_GPIO);
@@ -221,6 +221,11 @@ void ICACHE_FLASH_ATTR NRF24_init(void)
 	NRF24_SET_CSN_HI;
 #endif
 	ets_intr_unlock();
+	#if DEBUGSOO > 4
+		uint32 r = READ_PERI_REG(SPI_CLOCK(0));
+		os_printf("SPI0 Clk: %uMHz(%X=%u,%u,%u,%u)\n", ets_get_cpu_frequency()/(((r>>SPI_CLKDIV_PRE_S)&SPI_CLKDIV_PRE)+1)/(((r>>SPI_CLKCNT_N_S)&SPI_CLKCNT_N)+1),
+				r, (r>>SPI_CLKDIV_PRE_S)&SPI_CLKDIV_PRE, (r>>SPI_CLKCNT_N_S)&SPI_CLKCNT_N, (r>>SPI_CLKCNT_H_S)&SPI_CLKCNT_H, (r>>SPI_CLKCNT_L_S)&SPI_CLKCNT_L);
+	#endif
 	uint16_t i;
 	for(i = 0; i < sizeof(NRF24_INIT_DATA) / 2; i++) {
 		uint16_t d = ((uint16 *)NRF24_INIT_DATA)[i]; // array must be: aligned(2)

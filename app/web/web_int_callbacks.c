@@ -772,6 +772,10 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
           else ifcmp("res_event") tcp_puts("%u", rtc_get_reset_reason()); // 1 - power/ch_pd, 2 - reset, 3 - software, 4 - wdt ...
           else ifcmp("rst") tcp_puts("%u", system_get_rst_info()->reason);
           else ifcmp("clkcpu") tcp_puts("%u", ets_get_cpu_frequency());
+          else ifcmp("clkspi") {
+        	  uint32 r = READ_PERI_REG(SPI_CLOCK(0));
+        	  tcp_puts("%u", ets_get_cpu_frequency()/(((r>>SPI_CLKDIV_PRE_S)&SPI_CLKDIV_PRE)+1)/(((r>>SPI_CLKCNT_N_S)&SPI_CLKCNT_N)+1));
+          }
           else ifcmp("sleep_old") tcp_puts("%u", deep_sleep_option); // если нет отдельного питания RTC и deep_sleep не устанавливался/применялся при текущем включения питания чипа, то значение неопределенно (там хлам).
 //          else ifcmp("test") { };
           else ifcmp("reset") web_conn->web_disc_cb = (web_func_disc_cb)_ResetVector;
