@@ -3,29 +3,29 @@ WirelessCO2Fan.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000862  00000000  00000000  00000094  2**1
+  0 .text         0000084e  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000002  00800060  00000862  000008f6  2**0
+  1 .data         00000002  00800060  0000084e  000008e2  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          00000016  00800062  00800062  000008f8  2**0
+  2 .bss          00000016  00800062  00800062  000008e4  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  000008f8  2**0
+  3 .comment      00000030  00000000  00000000  000008e4  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 000000d0  00000000  00000000  00000928  2**0
+  4 .debug_aranges 000000d0  00000000  00000000  00000914  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00001137  00000000  00000000  000009f8  2**0
+  5 .debug_info   00001116  00000000  00000000  000009e4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000303  00000000  00000000  00001b2f  2**0
+  6 .debug_abbrev 00000303  00000000  00000000  00001afa  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000670  00000000  00000000  00001e32  2**0
+  7 .debug_line   00000650  00000000  00000000  00001dfd  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000284  00000000  00000000  000024a4  2**2
+  8 .debug_frame  00000284  00000000  00000000  00002450  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000004e6  00000000  00000000  00002728  2**0
+  9 .debug_str    000004e6  00000000  00000000  000026d4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000cef  00000000  00000000  00002c0e  2**0
+ 10 .debug_loc    00000cef  00000000  00000000  00002bba  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 000000d8  00000000  00000000  000038fd  2**0
+ 11 .debug_ranges 000000d8  00000000  00000000  000038a9  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -67,7 +67,7 @@ Disassembly of section .text:
   3e:	10 e0       	ldi	r17, 0x00	; 0
   40:	a0 e6       	ldi	r26, 0x60	; 96
   42:	b0 e0       	ldi	r27, 0x00	; 0
-  44:	e2 e6       	ldi	r30, 0x62	; 98
+  44:	ee e4       	ldi	r30, 0x4E	; 78
   46:	f8 e0       	ldi	r31, 0x08	; 8
   48:	02 c0       	rjmp	.+4      	; 0x4e <__SREG__+0xf>
   4a:	05 90       	lpm	r0, Z+
@@ -90,7 +90,7 @@ Disassembly of section .text:
   60:	b2 07       	cpc	r27, r18
   62:	e1 f7       	brne	.-8      	; 0x5c <.do_clear_bss_loop>
   64:	14 d2       	rcall	.+1064   	; 0x48e <main>
-  66:	fb c3       	rjmp	.+2038   	; 0x85e <_exit>
+  66:	f1 c3       	rjmp	.+2018   	; 0x84a <_exit>
 
 00000068 <__bad_interrupt>:
   68:	cb cf       	rjmp	.-106    	; 0x0 <__vectors>
@@ -611,7 +611,7 @@ uint8_t NRF24_SetAddresses(uint8_t addr_LSB) // Set addresses: NRF24_BASE_ADDR +
  2ac:	70 e0       	ldi	r23, 0x00	; 0
  2ae:	85 e7       	ldi	r24, 0x75	; 117
  2b0:	90 e0       	ldi	r25, 0x00	; 0
- 2b2:	cc d2       	rcall	.+1432   	; 0x84c <memcpy_P>
+ 2b2:	c2 d2       	rcall	.+1412   	; 0x838 <memcpy_P>
 	NRF24_WriteArray(NRF24_CMD_W_REGISTER | NRF24_REG_RX_ADDR_P0, NRF24_Buffer, NRF24_ADDRESS_LEN);
  2b4:	43 e0       	ldi	r20, 0x03	; 3
  2b6:	64 e7       	ldi	r22, 0x74	; 116
@@ -1401,141 +1401,131 @@ x_save_speed:
 			if(setup_mode == 0) {
  77a:	80 91 66 00 	lds	r24, 0x0066
  77e:	81 11       	cpse	r24, r1
- 780:	62 c0       	rjmp	.+196    	; 0x846 <main+0x3b8>
-				if(1) {
-				//if(FanSpeedOff == 0 || SendOffStatus == 1) {
+ 780:	58 c0       	rjmp	.+176    	; 0x832 <main+0x3a4>
+				//if(1) {
+				if(FanSpeedOff == 0 || SendOffStatus == 1) {
+ 782:	80 91 6a 00 	lds	r24, 0x006A
+ 786:	88 23       	and	r24, r24
+ 788:	29 f0       	breq	.+10     	; 0x794 <main+0x306>
+ 78a:	90 91 68 00 	lds	r25, 0x0068
+ 78e:	91 30       	cpi	r25, 0x01	; 1
+ 790:	09 f0       	breq	.+2      	; 0x794 <main+0x306>
+ 792:	4c c0       	rjmp	.+152    	; 0x82c <main+0x39e>
 					if(send_data != 0xEE) send_data = (nrf_last_status << 5) | (FanSpeedOff << 4) | (FanSpeedOverride & 0x0F); // 11123333
- 782:	80 91 65 00 	lds	r24, 0x0065
- 786:	20 91 6a 00 	lds	r18, 0x006A
- 78a:	8e 3e       	cpi	r24, 0xEE	; 238
- 78c:	79 f0       	breq	.+30     	; 0x7ac <main+0x31e>
- 78e:	90 91 67 00 	lds	r25, 0x0067
- 792:	92 95       	swap	r25
- 794:	99 0f       	add	r25, r25
- 796:	90 7e       	andi	r25, 0xE0	; 224
- 798:	82 2f       	mov	r24, r18
- 79a:	82 95       	swap	r24
- 79c:	80 7f       	andi	r24, 0xF0	; 240
- 79e:	89 2b       	or	r24, r25
- 7a0:	90 91 6b 00 	lds	r25, 0x006B
- 7a4:	9f 70       	andi	r25, 0x0F	; 15
- 7a6:	89 2b       	or	r24, r25
- 7a8:	80 93 65 00 	sts	0x0065, r24
-					
-					if(FanSpeedOff) send_data = NRF24_SendCommand(NRF24_CMD_NOP);
- 7ac:	22 23       	and	r18, r18
- 7ae:	11 f0       	breq	.+4      	; 0x7b4 <main+0x326>
- 7b0:	8f ef       	ldi	r24, 0xFF	; 255
- 7b2:	05 c0       	rjmp	.+10     	; 0x7be <main+0x330>
-					else if(FanSpeedOverride == 1) send_data = NRF24_SendCommand(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS);
- 7b4:	80 91 6b 00 	lds	r24, 0x006B
- 7b8:	81 30       	cpi	r24, 0x01	; 1
- 7ba:	21 f4       	brne	.+8      	; 0x7c4 <main+0x336>
- 7bc:	87 e1       	ldi	r24, 0x17	; 23
- 7be:	13 dd       	rcall	.-1498   	; 0x1e6 <NRF24_SendCommand>
- 7c0:	80 93 65 00 	sts	0x0065, r24
-					
+ 794:	90 91 65 00 	lds	r25, 0x0065
+ 798:	9e 3e       	cpi	r25, 0xEE	; 238
+ 79a:	71 f0       	breq	.+28     	; 0x7b8 <main+0x32a>
+ 79c:	90 91 67 00 	lds	r25, 0x0067
+ 7a0:	92 95       	swap	r25
+ 7a2:	99 0f       	add	r25, r25
+ 7a4:	90 7e       	andi	r25, 0xE0	; 224
+ 7a6:	82 95       	swap	r24
+ 7a8:	80 7f       	andi	r24, 0xF0	; 240
+ 7aa:	89 2b       	or	r24, r25
+ 7ac:	90 91 6b 00 	lds	r25, 0x006B
+ 7b0:	9f 70       	andi	r25, 0x0F	; 15
+ 7b2:	89 2b       	or	r24, r25
+ 7b4:	80 93 65 00 	sts	0x0065, r24
+//					if(FanSpeedOff) send_data = NRF24_SendCommand(NRF24_CMD_NOP);
+//					else if(FanSpeedOverride == 1) send_data = NRF24_SendCommand(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS);
 					NRF24_Buffer[0] = send_data;
- 7c4:	80 91 65 00 	lds	r24, 0x0065
- 7c8:	80 93 74 00 	sts	0x0074, r24
+ 7b8:	80 91 65 00 	lds	r24, 0x0065
+ 7bc:	80 93 74 00 	sts	0x0074, r24
 					NRF24_SetMode(NRF24_TransmitMode);
- 7cc:	80 e0       	ldi	r24, 0x00	; 0
- 7ce:	0f dd       	rcall	.-1506   	; 0x1ee <NRF24_SetMode>
+ 7c0:	80 e0       	ldi	r24, 0x00	; 0
+ 7c2:	15 dd       	rcall	.-1494   	; 0x1ee <NRF24_SetMode>
 					nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
- 7d0:	64 e0       	ldi	r22, 0x04	; 4
- 7d2:	81 e0       	ldi	r24, 0x01	; 1
- 7d4:	1a dd       	rcall	.-1484   	; 0x20a <NRF24_TransmitShockBurst>
- 7d6:	80 93 67 00 	sts	0x0067, r24
+ 7c4:	64 e0       	ldi	r22, 0x04	; 4
+ 7c6:	81 e0       	ldi	r24, 0x01	; 1
+ 7c8:	20 dd       	rcall	.-1472   	; 0x20a <NRF24_TransmitShockBurst>
+ 7ca:	80 93 67 00 	sts	0x0067, r24
 					if(nrf_last_status) { // some problem
- 7da:	88 23       	and	r24, r24
- 7dc:	39 f0       	breq	.+14     	; 0x7ec <main+0x35e>
+ 7ce:	88 23       	and	r24, r24
+ 7d0:	29 f0       	breq	.+10     	; 0x7dc <main+0x34e>
 						LED_Warning = nrf_last_status;
- 7de:	80 93 64 00 	sts	0x0064, r24
+ 7d2:	80 93 64 00 	sts	0x0064, r24
 						RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
- 7e2:	84 e0       	ldi	r24, 0x04	; 4
- 7e4:	42 dc       	rcall	.-1916   	; 0x6a <EEPROM_read>
- 7e6:	80 93 60 00 	sts	0x0060, r24
- 7ea:	23 c0       	rjmp	.+70     	; 0x832 <main+0x3a4>
+ 7d6:	84 e0       	ldi	r24, 0x04	; 4
+ 7d8:	48 dc       	rcall	.-1904   	; 0x6a <EEPROM_read>
+ 7da:	1c c0       	rjmp	.+56     	; 0x814 <main+0x386>
     return 1;
 }
 
 static __inline__ uint8_t __iCliRetVal(void)
 {
     cli();
- 7ec:	f8 94       	cli
+ 7dc:	f8 94       	cli
 					} else {
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
 							FanSpeed = ((master_data*) NRF24_Buffer)->FanSpeed + FanSpeedOverride;
- 7ee:	20 91 6b 00 	lds	r18, 0x006B
- 7f2:	80 91 76 00 	lds	r24, 0x0076
- 7f6:	28 0f       	add	r18, r24
- 7f8:	20 93 73 00 	sts	0x0073, r18
+ 7de:	20 91 6b 00 	lds	r18, 0x006B
+ 7e2:	80 91 76 00 	lds	r24, 0x0076
+ 7e6:	28 0f       	add	r18, r24
+ 7e8:	20 93 73 00 	sts	0x0073, r18
 							if(FanSpeed < 0) FanSpeed = 0; // off
- 7fc:	27 ff       	sbrs	r18, 7
- 7fe:	03 c0       	rjmp	.+6      	; 0x806 <main+0x378>
- 800:	10 92 73 00 	sts	0x0073, r1
- 804:	0c c0       	rjmp	.+24     	; 0x81e <main+0x390>
+ 7ec:	27 ff       	sbrs	r18, 7
+ 7ee:	03 c0       	rjmp	.+6      	; 0x7f6 <main+0x368>
+ 7f0:	10 92 73 00 	sts	0x0073, r1
+ 7f4:	0c c0       	rjmp	.+24     	; 0x80e <main+0x380>
 							else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
- 806:	40 91 71 00 	lds	r20, 0x0071
- 80a:	33 27       	eor	r19, r19
- 80c:	27 fd       	sbrc	r18, 7
- 80e:	30 95       	com	r19
- 810:	84 2f       	mov	r24, r20
- 812:	90 e0       	ldi	r25, 0x00	; 0
- 814:	82 17       	cp	r24, r18
- 816:	93 07       	cpc	r25, r19
- 818:	14 f4       	brge	.+4      	; 0x81e <main+0x390>
- 81a:	40 93 73 00 	sts	0x0073, r20
+ 7f6:	40 91 71 00 	lds	r20, 0x0071
+ 7fa:	33 27       	eor	r19, r19
+ 7fc:	27 fd       	sbrc	r18, 7
+ 7fe:	30 95       	com	r19
+ 800:	84 2f       	mov	r24, r20
+ 802:	90 e0       	ldi	r25, 0x00	; 0
+ 804:	82 17       	cp	r24, r18
+ 806:	93 07       	cpc	r25, r19
+ 808:	14 f4       	brge	.+4      	; 0x80e <main+0x380>
+ 80a:	40 93 73 00 	sts	0x0073, r20
     return 1;
 }
 
 static __inline__ void __iSeiParam(const uint8_t *__s)
 {
     sei();
- 81e:	78 94       	sei
+ 80e:	78 94       	sei
 						}
 						RequestCountdown = ((master_data*) NRF24_Buffer)->Pause;
- 820:	80 91 77 00 	lds	r24, 0x0077
- 824:	80 93 60 00 	sts	0x0060, r24
-						FlashLED(FanSpeed, 5, 10);
- 828:	4a e0       	ldi	r20, 0x0A	; 10
- 82a:	65 e0       	ldi	r22, 0x05	; 5
- 82c:	80 91 73 00 	lds	r24, 0x0073
- 830:	62 dc       	rcall	.-1852   	; 0xf6 <FlashLED>
+ 810:	80 91 77 00 	lds	r24, 0x0077
+ 814:	80 93 60 00 	sts	0x0060, r24
+//						FlashLED(FanSpeed, 5, 10);
 					}
 					if(nrf_last_status <= 1) { // Status was send successfully
- 832:	80 91 67 00 	lds	r24, 0x0067
- 836:	82 30       	cpi	r24, 0x02	; 2
- 838:	20 f4       	brcc	.+8      	; 0x842 <main+0x3b4>
+ 818:	80 91 67 00 	lds	r24, 0x0067
+ 81c:	82 30       	cpi	r24, 0x02	; 2
+ 81e:	20 f4       	brcc	.+8      	; 0x828 <main+0x39a>
 						SendOffStatus = 0;
- 83a:	10 92 68 00 	sts	0x0068, r1
+ 820:	10 92 68 00 	sts	0x0068, r1
 						send_data = 0;
- 83e:	10 92 65 00 	sts	0x0065, r1
+ 824:	10 92 65 00 	sts	0x0065, r1
 					}
 					NRF24_Powerdown();
- 842:	4e dd       	rcall	.-1380   	; 0x2e0 <NRF24_Powerdown>
- 844:	84 ce       	rjmp	.-760    	; 0x54e <main+0xc0>
+ 828:	5b dd       	rcall	.-1354   	; 0x2e0 <NRF24_Powerdown>
+ 82a:	91 ce       	rjmp	.-734    	; 0x54e <main+0xc0>
 				} else {
 					RequestCountdown = 1; // sec
+ 82c:	c0 93 60 00 	sts	0x0060, r28
+ 830:	8e ce       	rjmp	.-740    	; 0x54e <main+0xc0>
 				}
 			} else { // setup mode timeout
 				setup_mode = 0;
- 846:	10 92 66 00 	sts	0x0066, r1
- 84a:	81 ce       	rjmp	.-766    	; 0x54e <main+0xc0>
+ 832:	10 92 66 00 	sts	0x0066, r1
+ 836:	8b ce       	rjmp	.-746    	; 0x54e <main+0xc0>
 
-0000084c <memcpy_P>:
- 84c:	fb 01       	movw	r30, r22
- 84e:	dc 01       	movw	r26, r24
- 850:	02 c0       	rjmp	.+4      	; 0x856 <memcpy_P+0xa>
- 852:	05 90       	lpm	r0, Z+
- 854:	0d 92       	st	X+, r0
- 856:	41 50       	subi	r20, 0x01	; 1
- 858:	50 40       	sbci	r21, 0x00	; 0
- 85a:	d8 f7       	brcc	.-10     	; 0x852 <memcpy_P+0x6>
- 85c:	08 95       	ret
+00000838 <memcpy_P>:
+ 838:	fb 01       	movw	r30, r22
+ 83a:	dc 01       	movw	r26, r24
+ 83c:	02 c0       	rjmp	.+4      	; 0x842 <memcpy_P+0xa>
+ 83e:	05 90       	lpm	r0, Z+
+ 840:	0d 92       	st	X+, r0
+ 842:	41 50       	subi	r20, 0x01	; 1
+ 844:	50 40       	sbci	r21, 0x00	; 0
+ 846:	d8 f7       	brcc	.-10     	; 0x83e <memcpy_P+0x6>
+ 848:	08 95       	ret
 
-0000085e <_exit>:
- 85e:	f8 94       	cli
+0000084a <_exit>:
+ 84a:	f8 94       	cli
 
-00000860 <__stop_program>:
- 860:	ff cf       	rjmp	.-2      	; 0x860 <__stop_program>
+0000084c <__stop_program>:
+ 84c:	ff cf       	rjmp	.-2      	; 0x84c <__stop_program>

@@ -322,13 +322,11 @@ x_save_speed:
 		}
 		if(RequestCountdown == 0) {
 			if(setup_mode == 0) {
-				if(1) {
-				//if(FanSpeedOff == 0 || SendOffStatus == 1) {
+				//if(1) {
+				if(FanSpeedOff == 0 || SendOffStatus == 1) {
 					if(send_data != 0xEE) send_data = (nrf_last_status << 5) | (FanSpeedOff << 4) | (FanSpeedOverride & 0x0F); // 11123333
-					
-					if(FanSpeedOff) send_data = NRF24_SendCommand(NRF24_CMD_NOP);
-					else if(FanSpeedOverride == 1) send_data = NRF24_SendCommand(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS);
-					
+//					if(FanSpeedOff) send_data = NRF24_SendCommand(NRF24_CMD_NOP);
+//					else if(FanSpeedOverride == 1) send_data = NRF24_SendCommand(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS);
 					NRF24_Buffer[0] = send_data;
 					NRF24_SetMode(NRF24_TransmitMode);
 					nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
@@ -342,7 +340,7 @@ x_save_speed:
 							else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
 						}
 						RequestCountdown = ((master_data*) NRF24_Buffer)->Pause;
-						FlashLED(FanSpeed, 5, 10);
+//						FlashLED(FanSpeed, 5, 10);
 					}
 					if(nrf_last_status <= 1) { // Status was send successfully
 						SendOffStatus = 0;

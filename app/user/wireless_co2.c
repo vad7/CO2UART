@@ -20,7 +20,7 @@ os_timer_t user_loop_timer DATA_IRAM_ATTR;
 
 char AZ_7798_Command_Info[] = 		{ "I\r" };
 char AZ_7798_Command_SetTime[] =	{ "C 1234567890\r" }; // number of seconds from 1 jan 2000 (946674000)
-#define AZ_7798_Command_SetTimeOffset 946674000
+#define AZ_7798_Command_SetTimeOffset 946684800
 //char AZ_7798_Command_SetTimeOk =	'>';
 char AZ_7798_Command_GetValues[] = 	{ ":\r" };
 // : T20.4C:C1753ppm:H47.5%
@@ -39,7 +39,8 @@ uint16 receive_timeout; // sec
 uint16_t CO2LevelAverageIdx = CO2LevelAverageArrayLength;
 uint16_t CO2LevelAverageArray[CO2LevelAverageArrayLength];
 
-void dump_NRF_registers(void) ICACHE_FLASH_ATTR;
+//void dump_NRF_registers(void) ICACHE_FLASH_ATTR;
+#define dump_NRF_registers()
 
 void ICACHE_FLASH_ATTR set_new_rf_channel(uint8 ch)
 {
@@ -352,7 +353,7 @@ bool ICACHE_FLASH_ATTR write_global_vars_cfg(void) {
 	return flash_save_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars));
 }
 
-///*
+/*
 void ICACHE_FLASH_ATTR dump_NRF_registers(void)
 {
 	uint8 i;
