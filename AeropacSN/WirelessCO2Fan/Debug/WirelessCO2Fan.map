@@ -205,7 +205,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x84e
+.text           0x00000000      0x91a
  *(.vectors)
  .vectors       0x00000000       0x22 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
                 0x00000000                __vector_default
@@ -332,19 +332,22 @@ END GROUP
                 0x000002e8       0x2e WirelessCO2Fan.o
                 0x000002e8                NRF24_init
  .text.__vector_11
-                0x00000316      0x178 WirelessCO2Fan.o
+                0x00000316      0x184 WirelessCO2Fan.o
                 0x00000316                __vector_11
+ .text.NRF_save_registers
+                0x0000049a       0xac WirelessCO2Fan.o
+                0x0000049a                NRF_save_registers
  .text.startup.main
-                0x0000048e      0x3aa WirelessCO2Fan.o
-                0x0000048e                main
+                0x00000546      0x3be WirelessCO2Fan.o
+                0x00000546                main
  .text.avr-libc
-                0x00000838       0x12 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25\libc.a(memcpy_P.o)
-                0x00000838                memcpy_P
-                0x0000084a                . = ALIGN (0x2)
+                0x00000904       0x12 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25\libc.a(memcpy_P.o)
+                0x00000904                memcpy_P
+                0x00000916                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000084a        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
-                0x0000084a                _exit
-                0x0000084a                exit
+ .fini9         0x00000916        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
+                0x00000916                _exit
+                0x00000916                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -363,11 +366,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000084a        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
+ .fini0         0x00000916        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
  *(.fini0)
-                0x0000084e                _etext = .
+                0x0000091a                _etext = .
 
-.data           0x00800060        0x2 load address 0x0000084e
+.data           0x00800060        0x2 load address 0x0000091a
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -382,69 +385,71 @@ END GROUP
                 0x00800062                _edata = .
                 0x00800062                PROVIDE (__data_end, .)
 
-.bss            0x00800062       0x16
+.bss            0x00800062       0x17
                 0x00800062                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
+ .bss.Timer     0x00800062        0x1 WirelessCO2Fan.o
+                0x00800062                Timer
  .bss.LED_WarningOffCnt
-                0x00800062        0x1 WirelessCO2Fan.o
-                0x00800062                LED_WarningOffCnt
- .bss.LED_WarningOnCnt
                 0x00800063        0x1 WirelessCO2Fan.o
-                0x00800063                LED_WarningOnCnt
- .bss.LED_Warning
+                0x00800063                LED_WarningOffCnt
+ .bss.LED_WarningOnCnt
                 0x00800064        0x1 WirelessCO2Fan.o
-                0x00800064                LED_Warning
- .bss.send_data
+                0x00800064                LED_WarningOnCnt
+ .bss.LED_Warning
                 0x00800065        0x1 WirelessCO2Fan.o
-                0x00800065                send_data
- .bss.setup_mode
+                0x00800065                LED_Warning
+ .bss.send_data
                 0x00800066        0x1 WirelessCO2Fan.o
-                0x00800066                setup_mode
- .bss.nrf_last_status
+                0x00800066                send_data
+ .bss.setup_mode
                 0x00800067        0x1 WirelessCO2Fan.o
-                0x00800067                nrf_last_status
- .bss.SendOffStatus
+                0x00800067                setup_mode
+ .bss.nrf_last_status
                 0x00800068        0x1 WirelessCO2Fan.o
-                0x00800068                SendOffStatus
- .bss.TimerCntSec
+                0x00800068                nrf_last_status
+ .bss.SendOffStatus
                 0x00800069        0x1 WirelessCO2Fan.o
-                0x00800069                TimerCntSec
- .bss.FanSpeedOff
+                0x00800069                SendOffStatus
+ .bss.TimerCntSec
                 0x0080006a        0x1 WirelessCO2Fan.o
-                0x0080006a                FanSpeedOff
- .bss.FanSpeedOverride
+                0x0080006a                TimerCntSec
+ .bss.FanSpeedOff
                 0x0080006b        0x1 WirelessCO2Fan.o
-                0x0080006b                FanSpeedOverride
- .bss.SpeedSetChanged
+                0x0080006b                FanSpeedOff
+ .bss.FanSpeedOverride
                 0x0080006c        0x1 WirelessCO2Fan.o
-                0x0080006c                SpeedSetChanged
- .bss.PressKeyOnTime
+                0x0080006c                FanSpeedOverride
+ .bss.SpeedSetChanged
                 0x0080006d        0x1 WirelessCO2Fan.o
-                0x0080006d                PressKeyOnTime
- .bss.PressKeyOffTime
+                0x0080006d                SpeedSetChanged
+ .bss.PressKeyOnTime
                 0x0080006e        0x1 WirelessCO2Fan.o
-                0x0080006e                PressKeyOffTime
- .bss.PressKey  0x0080006f        0x1 WirelessCO2Fan.o
-                0x0080006f                PressKey
- .bss.keys      0x00800070        0x1 WirelessCO2Fan.o
-                0x00800070                keys
+                0x0080006e                PressKeyOnTime
+ .bss.PressKeyOffTime
+                0x0080006f        0x1 WirelessCO2Fan.o
+                0x0080006f                PressKeyOffTime
+ .bss.PressKey  0x00800070        0x1 WirelessCO2Fan.o
+                0x00800070                PressKey
+ .bss.keys      0x00800071        0x1 WirelessCO2Fan.o
+                0x00800071                keys
  *(COMMON)
- COMMON         0x00800071        0x7 WirelessCO2Fan.o
-                0x00800071                FanSpeedMax
-                0x00800072                SpeedSet
-                0x00800073                FanSpeed
-                0x00800074                NRF24_Buffer
-                0x00800078                PROVIDE (__bss_end, .)
-                0x0000084e                __data_load_start = LOADADDR (.data)
-                0x00000850                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x00800072        0x7 WirelessCO2Fan.o
+                0x00800072                FanSpeedMax
+                0x00800073                SpeedSet
+                0x00800074                FanSpeed
+                0x00800075                NRF24_Buffer
+                0x00800079                PROVIDE (__bss_end, .)
+                0x0000091a                __data_load_start = LOADADDR (.data)
+                0x0000091c                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800078        0x0
-                0x00800078                PROVIDE (__noinit_start, .)
+.noinit         0x00800079        0x0
+                0x00800079                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x00800078                PROVIDE (__noinit_end, .)
-                0x00800078                _end = .
-                0x00800078                PROVIDE (__heap_start, .)
+                0x00800079                PROVIDE (__noinit_end, .)
+                0x00800079                _end = .
+                0x00800079                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -503,38 +508,38 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0xd0
+.debug_aranges  0x00000000       0xd8
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0xd0 WirelessCO2Fan.o
+                0x00000000       0xd8 WirelessCO2Fan.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1116
+.debug_info     0x00000000     0x1291
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000     0x1116 WirelessCO2Fan.o
+ .debug_info    0x00000000     0x1291 WirelessCO2Fan.o
 
 .debug_abbrev   0x00000000      0x303
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x303 WirelessCO2Fan.o
 
-.debug_line     0x00000000      0x650
+.debug_line     0x00000000      0x685
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x00000000      0x650 WirelessCO2Fan.o
+ .debug_line    0x00000000      0x685 WirelessCO2Fan.o
 
-.debug_frame    0x00000000      0x284
+.debug_frame    0x00000000      0x2b8
  *(.debug_frame)
- .debug_frame   0x00000000      0x284 WirelessCO2Fan.o
+ .debug_frame   0x00000000      0x2b8 WirelessCO2Fan.o
 
-.debug_str      0x00000000      0x4e6
+.debug_str      0x00000000      0x4ff
  *(.debug_str)
- .debug_str     0x00000000      0x4e6 WirelessCO2Fan.o
-                                0x539 (size before relaxing)
+ .debug_str     0x00000000      0x4ff WirelessCO2Fan.o
+                                0x552 (size before relaxing)
 
-.debug_loc      0x00000000      0xcef
+.debug_loc      0x00000000      0xddc
  *(.debug_loc)
- .debug_loc     0x00000000      0xcef WirelessCO2Fan.o
+ .debug_loc     0x00000000      0xddc WirelessCO2Fan.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -554,9 +559,9 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0xd8
+.debug_ranges   0x00000000       0xe0
  *(.debug_ranges)
- .debug_ranges  0x00000000       0xd8 WirelessCO2Fan.o
+ .debug_ranges  0x00000000       0xe0 WirelessCO2Fan.o
 
 .debug_macro
  *(.debug_macro)

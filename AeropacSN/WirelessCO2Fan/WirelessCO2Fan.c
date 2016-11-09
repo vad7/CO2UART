@@ -43,7 +43,7 @@ uint8_t PressKeyOffTime				= 0; // *0.1 sec
 uint8_t PressKeyOnTime				= 0; // *0.1 sec
 ISR(PCINT1_vect) {
 	if(PressKeyOnTime == 0 && PressKeyOffTime == 0) { // not in changing process
-		keys = ~KEYS_PIN & (KEY_PWR | KEY_MINUS | KEY_PLUS);
+		keys = (~KEYS_PIN) & (KEY_PWR | KEY_MINUS | KEY_PLUS);
 	} else keys = 0;
 }
 
@@ -68,7 +68,7 @@ uint8_t setup_mode					= 0;
 #define EPROM_RF_Channel			0x02 // 120
 #define EPROM_FanSpeedMax			0x03 // 7, max value = 127
 #define EPROM_PauseWhenError		0x04 // 20, sec
-#define EPROM_CurrentSpeedAddr		0x80 // 0x81..until end, if = 0 speed don't saved - after boot set 1
+#define EPROM_CurrentSpeedAddr		0x0F // +1..until end, if = 0 speed don't saved - after boot set 1
 //                                  0xFF
 
 
@@ -140,12 +140,14 @@ static void EEPROM_write(uint8_t ucAddress, uint8_t ucData) // ATtiny24A/44A onl
 
 #define SETUP_WATCHDOG WDTCSR = (1<<WDCE) | (1<<WDE); WDTCSR = (1<<WDE) | (0<<WDIE) | (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0); //  Watchdog reset 1 s
 uint8_t LED_Warning = 0, LED_WarningOnCnt = 0, LED_WarningOffCnt = 0;
+uint8_t Timer = 0;
 
 ISR(TIM0_OVF_vect) // 0.10035 sec
 {
 	if(++TimerCntSec == 10) { // 1 sec
 		TimerCntSec = 0;
 		if(RequestCountdown) RequestCountdown--;
+		Timer++;
 	}
  	if(LED_WarningOnCnt) {
 	 	LED1_ON;
@@ -196,6 +198,32 @@ x_off_ok:				FanSpeed = SpeedSet;
 	}
 }
 
+void NRF_save_registers(void)
+{
+	#define EPROM_SaveRegIdx 0x0F
+	#define EPROM_SaveReg	 0x10
+	#define IDX_MAX			 7
+	uint8_t buf[1];
+	
+	uint8_t idx = EEPROM_read(EPROM_SaveRegIdx);
+	if(idx > IDX_MAX) idx = 0;
+	idx = EPROM_SaveReg + idx * 0x20;
+	for(uint8_t i = 0; i <= 0x17; i++) {
+		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
+		EEPROM_write(idx++, buf[0]);
+	}
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1C, buf, 1); // at 0x18
+	EEPROM_write(idx++, buf[0]);
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1D, buf, 1); // at 0x19
+	EEPROM_write(idx++, buf[0]);
+	EEPROM_write(idx++, Timer);
+	EEPROM_write(idx++, nrf_last_status);
+	
+	idx = EEPROM_read(EPROM_SaveRegIdx) + 1;
+	if(idx > IDX_MAX) idx = IDX_MAX;
+	EEPROM_write(EPROM_SaveRegIdx, idx);
+}
+
 int main(void)
 {
 	CLKPR = (1<<CLKPCE); CLKPR = (0<<CLKPS3) | (0<<CLKPS2) | (1<<CLKPS1) | (1<<CLKPS0); // Clock prescaler: 8
@@ -216,15 +244,15 @@ int main(void)
 	if(FanSpeedMax == 0xFF) {
 		EEPROM_write(EPROM_OSCCAL, OSCCAL);
 		EEPROM_write(EPROM_CurrentSpeedAddr, EPROM_CurrentSpeedAddr + 1);
-		EEPROM_write(EPROM_CurrentSpeedAddr + 1, 0);
+		EEPROM_write(EPROM_CurrentSpeedAddr + 1, 1);
 		EEPROM_write(EPROM_FanSpeedMax, 7);
 		EEPROM_write(EPROM_RFAddress, 0xE5);
 		EEPROM_write(EPROM_RF_Channel, 120);
 	}
 	//OSCCAL = EEPROM_read(EPROM_OSCCAL);
 	uint8_t addr = EEPROM_read(EPROM_CurrentSpeedAddr);
-	if(addr) {
-		SpeedSet = FanSpeed = EEPROM_read(addr);
+	if(addr && (SpeedSet = EEPROM_read(addr)) <= FanSpeedMax) {
+		FanSpeed = SpeedSet;
 	} else { // Speed not saved - set 1
 		SpeedSet = FanSpeedMax;
 		FanSpeed = 1;
@@ -330,6 +358,9 @@ x_save_speed:
 					NRF24_Buffer[0] = send_data;
 					NRF24_SetMode(NRF24_TransmitMode);
 					nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
+					
+					NRF_save_registers();
+					
 					if(nrf_last_status) { // some problem
 						LED_Warning = nrf_last_status;
 						RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec

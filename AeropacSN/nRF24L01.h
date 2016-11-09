@@ -103,7 +103,7 @@ uint8_t NRF24_Buffer[NRF24_PAYLOAD_LEN]; // MUST be EQUAL or GREATER than Addres
 const uint8_t NRF24_INIT_DATA[] PROGMEM = { // Enhanced	ShockBurst config
 	NRF24_CMD_W_REGISTER | NRF24_REG_RF_SETUP,	(0<<NRF24_BIT_RF_DR_LOW) | (0<<NRF24_BIT_RF_DR_HIGH) | 0b111, // Data rate: 1Mbps, Max power (0b111)
 	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_AW,	NRF24_ADDRESS_LEN - 2, // address length
-	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_RETR,(0b0100<<NRF24_BIT_ARD) | (0b0001<<NRF24_BIT_ARC), // Auto Retransmit Delay = 1000uS, 2 Re-Transmit on fail (must be > 0 for ACK)
+	NRF24_CMD_W_REGISTER | NRF24_REG_SETUP_RETR,(0b0111<<NRF24_BIT_ARD) | (0b0011<<NRF24_BIT_ARC), // Auto Retransmit Delay = 1000uS, 2 Re-Transmit on fail (must be > 0 for ACK)
 //	NRF24_CMD_W_REGISTER | NRF24_REG_RF_CH,		NRF24_RF_CHANNEL, // RF channel
 //	NRF24_CMD_W_REGISTER | NRF24_REG_RX_PW_P0,	NRF24_PAYLOAD_LEN,
 	NRF24_CMD_W_REGISTER | NRF24_REG_FEATURE,	(1<<NRF24_BIT_EN_DPL) | (1<<NRF24_BIT_EN_ACK_PAY), // Dynamic Payload Length, Enables Payload with ACK
