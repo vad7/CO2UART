@@ -386,7 +386,9 @@ void ICACHE_FLASH_ATTR iot_cloud_send(uint8 fwork)
 	#if DEBUGSOO > 4
 		os_printf("iot_send: %d, %d: %x %x, IP%d(%d)\n", tc_init_flg, fwork, iot_data_first, iot_data_processing, wifi_station_get_connect_status(), flg_open_all_service);
 	#endif
-	if((tc_init_flg & TC_INITED) == 0) return;
+	if((tc_init_flg & TC_INITED) == 0) { //
+		if(iot_cloud_init()) return; // Not inited - reinit
+	}
 	if(fwork == 0) { // end
 		close_dns_finding();
 		return;

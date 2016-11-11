@@ -2,8 +2,6 @@ Archive member included because of file (symbol)
 
 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
                               d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o (exit)
-d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
-                              WirelessCO2Fan.o (__do_copy_data)
 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_clear_bss.o)
                               WirelessCO2Fan.o (__do_clear_bss)
 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25\libc.a(memcpy_P.o)
@@ -30,10 +28,14 @@ Discarded input sections
                 0x00000000       0x26 WirelessCO2Fan.o
  .text.NRF24_ReadRegister
                 0x00000000        0xe WirelessCO2Fan.o
+ .text.NRF_save_registers
+                0x00000000       0xbe WirelessCO2Fan.o
  .text.NRF24_Receive
                 0x00000000       0x34 WirelessCO2Fan.o
  .text.NRF24_Transmit
                 0x00000000       0x44 WirelessCO2Fan.o
+ .text.NRF24_Powerdown
+                0x00000000        0x8 WirelessCO2Fan.o
  .bss.RequestStatus
                 0x00000000        0x1 WirelessCO2Fan.o
  .bss.FanSpeedChange
@@ -54,22 +56,6 @@ Discarded input sections
                 0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
  .text.libgcc.fixed
                 0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
- .text          0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
- .data          0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
- .bss           0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
- .text.libgcc.mul
-                0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
- .text.libgcc.div
-                0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
- .text.libgcc   0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
- .text.libgcc.prologue
-                0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
- .text.libgcc.builtins
-                0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
- .text.libgcc.fmul
-                0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
- .text.libgcc.fixed
-                0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
  .text          0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_clear_bss.o)
  .data          0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_clear_bss.o)
  .bss           0x00000000        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_clear_bss.o)
@@ -205,7 +191,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x91a
+.text           0x00000000      0x8d0
  *(.vectors)
  .vectors       0x00000000       0x22 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
                 0x00000000                __vector_default
@@ -250,10 +236,8 @@ END GROUP
  *(.init3)
  *(.init3)
  *(.init4)
- .init4         0x0000003e       0x16 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_copy_data.o)
-                0x0000003e                __do_copy_data
- .init4         0x00000054       0x10 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_clear_bss.o)
-                0x00000054                __do_clear_bss
+ .init4         0x0000003e       0x10 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_clear_bss.o)
+                0x0000003e                __do_clear_bss
  *(.init4)
  *(.init5)
  *(.init5)
@@ -264,90 +248,84 @@ END GROUP
  *(.init8)
  *(.init8)
  *(.init9)
- .init9         0x00000064        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
+ .init9         0x0000004e        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
  *(.init9)
  *(.text)
- .text          0x00000068        0x2 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
-                0x00000068                __vector_1
-                0x00000068                __vector_12
-                0x00000068                __bad_interrupt
-                0x00000068                __vector_6
-                0x00000068                __vector_13
-                0x00000068                __vector_7
-                0x00000068                __vector_5
-                0x00000068                __vector_4
-                0x00000068                __vector_9
-                0x00000068                __vector_2
-                0x00000068                __vector_15
-                0x00000068                __vector_8
-                0x00000068                __vector_14
-                0x00000068                __vector_10
-                0x00000068                __vector_16
-                0x0000006a                . = ALIGN (0x2)
+ .text          0x00000052        0x2 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25/crttn44a.o
+                0x00000052                __vector_1
+                0x00000052                __vector_12
+                0x00000052                __bad_interrupt
+                0x00000052                __vector_6
+                0x00000052                __vector_13
+                0x00000052                __vector_7
+                0x00000052                __vector_5
+                0x00000052                __vector_4
+                0x00000052                __vector_9
+                0x00000052                __vector_2
+                0x00000052                __vector_15
+                0x00000052                __vector_8
+                0x00000052                __vector_14
+                0x00000052                __vector_10
+                0x00000052                __vector_16
+                0x00000054                . = ALIGN (0x2)
  *(.text.*)
  .text.EEPROM_read
-                0x0000006a       0x10 WirelessCO2Fan.o
+                0x00000054       0x10 WirelessCO2Fan.o
  .text.EEPROM_write
-                0x0000007a       0x18 WirelessCO2Fan.o
+                0x00000064       0x18 WirelessCO2Fan.o
  .text.__vector_3
-                0x00000092       0x38 WirelessCO2Fan.o
-                0x00000092                __vector_3
+                0x0000007c       0x38 WirelessCO2Fan.o
+                0x0000007c                __vector_3
  .text.Delay10us
-                0x000000ca       0x14 WirelessCO2Fan.o
-                0x000000ca                Delay10us
+                0x000000b4       0x14 WirelessCO2Fan.o
+                0x000000b4                Delay10us
  .text.Delay100ms
-                0x000000de       0x18 WirelessCO2Fan.o
-                0x000000de                Delay100ms
+                0x000000c8       0x18 WirelessCO2Fan.o
+                0x000000c8                Delay100ms
  .text.FlashLED
-                0x000000f6       0x34 WirelessCO2Fan.o
-                0x000000f6                FlashLED
+                0x000000e0       0x34 WirelessCO2Fan.o
+                0x000000e0                FlashLED
  .text.SPI_WriteReadByte
-                0x0000012a       0x12 WirelessCO2Fan.o
-                0x0000012a                SPI_WriteReadByte
+                0x00000114       0x12 WirelessCO2Fan.o
+                0x00000114                SPI_WriteReadByte
  .text.NRF24_ReadArray
-                0x0000013c       0x46 WirelessCO2Fan.o
-                0x0000013c                NRF24_ReadArray
+                0x00000126       0x46 WirelessCO2Fan.o
+                0x00000126                NRF24_ReadArray
  .text.NRF24_WriteByte
-                0x00000182       0x20 WirelessCO2Fan.o
-                0x00000182                NRF24_WriteByte
+                0x0000016c       0x20 WirelessCO2Fan.o
+                0x0000016c                NRF24_WriteByte
  .text.NRF24_WriteArray
-                0x000001a2       0x44 WirelessCO2Fan.o
-                0x000001a2                NRF24_WriteArray
+                0x0000018c       0x44 WirelessCO2Fan.o
+                0x0000018c                NRF24_WriteArray
  .text.NRF24_SendCommand
-                0x000001e6        0x8 WirelessCO2Fan.o
-                0x000001e6                NRF24_SendCommand
+                0x000001d0        0x8 WirelessCO2Fan.o
+                0x000001d0                NRF24_SendCommand
  .text.NRF24_SetMode
-                0x000001ee       0x1c WirelessCO2Fan.o
-                0x000001ee                NRF24_SetMode
+                0x000001d8       0x1c WirelessCO2Fan.o
+                0x000001d8                NRF24_SetMode
  .text.NRF24_TransmitShockBurst
-                0x0000020a       0x94 WirelessCO2Fan.o
-                0x0000020a                NRF24_TransmitShockBurst
+                0x000001f4       0xa6 WirelessCO2Fan.o
+                0x000001f4                NRF24_TransmitShockBurst
  .text.NRF24_SetAddresses
-                0x0000029e       0x42 WirelessCO2Fan.o
-                0x0000029e                NRF24_SetAddresses
- .text.NRF24_Powerdown
-                0x000002e0        0x8 WirelessCO2Fan.o
-                0x000002e0                NRF24_Powerdown
+                0x0000029a       0x42 WirelessCO2Fan.o
+                0x0000029a                NRF24_SetAddresses
  .text.NRF24_init
-                0x000002e8       0x2e WirelessCO2Fan.o
-                0x000002e8                NRF24_init
+                0x000002dc       0x2e WirelessCO2Fan.o
+                0x000002dc                NRF24_init
  .text.__vector_11
-                0x00000316      0x184 WirelessCO2Fan.o
-                0x00000316                __vector_11
- .text.NRF_save_registers
-                0x0000049a       0xac WirelessCO2Fan.o
-                0x0000049a                NRF_save_registers
+                0x0000030a      0x18a WirelessCO2Fan.o
+                0x0000030a                __vector_11
  .text.startup.main
-                0x00000546      0x3be WirelessCO2Fan.o
-                0x00000546                main
+                0x00000494      0x426 WirelessCO2Fan.o
+                0x00000494                main
  .text.avr-libc
-                0x00000904       0x12 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25\libc.a(memcpy_P.o)
-                0x00000904                memcpy_P
-                0x00000916                . = ALIGN (0x2)
+                0x000008ba       0x12 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr25\libc.a(memcpy_P.o)
+                0x000008ba                memcpy_P
+                0x000008cc                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000916        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
-                0x00000916                _exit
-                0x00000916                exit
+ .fini9         0x000008cc        0x0 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
+                0x000008cc                _exit
+                0x000008cc                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -366,90 +344,89 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000916        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
+ .fini0         0x000008cc        0x4 d:/program files/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr25\libgcc.a(_exit.o)
  *(.fini0)
-                0x0000091a                _etext = .
+                0x000008d0                _etext = .
 
-.data           0x00800060        0x2 load address 0x0000091a
+.data           0x00800060        0x0 load address 0x000008d0
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
- .data.RequestCountdown
-                0x00800060        0x1 WirelessCO2Fan.o
-                0x00800060                RequestCountdown
  *(.rodata)
  *(.rodata*)
  *(.gnu.linkonce.d*)
-                0x00800062                . = ALIGN (0x2)
- *fill*         0x00800061        0x1 
-                0x00800062                _edata = .
-                0x00800062                PROVIDE (__data_end, .)
+                0x00800060                . = ALIGN (0x2)
+                0x00800060                _edata = .
+                0x00800060                PROVIDE (__data_end, .)
 
-.bss            0x00800062       0x17
-                0x00800062                PROVIDE (__bss_start, .)
+.bss            0x00800060       0x18
+                0x00800060                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
- .bss.Timer     0x00800062        0x1 WirelessCO2Fan.o
-                0x00800062                Timer
  .bss.LED_WarningOffCnt
-                0x00800063        0x1 WirelessCO2Fan.o
-                0x00800063                LED_WarningOffCnt
+                0x00800060        0x1 WirelessCO2Fan.o
+                0x00800060                LED_WarningOffCnt
  .bss.LED_WarningOnCnt
-                0x00800064        0x1 WirelessCO2Fan.o
-                0x00800064                LED_WarningOnCnt
+                0x00800061        0x1 WirelessCO2Fan.o
+                0x00800061                LED_WarningOnCnt
  .bss.LED_Warning
-                0x00800065        0x1 WirelessCO2Fan.o
-                0x00800065                LED_Warning
+                0x00800062        0x1 WirelessCO2Fan.o
+                0x00800062                LED_Warning
  .bss.send_data
-                0x00800066        0x1 WirelessCO2Fan.o
-                0x00800066                send_data
+                0x00800063        0x1 WirelessCO2Fan.o
+                0x00800063                send_data
  .bss.setup_mode
-                0x00800067        0x1 WirelessCO2Fan.o
-                0x00800067                setup_mode
+                0x00800064        0x1 WirelessCO2Fan.o
+                0x00800064                setup_mode
  .bss.nrf_last_status
-                0x00800068        0x1 WirelessCO2Fan.o
-                0x00800068                nrf_last_status
+                0x00800065        0x1 WirelessCO2Fan.o
+                0x00800065                nrf_last_status
  .bss.SendOffStatus
-                0x00800069        0x1 WirelessCO2Fan.o
-                0x00800069                SendOffStatus
+                0x00800066        0x1 WirelessCO2Fan.o
+                0x00800066                SendOffStatus
+ .bss.RequestCountdown
+                0x00800067        0x1 WirelessCO2Fan.o
+                0x00800067                RequestCountdown
+ .bss.Timer     0x00800068        0x1 WirelessCO2Fan.o
+                0x00800068                Timer
  .bss.TimerCntSec
-                0x0080006a        0x1 WirelessCO2Fan.o
-                0x0080006a                TimerCntSec
+                0x00800069        0x1 WirelessCO2Fan.o
+                0x00800069                TimerCntSec
  .bss.FanSpeedOff
-                0x0080006b        0x1 WirelessCO2Fan.o
-                0x0080006b                FanSpeedOff
+                0x0080006a        0x1 WirelessCO2Fan.o
+                0x0080006a                FanSpeedOff
  .bss.FanSpeedOverride
-                0x0080006c        0x1 WirelessCO2Fan.o
-                0x0080006c                FanSpeedOverride
+                0x0080006b        0x1 WirelessCO2Fan.o
+                0x0080006b                FanSpeedOverride
  .bss.SpeedSetChanged
-                0x0080006d        0x1 WirelessCO2Fan.o
-                0x0080006d                SpeedSetChanged
+                0x0080006c        0x1 WirelessCO2Fan.o
+                0x0080006c                SpeedSetChanged
  .bss.PressKeyOnTime
-                0x0080006e        0x1 WirelessCO2Fan.o
-                0x0080006e                PressKeyOnTime
+                0x0080006d        0x1 WirelessCO2Fan.o
+                0x0080006d                PressKeyOnTime
  .bss.PressKeyOffTime
-                0x0080006f        0x1 WirelessCO2Fan.o
-                0x0080006f                PressKeyOffTime
- .bss.PressKey  0x00800070        0x1 WirelessCO2Fan.o
-                0x00800070                PressKey
- .bss.keys      0x00800071        0x1 WirelessCO2Fan.o
-                0x00800071                keys
+                0x0080006e        0x1 WirelessCO2Fan.o
+                0x0080006e                PressKeyOffTime
+ .bss.PressKey  0x0080006f        0x1 WirelessCO2Fan.o
+                0x0080006f                PressKey
+ .bss.keys      0x00800070        0x1 WirelessCO2Fan.o
+                0x00800070                keys
  *(COMMON)
- COMMON         0x00800072        0x7 WirelessCO2Fan.o
-                0x00800072                FanSpeedMax
-                0x00800073                SpeedSet
-                0x00800074                FanSpeed
-                0x00800075                NRF24_Buffer
-                0x00800079                PROVIDE (__bss_end, .)
-                0x0000091a                __data_load_start = LOADADDR (.data)
-                0x0000091c                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x00800071        0x7 WirelessCO2Fan.o
+                0x00800071                FanSpeedMax
+                0x00800072                SpeedSet
+                0x00800073                FanSpeed
+                0x00800074                NRF24_Buffer
+                0x00800078                PROVIDE (__bss_end, .)
+                0x000008d0                __data_load_start = LOADADDR (.data)
+                0x000008d0                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800079        0x0
-                0x00800079                PROVIDE (__noinit_start, .)
+.noinit         0x00800078        0x0
+                0x00800078                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x00800079                PROVIDE (__noinit_end, .)
-                0x00800079                _end = .
-                0x00800079                PROVIDE (__heap_start, .)
+                0x00800078                PROVIDE (__noinit_end, .)
+                0x00800078                _end = .
+                0x00800078                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -516,30 +493,30 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x1291
+.debug_info     0x00000000     0x13a0
  *(.debug_info .gnu.linkonce.wi.*)
- .debug_info    0x00000000     0x1291 WirelessCO2Fan.o
+ .debug_info    0x00000000     0x13a0 WirelessCO2Fan.o
 
-.debug_abbrev   0x00000000      0x303
+.debug_abbrev   0x00000000      0x371
  *(.debug_abbrev)
- .debug_abbrev  0x00000000      0x303 WirelessCO2Fan.o
+ .debug_abbrev  0x00000000      0x371 WirelessCO2Fan.o
 
-.debug_line     0x00000000      0x685
+.debug_line     0x00000000      0x6ad
  *(.debug_line .debug_line.* .debug_line_end)
- .debug_line    0x00000000      0x685 WirelessCO2Fan.o
+ .debug_line    0x00000000      0x6ad WirelessCO2Fan.o
 
-.debug_frame    0x00000000      0x2b8
+.debug_frame    0x00000000      0x2c8
  *(.debug_frame)
- .debug_frame   0x00000000      0x2b8 WirelessCO2Fan.o
+ .debug_frame   0x00000000      0x2c8 WirelessCO2Fan.o
 
-.debug_str      0x00000000      0x4ff
+.debug_str      0x00000000      0x50a
  *(.debug_str)
- .debug_str     0x00000000      0x4ff WirelessCO2Fan.o
-                                0x552 (size before relaxing)
+ .debug_str     0x00000000      0x50a WirelessCO2Fan.o
+                                0x55d (size before relaxing)
 
-.debug_loc      0x00000000      0xddc
+.debug_loc      0x00000000      0xea3
  *(.debug_loc)
- .debug_loc     0x00000000      0xddc WirelessCO2Fan.o
+ .debug_loc     0x00000000      0xea3 WirelessCO2Fan.o
 
 .debug_macinfo
  *(.debug_macinfo)

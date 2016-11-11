@@ -3,51 +3,49 @@ WirelessCO2Fan.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         0000091a  00000000  00000000  00000094  2**1
+  0 .text         000008d0  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000002  00800060  0000091a  000009ae  2**0
-                  CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          00000017  00800062  00800062  000009b0  2**0
+  1 .bss          00000018  00800060  00800060  00000944  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  000009b0  2**0
+  2 .comment      00000030  00000000  00000000  00000944  2**0
                   CONTENTS, READONLY
-  4 .debug_aranges 000000d8  00000000  00000000  000009e0  2**0
+  3 .debug_aranges 000000d8  00000000  00000000  00000974  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00001291  00000000  00000000  00000ab8  2**0
+  4 .debug_info   000013a0  00000000  00000000  00000a4c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000303  00000000  00000000  00001d49  2**0
+  5 .debug_abbrev 00000371  00000000  00000000  00001dec  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000685  00000000  00000000  0000204c  2**0
+  6 .debug_line   000006ad  00000000  00000000  0000215d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  000002b8  00000000  00000000  000026d4  2**2
+  7 .debug_frame  000002c8  00000000  00000000  0000280c  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000004ff  00000000  00000000  0000298c  2**0
+  8 .debug_str    0000050a  00000000  00000000  00002ad4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000ddc  00000000  00000000  00002e8b  2**0
+  9 .debug_loc    00000ea3  00000000  00000000  00002fde  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 000000e0  00000000  00000000  00003c67  2**0
+ 10 .debug_ranges 000000e0  00000000  00000000  00003e81  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
 
 00000000 <__vectors>:
    0:	18 c0       	rjmp	.+48     	; 0x32 <__ctors_end>
-   2:	32 c0       	rjmp	.+100    	; 0x68 <__bad_interrupt>
-   4:	31 c0       	rjmp	.+98     	; 0x68 <__bad_interrupt>
-   6:	45 c0       	rjmp	.+138    	; 0x92 <__vector_3>
-   8:	2f c0       	rjmp	.+94     	; 0x68 <__bad_interrupt>
-   a:	2e c0       	rjmp	.+92     	; 0x68 <__bad_interrupt>
-   c:	2d c0       	rjmp	.+90     	; 0x68 <__bad_interrupt>
-   e:	2c c0       	rjmp	.+88     	; 0x68 <__bad_interrupt>
-  10:	2b c0       	rjmp	.+86     	; 0x68 <__bad_interrupt>
-  12:	2a c0       	rjmp	.+84     	; 0x68 <__bad_interrupt>
-  14:	29 c0       	rjmp	.+82     	; 0x68 <__bad_interrupt>
-  16:	7f c1       	rjmp	.+766    	; 0x316 <__vector_11>
-  18:	27 c0       	rjmp	.+78     	; 0x68 <__bad_interrupt>
-  1a:	26 c0       	rjmp	.+76     	; 0x68 <__bad_interrupt>
-  1c:	25 c0       	rjmp	.+74     	; 0x68 <__bad_interrupt>
-  1e:	24 c0       	rjmp	.+72     	; 0x68 <__bad_interrupt>
-  20:	23 c0       	rjmp	.+70     	; 0x68 <__bad_interrupt>
+   2:	27 c0       	rjmp	.+78     	; 0x52 <__bad_interrupt>
+   4:	26 c0       	rjmp	.+76     	; 0x52 <__bad_interrupt>
+   6:	3a c0       	rjmp	.+116    	; 0x7c <__vector_3>
+   8:	24 c0       	rjmp	.+72     	; 0x52 <__bad_interrupt>
+   a:	23 c0       	rjmp	.+70     	; 0x52 <__bad_interrupt>
+   c:	22 c0       	rjmp	.+68     	; 0x52 <__bad_interrupt>
+   e:	21 c0       	rjmp	.+66     	; 0x52 <__bad_interrupt>
+  10:	20 c0       	rjmp	.+64     	; 0x52 <__bad_interrupt>
+  12:	1f c0       	rjmp	.+62     	; 0x52 <__bad_interrupt>
+  14:	1e c0       	rjmp	.+60     	; 0x52 <__bad_interrupt>
+  16:	79 c1       	rjmp	.+754    	; 0x30a <__vector_11>
+  18:	1c c0       	rjmp	.+56     	; 0x52 <__bad_interrupt>
+  1a:	1b c0       	rjmp	.+54     	; 0x52 <__bad_interrupt>
+  1c:	1a c0       	rjmp	.+52     	; 0x52 <__bad_interrupt>
+  1e:	19 c0       	rjmp	.+50     	; 0x52 <__bad_interrupt>
+  20:	18 c0       	rjmp	.+48     	; 0x52 <__bad_interrupt>
 
 00000022 <NRF24_BASE_ADDR>:
   22:	c8 c8                                               ..
@@ -63,1606 +61,1527 @@ Disassembly of section .text:
   3a:	de bf       	out	0x3e, r29	; 62
   3c:	cd bf       	out	0x3d, r28	; 61
 
-0000003e <__do_copy_data>:
-  3e:	10 e0       	ldi	r17, 0x00	; 0
+0000003e <__do_clear_bss>:
+  3e:	20 e0       	ldi	r18, 0x00	; 0
   40:	a0 e6       	ldi	r26, 0x60	; 96
   42:	b0 e0       	ldi	r27, 0x00	; 0
-  44:	ea e1       	ldi	r30, 0x1A	; 26
-  46:	f9 e0       	ldi	r31, 0x09	; 9
-  48:	02 c0       	rjmp	.+4      	; 0x4e <__SREG__+0xf>
-  4a:	05 90       	lpm	r0, Z+
-  4c:	0d 92       	st	X+, r0
-  4e:	a2 36       	cpi	r26, 0x62	; 98
-  50:	b1 07       	cpc	r27, r17
-  52:	d9 f7       	brne	.-10     	; 0x4a <__SREG__+0xb>
+  44:	01 c0       	rjmp	.+2      	; 0x48 <.do_clear_bss_start>
 
-00000054 <__do_clear_bss>:
-  54:	20 e0       	ldi	r18, 0x00	; 0
-  56:	a2 e6       	ldi	r26, 0x62	; 98
-  58:	b0 e0       	ldi	r27, 0x00	; 0
-  5a:	01 c0       	rjmp	.+2      	; 0x5e <.do_clear_bss_start>
+00000046 <.do_clear_bss_loop>:
+  46:	1d 92       	st	X+, r1
 
-0000005c <.do_clear_bss_loop>:
-  5c:	1d 92       	st	X+, r1
+00000048 <.do_clear_bss_start>:
+  48:	a8 37       	cpi	r26, 0x78	; 120
+  4a:	b2 07       	cpc	r27, r18
+  4c:	e1 f7       	brne	.-8      	; 0x46 <.do_clear_bss_loop>
+  4e:	22 d2       	rcall	.+1092   	; 0x494 <main>
+  50:	3d c4       	rjmp	.+2170   	; 0x8cc <_exit>
 
-0000005e <.do_clear_bss_start>:
-  5e:	a9 37       	cpi	r26, 0x79	; 121
-  60:	b2 07       	cpc	r27, r18
-  62:	e1 f7       	brne	.-8      	; 0x5c <.do_clear_bss_loop>
-  64:	70 d2       	rcall	.+1248   	; 0x546 <main>
-  66:	57 c4       	rjmp	.+2222   	; 0x916 <_exit>
+00000052 <__bad_interrupt>:
+  52:	d6 cf       	rjmp	.-84     	; 0x0 <__vectors>
 
-00000068 <__bad_interrupt>:
-  68:	cb cf       	rjmp	.-106    	; 0x0 <__vectors>
+00000054 <EEPROM_read>:
+	uint8_t idx = EEPROM_read(EPROM_SaveRegIdx);
+	if(idx == 0xFF) idx = 0;
+	idx = EPROM_SaveReg + idx * 0x20;
+	for(uint8_t i = 0; i <= 0x17; i++) {
+		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
+		EEPROM_write(idx++, buf[0]);
+  54:	e1 99       	sbic	0x1c, 1	; 28
+	}
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1C, buf, 1); // at 0x18
+  56:	fe cf       	rjmp	.-4      	; 0x54 <EEPROM_read>
+  58:	90 e0       	ldi	r25, 0x00	; 0
+  5a:	9f bb       	out	0x1f, r25	; 31
+  5c:	8e bb       	out	0x1e, r24	; 30
+  5e:	e0 9a       	sbi	0x1c, 0	; 28
+  60:	8d b3       	in	r24, 0x1d	; 29
+	EEPROM_write(idx++, buf[0]);
+  62:	08 95       	ret
 
-0000006a <EEPROM_read>:
-	Delay100ms(20);
+00000064 <EEPROM_write>:
+  64:	e1 99       	sbic	0x1c, 1	; 28
+  66:	fe cf       	rjmp	.-4      	; 0x64 <EEPROM_write>
+  68:	f8 94       	cli
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1D, buf, 1); // at 0x19
+  6a:	1c ba       	out	0x1c, r1	; 28
+  6c:	90 e0       	ldi	r25, 0x00	; 0
+  6e:	9f bb       	out	0x1f, r25	; 31
+  70:	8e bb       	out	0x1e, r24	; 30
+  72:	6d bb       	out	0x1d, r22	; 29
+  74:	e2 9a       	sbi	0x1c, 2	; 28
+	EEPROM_write(idx++, buf[0]);
+  76:	e1 9a       	sbi	0x1c, 1	; 28
+  78:	78 94       	sei
+  7a:	08 95       	ret
+
+0000007c <__vector_3>:
+  7c:	1f 92       	push	r1
+	EEPROM_write(idx++, st);
+  7e:	0f 92       	push	r0
+  80:	0f b6       	in	r0, 0x3f	; 63
+  82:	0f 92       	push	r0
+  84:	11 24       	eor	r1, r1
+	EEPROM_write(idx++, cnt);
+  86:	8f 93       	push	r24
+  88:	80 91 6d 00 	lds	r24, 0x006D
+  8c:	81 11       	cpse	r24, r1
+	EEPROM_write(idx++, Timer);
+  8e:	0a c0       	rjmp	.+20     	; 0xa4 <__vector_3+0x28>
+  90:	80 91 6e 00 	lds	r24, 0x006E
+  94:	81 11       	cpse	r24, r1
+  96:	06 c0       	rjmp	.+12     	; 0xa4 <__vector_3+0x28>
+	
+	idx = EEPROM_read(EPROM_SaveRegIdx) + 1;
+  98:	86 b3       	in	r24, 0x16	; 22
+  9a:	80 95       	com	r24
+  9c:	87 70       	andi	r24, 0x07	; 7
+  9e:	80 93 70 00 	sts	0x0070, r24
+	if(idx > IDX_MAX) idx = 0;
+  a2:	02 c0       	rjmp	.+4      	; 0xa8 <__vector_3+0x2c>
+  a4:	10 92 70 00 	sts	0x0070, r1
+	EEPROM_write(EPROM_SaveRegIdx, idx);
+  a8:	8f 91       	pop	r24
 }
+  aa:	0f 90       	pop	r0
+  ac:	0f be       	out	0x3f, r0	; 63
+  ae:	0f 90       	pop	r0
+  b0:	1f 90       	pop	r1
+  b2:	18 95       	reti
 
-static uint8_t EEPROM_read(uint8_t ucAddress) // ATtiny24A/44A only!
-{
-	while(EECR & (1<<EEPE)) ; // EEWE
-  6a:	e1 99       	sbic	0x1c, 1	; 28
-  6c:	fe cf       	rjmp	.-4      	; 0x6a <EEPROM_read>
-	EEAR = ucAddress;
-  6e:	90 e0       	ldi	r25, 0x00	; 0
-  70:	9f bb       	out	0x1f, r25	; 31
-  72:	8e bb       	out	0x1e, r24	; 30
-	EECR |= (1<<EERE);
-  74:	e0 9a       	sbi	0x1c, 0	; 28
-	return EEDR;
-  76:	8d b3       	in	r24, 0x1d	; 29
-}
-  78:	08 95       	ret
+000000b4 <Delay10us>:
+  b4:	88 23       	and	r24, r24
+  b6:	31 f0       	breq	.+12     	; 0xc4 <Delay10us+0x10>
+  b8:	93 e0       	ldi	r25, 0x03	; 3
+  ba:	9a 95       	dec	r25
+  bc:	f1 f7       	brne	.-4      	; 0xba <Delay10us+0x6>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
 
-0000007a <EEPROM_write>:
-static void EEPROM_write(uint8_t ucAddress, uint8_t ucData) // ATtiny24A/44A only!
-{
-	while(EECR & (1<<EEPE)) ; // EEWE
-  7a:	e1 99       	sbic	0x1c, 1	; 28
-  7c:	fe cf       	rjmp	.-4      	; 0x7a <EEPROM_write>
-	cli();
-  7e:	f8 94       	cli
-	EECR = (0<<EEPM1)|(0<<EEPM0);
-  80:	1c ba       	out	0x1c, r1	; 28
-	EEAR = ucAddress;
-  82:	90 e0       	ldi	r25, 0x00	; 0
-  84:	9f bb       	out	0x1f, r25	; 31
-  86:	8e bb       	out	0x1e, r24	; 30
-	EEDR = ucData;
-  88:	6d bb       	out	0x1d, r22	; 29
-	EECR |= (1<<EEMPE); //(1<<EEMWE);
-  8a:	e2 9a       	sbi	0x1c, 2	; 28
-	EECR |= (1<<EEPE); //(1<<EEWE);
-  8c:	e1 9a       	sbi	0x1c, 1	; 28
-	sei();
-  8e:	78 94       	sei
-  90:	08 95       	ret
-
-00000092 <__vector_3>:
-#define KEYS_INTR_INIT				GIMSK |= (1<<PCIE1); PCMSK1 |= (1<<PCINT10) | (1<<PCINT9) | (1<<PCINT8)  // PCINT8..10
-volatile uint8_t keys				= 0;
-uint8_t PressKey					= 0;	
-uint8_t PressKeyOffTime				= 0; // *0.1 sec
-uint8_t PressKeyOnTime				= 0; // *0.1 sec
-ISR(PCINT1_vect) {
-  92:	1f 92       	push	r1
-  94:	0f 92       	push	r0
-  96:	0f b6       	in	r0, 0x3f	; 63
-  98:	0f 92       	push	r0
-  9a:	11 24       	eor	r1, r1
-  9c:	8f 93       	push	r24
-	if(PressKeyOnTime == 0 && PressKeyOffTime == 0) { // not in changing process
-  9e:	80 91 6e 00 	lds	r24, 0x006E
-  a2:	81 11       	cpse	r24, r1
-  a4:	0a c0       	rjmp	.+20     	; 0xba <__vector_3+0x28>
-  a6:	80 91 6f 00 	lds	r24, 0x006F
-  aa:	81 11       	cpse	r24, r1
-  ac:	06 c0       	rjmp	.+12     	; 0xba <__vector_3+0x28>
-		keys = (~KEYS_PIN) & (KEY_PWR | KEY_MINUS | KEY_PLUS);
-  ae:	86 b3       	in	r24, 0x16	; 22
-  b0:	80 95       	com	r24
-  b2:	87 70       	andi	r24, 0x07	; 7
-  b4:	80 93 71 00 	sts	0x0071, r24
-  b8:	02 c0       	rjmp	.+4      	; 0xbe <__vector_3+0x2c>
-	} else keys = 0;
-  ba:	10 92 71 00 	sts	0x0071, r1
-}
-  be:	8f 91       	pop	r24
-  c0:	0f 90       	pop	r0
-  c2:	0f be       	out	0x3f, r0	; 63
-  c4:	0f 90       	pop	r0
-  c6:	1f 90       	pop	r1
-  c8:	18 95       	reti
-
-000000ca <Delay10us>:
+	__builtin_avr_delay_cycles(__ticks_dc);
+  be:	00 00       	nop
+  c0:	81 50       	subi	r24, 0x01	; 1
+  c2:	f8 cf       	rjmp	.-16     	; 0xb4 <Delay10us>
 
 #define FLAG_LowLight				0x01
 
 #if(1)
 void Delay10us(uint8_t ms) {
 	while(ms-- > 0) _delay_us(10); wdt_reset();
-  ca:	88 23       	and	r24, r24
-  cc:	31 f0       	breq	.+12     	; 0xda <Delay10us+0x10>
-	#else
-		//round up by default
-		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
-	#endif
+  c4:	a8 95       	wdr
+  c6:	08 95       	ret
 
-	__builtin_avr_delay_cycles(__ticks_dc);
-  ce:	93 e0       	ldi	r25, 0x03	; 3
-  d0:	9a 95       	dec	r25
-  d2:	f1 f7       	brne	.-4      	; 0xd0 <Delay10us+0x6>
-  d4:	00 00       	nop
-  d6:	81 50       	subi	r24, 0x01	; 1
-  d8:	f8 cf       	rjmp	.-16     	; 0xca <Delay10us>
-  da:	a8 95       	wdr
-  dc:	08 95       	ret
-
-000000de <Delay100ms>:
+000000c8 <Delay100ms>:
 	while(ms-- > 0) {
 		_delay_ms(1); wdt_reset();
 	}
 }
 void Delay100ms(unsigned int ms) {
 	while(ms-- > 0) {
-  de:	00 97       	sbiw	r24, 0x00	; 0
-  e0:	49 f0       	breq	.+18     	; 0xf4 <Delay100ms+0x16>
+  c8:	00 97       	sbiw	r24, 0x00	; 0
+  ca:	49 f0       	breq	.+18     	; 0xde <Delay100ms+0x16>
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  e2:	e7 ea       	ldi	r30, 0xA7	; 167
-  e4:	f1 e6       	ldi	r31, 0x61	; 97
-  e6:	31 97       	sbiw	r30, 0x01	; 1
-  e8:	f1 f7       	brne	.-4      	; 0xe6 <Delay100ms+0x8>
-  ea:	00 c0       	rjmp	.+0      	; 0xec <Delay100ms+0xe>
-  ec:	00 00       	nop
+  cc:	e7 ea       	ldi	r30, 0xA7	; 167
+  ce:	f1 e6       	ldi	r31, 0x61	; 97
+  d0:	31 97       	sbiw	r30, 0x01	; 1
+  d2:	f1 f7       	brne	.-4      	; 0xd0 <Delay100ms+0x8>
+  d4:	00 c0       	rjmp	.+0      	; 0xd6 <Delay100ms+0xe>
+  d6:	00 00       	nop
 		_delay_ms(100); wdt_reset();
-  ee:	a8 95       	wdr
-  f0:	01 97       	sbiw	r24, 0x01	; 1
-  f2:	f5 cf       	rjmp	.-22     	; 0xde <Delay100ms>
+  d8:	a8 95       	wdr
+  da:	01 97       	sbiw	r24, 0x01	; 1
+  dc:	f5 cf       	rjmp	.-22     	; 0xc8 <Delay100ms>
 	}
 }
-  f4:	08 95       	ret
+  de:	08 95       	ret
 
-000000f6 <FlashLED>:
+000000e0 <FlashLED>:
 
 void FlashLED(uint8_t num, uint8_t toff, uint8_t ton) {
-  f6:	ff 92       	push	r15
-  f8:	0f 93       	push	r16
-  fa:	1f 93       	push	r17
-  fc:	cf 93       	push	r28
-  fe:	df 93       	push	r29
+  e0:	ff 92       	push	r15
+  e2:	0f 93       	push	r16
+  e4:	1f 93       	push	r17
+  e6:	cf 93       	push	r28
+  e8:	df 93       	push	r29
 	while (num-- > 0) {
- 100:	f8 2e       	mov	r15, r24
+  ea:	f8 2e       	mov	r15, r24
 		LED1_OFF;
 		Delay100ms(toff);
- 102:	06 2f       	mov	r16, r22
- 104:	10 e0       	ldi	r17, 0x00	; 0
+  ec:	06 2f       	mov	r16, r22
+  ee:	10 e0       	ldi	r17, 0x00	; 0
 		LED1_ON;
 		Delay100ms(ton);
- 106:	c4 2f       	mov	r28, r20
- 108:	d0 e0       	ldi	r29, 0x00	; 0
+  f0:	c4 2f       	mov	r28, r20
+  f2:	d0 e0       	ldi	r29, 0x00	; 0
 	}
 }
 
 void FlashLED(uint8_t num, uint8_t toff, uint8_t ton) {
 	while (num-- > 0) {
 		LED1_OFF;
- 10a:	d9 98       	cbi	0x1b, 1	; 27
+  f4:	d9 98       	cbi	0x1b, 1	; 27
 		_delay_ms(100); wdt_reset();
 	}
 }
 
 void FlashLED(uint8_t num, uint8_t toff, uint8_t ton) {
 	while (num-- > 0) {
- 10c:	ff 20       	and	r15, r15
- 10e:	39 f0       	breq	.+14     	; 0x11e <FlashLED+0x28>
+  f6:	ff 20       	and	r15, r15
+  f8:	39 f0       	breq	.+14     	; 0x108 <FlashLED+0x28>
 		LED1_OFF;
 		Delay100ms(toff);
- 110:	c8 01       	movw	r24, r16
- 112:	e5 df       	rcall	.-54     	; 0xde <Delay100ms>
+  fa:	c8 01       	movw	r24, r16
+  fc:	e5 df       	rcall	.-54     	; 0xc8 <Delay100ms>
 		LED1_ON;
- 114:	d9 9a       	sbi	0x1b, 1	; 27
+  fe:	d9 9a       	sbi	0x1b, 1	; 27
 		Delay100ms(ton);
- 116:	ce 01       	movw	r24, r28
- 118:	e2 df       	rcall	.-60     	; 0xde <Delay100ms>
- 11a:	fa 94       	dec	r15
- 11c:	f6 cf       	rjmp	.-20     	; 0x10a <FlashLED+0x14>
+ 100:	ce 01       	movw	r24, r28
+ 102:	e2 df       	rcall	.-60     	; 0xc8 <Delay100ms>
+ 104:	fa 94       	dec	r15
+ 106:	f6 cf       	rjmp	.-20     	; 0xf4 <FlashLED+0x14>
 	}
 	LED1_OFF;
 }
- 11e:	df 91       	pop	r29
- 120:	cf 91       	pop	r28
- 122:	1f 91       	pop	r17
- 124:	0f 91       	pop	r16
- 126:	ff 90       	pop	r15
- 128:	08 95       	ret
+ 108:	df 91       	pop	r29
+ 10a:	cf 91       	pop	r28
+ 10c:	1f 91       	pop	r17
+ 10e:	0f 91       	pop	r16
+ 110:	ff 90       	pop	r15
+ 112:	08 95       	ret
 
-0000012a <SPI_WriteReadByte>:
+00000114 <SPI_WriteReadByte>:
 	NRF24_CMD_W_REGISTER | NRF24_REG_DYNPD,		0b000001 // Dynamic payload
 };
 const uint8_t NRF24_BASE_ADDR[] PROGMEM = { 0xC8, 0xC8 }; // Address MSBs: 2..3
 
 uint8_t SPI_WriteReadByte(uint8_t data) {
 	USIDR = data;
- 12a:	8f b9       	out	0x0f, r24	; 15
+ 114:	8f b9       	out	0x0f, r24	; 15
 	USISR = (1<<USIOIF); // clear overflow flag
- 12c:	80 e4       	ldi	r24, 0x40	; 64
- 12e:	8e b9       	out	0x0e, r24	; 14
+ 116:	80 e4       	ldi	r24, 0x40	; 64
+ 118:	8e b9       	out	0x0e, r24	; 14
 	do {
 		USICR = (1<<USIWM0) | (1<<USICS1) | (1<<USICLK) | (1<<USITC);
- 130:	8b e1       	ldi	r24, 0x1B	; 27
- 132:	8d b9       	out	0x0d, r24	; 13
+ 11a:	8b e1       	ldi	r24, 0x1B	; 27
+ 11c:	8d b9       	out	0x0d, r24	; 13
 	} while((USISR & (1<<USIOIF)) == 0);
- 134:	76 9b       	sbis	0x0e, 6	; 14
- 136:	fd cf       	rjmp	.-6      	; 0x132 <SPI_WriteReadByte+0x8>
+ 11e:	76 9b       	sbis	0x0e, 6	; 14
+ 120:	fd cf       	rjmp	.-6      	; 0x11c <SPI_WriteReadByte+0x8>
 	return USIDR;
- 138:	8f b1       	in	r24, 0x0f	; 15
+ 122:	8f b1       	in	r24, 0x0f	; 15
 }
- 13a:	08 95       	ret
+ 124:	08 95       	ret
 
-0000013c <NRF24_ReadArray>:
+00000126 <NRF24_ReadArray>:
 	NRF24_SET_CSN_HI;
 	return result;
 }
 
 void NRF24_ReadArray(uint8_t cmd, uint8_t *array, uint8_t len)
 {
- 13c:	ef 92       	push	r14
- 13e:	ff 92       	push	r15
- 140:	1f 93       	push	r17
- 142:	cf 93       	push	r28
- 144:	df 93       	push	r29
- 146:	00 d0       	rcall	.+0      	; 0x148 <NRF24_ReadArray+0xc>
- 148:	cd b7       	in	r28, 0x3d	; 61
- 14a:	de b7       	in	r29, 0x3e	; 62
- 14c:	14 2f       	mov	r17, r20
+ 126:	ef 92       	push	r14
+ 128:	ff 92       	push	r15
+ 12a:	1f 93       	push	r17
+ 12c:	cf 93       	push	r28
+ 12e:	df 93       	push	r29
+ 130:	00 d0       	rcall	.+0      	; 0x132 <NRF24_ReadArray+0xc>
+ 132:	cd b7       	in	r28, 0x3d	; 61
+ 134:	de b7       	in	r29, 0x3e	; 62
+ 136:	14 2f       	mov	r17, r20
 	NRF24_SET_CSN_LOW;
- 14e:	db 98       	cbi	0x1b, 3	; 27
+ 138:	db 98       	cbi	0x1b, 3	; 27
 	SPI_WriteReadByte(cmd);
- 150:	69 83       	std	Y+1, r22	; 0x01
- 152:	7a 83       	std	Y+2, r23	; 0x02
- 154:	ea df       	rcall	.-44     	; 0x12a <SPI_WriteReadByte>
+ 13a:	69 83       	std	Y+1, r22	; 0x01
+ 13c:	7a 83       	std	Y+2, r23	; 0x02
+ 13e:	ea df       	rcall	.-44     	; 0x114 <SPI_WriteReadByte>
 	while(len-- > 0) *array++ = SPI_WriteReadByte(NRF24_CMD_NOP);
- 156:	69 81       	ldd	r22, Y+1	; 0x01
- 158:	e6 2e       	mov	r14, r22
- 15a:	7a 81       	ldd	r23, Y+2	; 0x02
- 15c:	f7 2e       	mov	r15, r23
- 15e:	16 0f       	add	r17, r22
- 160:	1e 15       	cp	r17, r14
- 162:	31 f0       	breq	.+12     	; 0x170 <__stack+0x11>
- 164:	8f ef       	ldi	r24, 0xFF	; 255
- 166:	e1 df       	rcall	.-62     	; 0x12a <SPI_WriteReadByte>
- 168:	f7 01       	movw	r30, r14
- 16a:	81 93       	st	Z+, r24
- 16c:	7f 01       	movw	r14, r30
- 16e:	f8 cf       	rjmp	.-16     	; 0x160 <__stack+0x1>
+ 140:	69 81       	ldd	r22, Y+1	; 0x01
+ 142:	e6 2e       	mov	r14, r22
+ 144:	7a 81       	ldd	r23, Y+2	; 0x02
+ 146:	f7 2e       	mov	r15, r23
+ 148:	16 0f       	add	r17, r22
+ 14a:	1e 15       	cp	r17, r14
+ 14c:	31 f0       	breq	.+12     	; 0x15a <NRF24_ReadArray+0x34>
+ 14e:	8f ef       	ldi	r24, 0xFF	; 255
+ 150:	e1 df       	rcall	.-62     	; 0x114 <SPI_WriteReadByte>
+ 152:	f7 01       	movw	r30, r14
+ 154:	81 93       	st	Z+, r24
+ 156:	7f 01       	movw	r14, r30
+ 158:	f8 cf       	rjmp	.-16     	; 0x14a <NRF24_ReadArray+0x24>
 	NRF24_SET_CSN_HI;
- 170:	db 9a       	sbi	0x1b, 3	; 27
+ 15a:	db 9a       	sbi	0x1b, 3	; 27
 }
- 172:	0f 90       	pop	r0
- 174:	0f 90       	pop	r0
- 176:	df 91       	pop	r29
- 178:	cf 91       	pop	r28
- 17a:	1f 91       	pop	r17
- 17c:	ff 90       	pop	r15
- 17e:	ef 90       	pop	r14
- 180:	08 95       	ret
+ 15c:	0f 90       	pop	r0
+ 15e:	0f 90       	pop	r0
+ 160:	df 91       	pop	r29
+ 162:	cf 91       	pop	r28
+ 164:	1f 91       	pop	r17
+ 166:	ff 90       	pop	r15
+ 168:	ef 90       	pop	r14
+ 16a:	08 95       	ret
 
-00000182 <NRF24_WriteByte>:
+0000016c <NRF24_WriteByte>:
 
 void NRF24_WriteByte(uint8_t cmd, uint8_t value)
 {
- 182:	cf 93       	push	r28
- 184:	df 93       	push	r29
- 186:	1f 92       	push	r1
- 188:	cd b7       	in	r28, 0x3d	; 61
- 18a:	de b7       	in	r29, 0x3e	; 62
+ 16c:	cf 93       	push	r28
+ 16e:	df 93       	push	r29
+ 170:	1f 92       	push	r1
+ 172:	cd b7       	in	r28, 0x3d	; 61
+ 174:	de b7       	in	r29, 0x3e	; 62
 	NRF24_SET_CSN_LOW;
- 18c:	db 98       	cbi	0x1b, 3	; 27
+ 176:	db 98       	cbi	0x1b, 3	; 27
 	SPI_WriteReadByte(cmd);
- 18e:	69 83       	std	Y+1, r22	; 0x01
- 190:	cc df       	rcall	.-104    	; 0x12a <SPI_WriteReadByte>
+ 178:	69 83       	std	Y+1, r22	; 0x01
+ 17a:	cc df       	rcall	.-104    	; 0x114 <SPI_WriteReadByte>
 	SPI_WriteReadByte(value);
- 192:	69 81       	ldd	r22, Y+1	; 0x01
- 194:	86 2f       	mov	r24, r22
- 196:	c9 df       	rcall	.-110    	; 0x12a <SPI_WriteReadByte>
+ 17c:	69 81       	ldd	r22, Y+1	; 0x01
+ 17e:	86 2f       	mov	r24, r22
+ 180:	c9 df       	rcall	.-110    	; 0x114 <SPI_WriteReadByte>
 	NRF24_SET_CSN_HI;
- 198:	db 9a       	sbi	0x1b, 3	; 27
+ 182:	db 9a       	sbi	0x1b, 3	; 27
 }
- 19a:	0f 90       	pop	r0
- 19c:	df 91       	pop	r29
- 19e:	cf 91       	pop	r28
- 1a0:	08 95       	ret
+ 184:	0f 90       	pop	r0
+ 186:	df 91       	pop	r29
+ 188:	cf 91       	pop	r28
+ 18a:	08 95       	ret
 
-000001a2 <NRF24_WriteArray>:
+0000018c <NRF24_WriteArray>:
 
 void NRF24_WriteArray(int8_t cmd, uint8_t *array, uint8_t len)
 {
- 1a2:	ef 92       	push	r14
- 1a4:	ff 92       	push	r15
- 1a6:	1f 93       	push	r17
- 1a8:	cf 93       	push	r28
- 1aa:	df 93       	push	r29
- 1ac:	00 d0       	rcall	.+0      	; 0x1ae <NRF24_WriteArray+0xc>
- 1ae:	cd b7       	in	r28, 0x3d	; 61
- 1b0:	de b7       	in	r29, 0x3e	; 62
- 1b2:	14 2f       	mov	r17, r20
+ 18c:	ef 92       	push	r14
+ 18e:	ff 92       	push	r15
+ 190:	1f 93       	push	r17
+ 192:	cf 93       	push	r28
+ 194:	df 93       	push	r29
+ 196:	00 d0       	rcall	.+0      	; 0x198 <NRF24_WriteArray+0xc>
+ 198:	cd b7       	in	r28, 0x3d	; 61
+ 19a:	de b7       	in	r29, 0x3e	; 62
+ 19c:	14 2f       	mov	r17, r20
 	NRF24_SET_CSN_LOW;
- 1b4:	db 98       	cbi	0x1b, 3	; 27
+ 19e:	db 98       	cbi	0x1b, 3	; 27
 	SPI_WriteReadByte(cmd);
- 1b6:	69 83       	std	Y+1, r22	; 0x01
- 1b8:	7a 83       	std	Y+2, r23	; 0x02
- 1ba:	b7 df       	rcall	.-146    	; 0x12a <SPI_WriteReadByte>
+ 1a0:	69 83       	std	Y+1, r22	; 0x01
+ 1a2:	7a 83       	std	Y+2, r23	; 0x02
+ 1a4:	b7 df       	rcall	.-146    	; 0x114 <SPI_WriteReadByte>
 	while(len-- > 0) SPI_WriteReadByte(*array++);
- 1bc:	69 81       	ldd	r22, Y+1	; 0x01
- 1be:	e6 2e       	mov	r14, r22
- 1c0:	7a 81       	ldd	r23, Y+2	; 0x02
- 1c2:	f7 2e       	mov	r15, r23
- 1c4:	16 0f       	add	r17, r22
- 1c6:	1e 15       	cp	r17, r14
- 1c8:	29 f0       	breq	.+10     	; 0x1d4 <NRF24_WriteArray+0x32>
- 1ca:	f7 01       	movw	r30, r14
- 1cc:	81 91       	ld	r24, Z+
- 1ce:	7f 01       	movw	r14, r30
- 1d0:	ac df       	rcall	.-168    	; 0x12a <SPI_WriteReadByte>
- 1d2:	f9 cf       	rjmp	.-14     	; 0x1c6 <NRF24_WriteArray+0x24>
+ 1a6:	69 81       	ldd	r22, Y+1	; 0x01
+ 1a8:	e6 2e       	mov	r14, r22
+ 1aa:	7a 81       	ldd	r23, Y+2	; 0x02
+ 1ac:	f7 2e       	mov	r15, r23
+ 1ae:	16 0f       	add	r17, r22
+ 1b0:	1e 15       	cp	r17, r14
+ 1b2:	29 f0       	breq	.+10     	; 0x1be <NRF24_WriteArray+0x32>
+ 1b4:	f7 01       	movw	r30, r14
+ 1b6:	81 91       	ld	r24, Z+
+ 1b8:	7f 01       	movw	r14, r30
+ 1ba:	ac df       	rcall	.-168    	; 0x114 <SPI_WriteReadByte>
+ 1bc:	f9 cf       	rjmp	.-14     	; 0x1b0 <NRF24_WriteArray+0x24>
 	NRF24_SET_CSN_HI;
- 1d4:	db 9a       	sbi	0x1b, 3	; 27
+ 1be:	db 9a       	sbi	0x1b, 3	; 27
 }
- 1d6:	0f 90       	pop	r0
- 1d8:	0f 90       	pop	r0
- 1da:	df 91       	pop	r29
- 1dc:	cf 91       	pop	r28
- 1de:	1f 91       	pop	r17
- 1e0:	ff 90       	pop	r15
- 1e2:	ef 90       	pop	r14
- 1e4:	08 95       	ret
+ 1c0:	0f 90       	pop	r0
+ 1c2:	0f 90       	pop	r0
+ 1c4:	df 91       	pop	r29
+ 1c6:	cf 91       	pop	r28
+ 1c8:	1f 91       	pop	r17
+ 1ca:	ff 90       	pop	r15
+ 1cc:	ef 90       	pop	r14
+ 1ce:	08 95       	ret
 
-000001e6 <NRF24_SendCommand>:
+000001d0 <NRF24_SendCommand>:
 
 uint8_t NRF24_SendCommand(uint8_t cmd) // Send command & receive status
 {
 	NRF24_SET_CSN_LOW;
- 1e6:	db 98       	cbi	0x1b, 3	; 27
+ 1d0:	db 98       	cbi	0x1b, 3	; 27
 	uint8_t result = SPI_WriteReadByte(cmd);
- 1e8:	a0 df       	rcall	.-192    	; 0x12a <SPI_WriteReadByte>
+ 1d2:	a0 df       	rcall	.-192    	; 0x114 <SPI_WriteReadByte>
 	NRF24_SET_CSN_HI;
- 1ea:	db 9a       	sbi	0x1b, 3	; 27
+ 1d4:	db 9a       	sbi	0x1b, 3	; 27
 	return result;
 }
- 1ec:	08 95       	ret
+ 1d6:	08 95       	ret
 
-000001ee <NRF24_SetMode>:
+000001d8 <NRF24_SetMode>:
+	if(idx > IDX_MAX) idx = 0;
+	EEPROM_write(EPROM_SaveRegIdx, idx);
+}
 
 void NRF24_SetMode(uint8_t mode) // Set mode in CONFIG reg
 {
- 1ee:	cf 93       	push	r28
- 1f0:	c8 2f       	mov	r28, r24
+ 1d8:	cf 93       	push	r28
+ 1da:	c8 2f       	mov	r28, r24
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_CONFIG, NRF24_CONFIG | (1<<NRF24_BIT_PWR_UP) | mode);
- 1f2:	68 2f       	mov	r22, r24
- 1f4:	6e 67       	ori	r22, 0x7E	; 126
- 1f6:	80 e2       	ldi	r24, 0x20	; 32
- 1f8:	c4 df       	rcall	.-120    	; 0x182 <NRF24_WriteByte>
+ 1dc:	68 2f       	mov	r22, r24
+ 1de:	6e 67       	ori	r22, 0x7E	; 126
+ 1e0:	80 e2       	ldi	r24, 0x20	; 32
+ 1e2:	c4 df       	rcall	.-120    	; 0x16c <NRF24_WriteByte>
 	if(mode & NRF24_ReceiveMode) { // Receive mode
- 1fa:	c0 ff       	sbrs	r28, 0
- 1fc:	04 c0       	rjmp	.+8      	; 0x206 <NRF24_SetMode+0x18>
+ 1e4:	c0 ff       	sbrs	r28, 0
+ 1e6:	04 c0       	rjmp	.+8      	; 0x1f0 <NRF24_SetMode+0x18>
 		//NRF24_SendCommand(NRF24_CMD_FLUSH_RX);
 		NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR) | (1<<NRF24_BIT_TX_DS) | (1<<NRF24_BIT_MAX_RT)); // clear status
- 1fe:	60 e7       	ldi	r22, 0x70	; 112
- 200:	87 e2       	ldi	r24, 0x27	; 39
- 202:	bf df       	rcall	.-130    	; 0x182 <NRF24_WriteByte>
+ 1e8:	60 e7       	ldi	r22, 0x70	; 112
+ 1ea:	87 e2       	ldi	r24, 0x27	; 39
+ 1ec:	bf df       	rcall	.-130    	; 0x16c <NRF24_WriteByte>
 		NRF24_SET_CE_HI; // start receiving
- 204:	da 9a       	sbi	0x1b, 2	; 27
+ 1ee:	da 9a       	sbi	0x1b, 2	; 27
 	}
 }
- 206:	cf 91       	pop	r28
- 208:	08 95       	ret
+ 1f0:	cf 91       	pop	r28
+ 1f2:	08 95       	ret
 
-0000020a <NRF24_TransmitShockBurst>:
+000001f4 <NRF24_TransmitShockBurst>:
 }
 
 // Transmit payload, than receive payload.
 // return 0 if success, 1 - Payload not returned, 2 - Max retransmit reached, 3 - return payload len error, 4 - module not responding.
 uint8_t NRF24_TransmitShockBurst(uint8_t send_len, uint8_t receive_len)
 {
- 20a:	0f 93       	push	r16
- 20c:	1f 93       	push	r17
- 20e:	cf 93       	push	r28
- 210:	df 93       	push	r29
- 212:	1f 92       	push	r1
- 214:	cd b7       	in	r28, 0x3d	; 61
- 216:	de b7       	in	r29, 0x3e	; 62
- 218:	48 2f       	mov	r20, r24
- 21a:	06 2f       	mov	r16, r22
+ 1f4:	ff 92       	push	r15
+ 1f6:	0f 93       	push	r16
+ 1f8:	1f 93       	push	r17
+ 1fa:	cf 93       	push	r28
+ 1fc:	df 93       	push	r29
+ 1fe:	1f 92       	push	r1
+ 200:	cd b7       	in	r28, 0x3d	; 61
+ 202:	de b7       	in	r29, 0x3e	; 62
+ 204:	48 2f       	mov	r20, r24
+ 206:	16 2f       	mov	r17, r22
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR) | (1<<NRF24_BIT_TX_DS) | (1<<NRF24_BIT_MAX_RT)); // clear status
- 21c:	60 e7       	ldi	r22, 0x70	; 112
- 21e:	87 e2       	ldi	r24, 0x27	; 39
- 220:	49 83       	std	Y+1, r20	; 0x01
- 222:	af df       	rcall	.-162    	; 0x182 <NRF24_WriteByte>
+ 208:	60 e7       	ldi	r22, 0x70	; 112
+ 20a:	87 e2       	ldi	r24, 0x27	; 39
+ 20c:	49 83       	std	Y+1, r20	; 0x01
+ 20e:	ae df       	rcall	.-164    	; 0x16c <NRF24_WriteByte>
 	NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
- 224:	81 ee       	ldi	r24, 0xE1	; 225
- 226:	df df       	rcall	.-66     	; 0x1e6 <NRF24_SendCommand>
+ 210:	81 ee       	ldi	r24, 0xE1	; 225
+ 212:	de df       	rcall	.-68     	; 0x1d0 <NRF24_SendCommand>
 	NRF24_WriteArray(NRF24_CMD_W_TX_PAYLOAD, NRF24_Buffer, send_len);
- 228:	49 81       	ldd	r20, Y+1	; 0x01
- 22a:	65 e7       	ldi	r22, 0x75	; 117
- 22c:	70 e0       	ldi	r23, 0x00	; 0
- 22e:	80 ea       	ldi	r24, 0xA0	; 160
- 230:	b8 df       	rcall	.-144    	; 0x1a2 <NRF24_WriteArray>
+ 214:	49 81       	ldd	r20, Y+1	; 0x01
+ 216:	64 e7       	ldi	r22, 0x74	; 116
+ 218:	70 e0       	ldi	r23, 0x00	; 0
+ 21a:	80 ea       	ldi	r24, 0xA0	; 160
+ 21c:	b7 df       	rcall	.-146    	; 0x18c <NRF24_WriteArray>
 	NRF24_SET_CE_HI; // Start transmission
- 232:	da 9a       	sbi	0x1b, 2	; 27
+ 21e:	da 9a       	sbi	0x1b, 2	; 27
 	uint8_t st = 0, i;
 	for(i = 1; i != 0; i++)
- 234:	11 e0       	ldi	r17, 0x01	; 1
+ 220:	01 e0       	ldi	r16, 0x01	; 1
 	{
 		Delay10us(10);
- 236:	8a e0       	ldi	r24, 0x0A	; 10
- 238:	48 df       	rcall	.-368    	; 0xca <Delay10us>
+ 222:	8a e0       	ldi	r24, 0x0A	; 10
+ 224:	47 df       	rcall	.-370    	; 0xb4 <Delay10us>
 		st = NRF24_SendCommand(NRF24_CMD_NOP);
- 23a:	8f ef       	ldi	r24, 0xFF	; 255
- 23c:	d4 df       	rcall	.-88     	; 0x1e6 <NRF24_SendCommand>
+ 226:	8f ef       	ldi	r24, 0xFF	; 255
+ 228:	d3 df       	rcall	.-90     	; 0x1d0 <NRF24_SendCommand>
+ 22a:	f8 2e       	mov	r15, r24
 		if(st & ((1<<NRF24_BIT_MAX_RT) | (1<<NRF24_BIT_TX_DS))) break; // stop if sent or max retransmit reached
- 23e:	98 2f       	mov	r25, r24
- 240:	90 73       	andi	r25, 0x30	; 48
- 242:	11 f4       	brne	.+4      	; 0x248 <NRF24_TransmitShockBurst+0x3e>
+ 22c:	80 73       	andi	r24, 0x30	; 48
+ 22e:	11 f4       	brne	.+4      	; 0x234 <NRF24_TransmitShockBurst+0x40>
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR) | (1<<NRF24_BIT_TX_DS) | (1<<NRF24_BIT_MAX_RT)); // clear status
 	NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
 	NRF24_WriteArray(NRF24_CMD_W_TX_PAYLOAD, NRF24_Buffer, send_len);
 	NRF24_SET_CE_HI; // Start transmission
 	uint8_t st = 0, i;
 	for(i = 1; i != 0; i++)
- 244:	1f 5f       	subi	r17, 0xFF	; 255
- 246:	b9 f7       	brne	.-18     	; 0x236 <NRF24_TransmitShockBurst+0x2c>
+ 230:	0f 5f       	subi	r16, 0xFF	; 255
+ 232:	b9 f7       	brne	.-18     	; 0x222 <NRF24_TransmitShockBurst+0x2e>
 	{
 		Delay10us(10);
 		st = NRF24_SendCommand(NRF24_CMD_NOP);
 		if(st & ((1<<NRF24_BIT_MAX_RT) | (1<<NRF24_BIT_TX_DS))) break; // stop if sent or max retransmit reached
 	}
 	NRF24_SET_CE_LOW;
- 248:	da 98       	cbi	0x1b, 2	; 27
+ 234:	da 98       	cbi	0x1b, 2	; 27
 	if(i == 0) return 4;
- 24a:	11 23       	and	r17, r17
- 24c:	d1 f0       	breq	.+52     	; 0x282 <NRF24_TransmitShockBurst+0x78>
-	if(st & (1<<NRF24_BIT_MAX_RT)) return 2;
- 24e:	18 2f       	mov	r17, r24
- 250:	10 71       	andi	r17, 0x10	; 16
- 252:	84 fd       	sbrc	r24, 4
- 254:	18 c0       	rjmp	.+48     	; 0x286 <NRF24_TransmitShockBurst+0x7c>
-	if(st & (1<<NRF24_BIT_RX_DR)) {
- 256:	86 ff       	sbrs	r24, 6
- 258:	18 c0       	rjmp	.+48     	; 0x28a <NRF24_TransmitShockBurst+0x80>
+ 236:	00 23       	and	r16, r16
+ 238:	21 f1       	breq	.+72     	; 0x282 <NRF24_TransmitShockBurst+0x8e>
+	// debug
+	//NRF_save_registers(st, i);
+	//
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS, NRF24_Buffer, 1); // get FIFO_STATUS
+ 23a:	41 e0       	ldi	r20, 0x01	; 1
+ 23c:	64 e7       	ldi	r22, 0x74	; 116
+ 23e:	70 e0       	ldi	r23, 0x00	; 0
+ 240:	87 e1       	ldi	r24, 0x17	; 23
+ 242:	71 df       	rcall	.-286    	; 0x126 <NRF24_ReadArray>
+	if((st & (1<<NRF24_BIT_RX_DR)) || (NRF24_Buffer[0] & (1<<NRF24_BIT_RX_EMPTY)) == 0) {
+ 244:	f6 fc       	sbrc	r15, 6
+ 246:	04 c0       	rjmp	.+8      	; 0x250 <NRF24_TransmitShockBurst+0x5c>
+ 248:	80 91 74 00 	lds	r24, 0x0074
+ 24c:	80 fd       	sbrc	r24, 0
+ 24e:	15 c0       	rjmp	.+42     	; 0x27a <NRF24_TransmitShockBurst+0x86>
 		NRF24_Buffer[0] = 0xFF;
- 25a:	8f ef       	ldi	r24, 0xFF	; 255
- 25c:	80 93 75 00 	sts	0x0075, r24
+ 250:	8f ef       	ldi	r24, 0xFF	; 255
+ 252:	80 93 74 00 	sts	0x0074, r24
 		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
- 260:	41 e0       	ldi	r20, 0x01	; 1
- 262:	65 e7       	ldi	r22, 0x75	; 117
- 264:	70 e0       	ldi	r23, 0x00	; 0
- 266:	80 e6       	ldi	r24, 0x60	; 96
- 268:	69 df       	rcall	.-302    	; 0x13c <NRF24_ReadArray>
+ 256:	41 e0       	ldi	r20, 0x01	; 1
+ 258:	64 e7       	ldi	r22, 0x74	; 116
+ 25a:	70 e0       	ldi	r23, 0x00	; 0
+ 25c:	80 e6       	ldi	r24, 0x60	; 96
+ 25e:	63 df       	rcall	.-314    	; 0x126 <NRF24_ReadArray>
 		if(NRF24_Buffer[0] > 32 || NRF24_Buffer[0] < receive_len) return 3;
- 26a:	80 91 75 00 	lds	r24, 0x0075
- 26e:	81 32       	cpi	r24, 0x21	; 33
- 270:	70 f4       	brcc	.+28     	; 0x28e <NRF24_TransmitShockBurst+0x84>
- 272:	80 17       	cp	r24, r16
- 274:	60 f0       	brcs	.+24     	; 0x28e <NRF24_TransmitShockBurst+0x84>
+ 260:	80 91 74 00 	lds	r24, 0x0074
+ 264:	81 32       	cpi	r24, 0x21	; 33
+ 266:	78 f4       	brcc	.+30     	; 0x286 <NRF24_TransmitShockBurst+0x92>
+ 268:	81 17       	cp	r24, r17
+ 26a:	68 f0       	brcs	.+26     	; 0x286 <NRF24_TransmitShockBurst+0x92>
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, NRF24_Buffer, receive_len); // get RX payload len
- 276:	40 2f       	mov	r20, r16
- 278:	65 e7       	ldi	r22, 0x75	; 117
- 27a:	70 e0       	ldi	r23, 0x00	; 0
- 27c:	81 e6       	ldi	r24, 0x61	; 97
- 27e:	5e df       	rcall	.-324    	; 0x13c <NRF24_ReadArray>
+ 26c:	41 2f       	mov	r20, r17
+ 26e:	64 e7       	ldi	r22, 0x74	; 116
+ 270:	70 e0       	ldi	r23, 0x00	; 0
+ 272:	81 e6       	ldi	r24, 0x61	; 97
+ 274:	58 df       	rcall	.-336    	; 0x126 <NRF24_ReadArray>
 		return  0;
- 280:	07 c0       	rjmp	.+14     	; 0x290 <NRF24_TransmitShockBurst+0x86>
+ 276:	80 e0       	ldi	r24, 0x00	; 0
+ 278:	09 c0       	rjmp	.+18     	; 0x28c <NRF24_TransmitShockBurst+0x98>
+	} else {
+		if(st & (1<<NRF24_BIT_MAX_RT)) return 2;
+ 27a:	f4 fe       	sbrs	r15, 4
+ 27c:	06 c0       	rjmp	.+12     	; 0x28a <NRF24_TransmitShockBurst+0x96>
+ 27e:	82 e0       	ldi	r24, 0x02	; 2
+ 280:	05 c0       	rjmp	.+10     	; 0x28c <NRF24_TransmitShockBurst+0x98>
 		Delay10us(10);
 		st = NRF24_SendCommand(NRF24_CMD_NOP);
 		if(st & ((1<<NRF24_BIT_MAX_RT) | (1<<NRF24_BIT_TX_DS))) break; // stop if sent or max retransmit reached
 	}
 	NRF24_SET_CE_LOW;
 	if(i == 0) return 4;
- 282:	14 e0       	ldi	r17, 0x04	; 4
- 284:	05 c0       	rjmp	.+10     	; 0x290 <NRF24_TransmitShockBurst+0x86>
-	if(st & (1<<NRF24_BIT_MAX_RT)) return 2;
- 286:	12 e0       	ldi	r17, 0x02	; 2
- 288:	03 c0       	rjmp	.+6      	; 0x290 <NRF24_TransmitShockBurst+0x86>
+ 282:	84 e0       	ldi	r24, 0x04	; 4
+ 284:	03 c0       	rjmp	.+6      	; 0x28c <NRF24_TransmitShockBurst+0x98>
+	//
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS, NRF24_Buffer, 1); // get FIFO_STATUS
+	if((st & (1<<NRF24_BIT_RX_DR)) || (NRF24_Buffer[0] & (1<<NRF24_BIT_RX_EMPTY)) == 0) {
 		NRF24_Buffer[0] = 0xFF;
 		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
 		if(NRF24_Buffer[0] > 32 || NRF24_Buffer[0] < receive_len) return 3;
+ 286:	83 e0       	ldi	r24, 0x03	; 3
+ 288:	01 c0       	rjmp	.+2      	; 0x28c <NRF24_TransmitShockBurst+0x98>
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, NRF24_Buffer, receive_len); // get RX payload len
 		return  0;
-	} else return 1;
- 28a:	11 e0       	ldi	r17, 0x01	; 1
- 28c:	01 c0       	rjmp	.+2      	; 0x290 <NRF24_TransmitShockBurst+0x86>
-	if(i == 0) return 4;
-	if(st & (1<<NRF24_BIT_MAX_RT)) return 2;
-	if(st & (1<<NRF24_BIT_RX_DR)) {
-		NRF24_Buffer[0] = 0xFF;
-		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
-		if(NRF24_Buffer[0] > 32 || NRF24_Buffer[0] < receive_len) return 3;
- 28e:	13 e0       	ldi	r17, 0x03	; 3
-		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, NRF24_Buffer, receive_len); // get RX payload len
-		return  0;
-	} else return 1;
+	} else {
+		if(st & (1<<NRF24_BIT_MAX_RT)) return 2;
+		return 1;
+ 28a:	81 e0       	ldi	r24, 0x01	; 1
+	}
 }
- 290:	81 2f       	mov	r24, r17
- 292:	0f 90       	pop	r0
- 294:	df 91       	pop	r29
- 296:	cf 91       	pop	r28
- 298:	1f 91       	pop	r17
- 29a:	0f 91       	pop	r16
- 29c:	08 95       	ret
+ 28c:	0f 90       	pop	r0
+ 28e:	df 91       	pop	r29
+ 290:	cf 91       	pop	r28
+ 292:	1f 91       	pop	r17
+ 294:	0f 91       	pop	r16
+ 296:	ff 90       	pop	r15
+ 298:	08 95       	ret
 
-0000029e <NRF24_SetAddresses>:
+0000029a <NRF24_SetAddresses>:
 
 uint8_t NRF24_SetAddresses(uint8_t addr_LSB) // Set addresses: NRF24_BASE_ADDR + addr_LSB, return 1 if success
 {
- 29e:	cf 93       	push	r28
- 2a0:	c8 2f       	mov	r28, r24
+ 29a:	cf 93       	push	r28
+ 29c:	c8 2f       	mov	r28, r24
 	NRF24_Buffer[0] = addr_LSB;
- 2a2:	80 93 75 00 	sts	0x0075, r24
+ 29e:	80 93 74 00 	sts	0x0074, r24
 	memcpy_P(NRF24_Buffer + 1, NRF24_BASE_ADDR, sizeof(NRF24_BASE_ADDR)/sizeof(NRF24_BASE_ADDR[0]));
- 2a6:	42 e0       	ldi	r20, 0x02	; 2
- 2a8:	50 e0       	ldi	r21, 0x00	; 0
- 2aa:	62 e2       	ldi	r22, 0x22	; 34
- 2ac:	70 e0       	ldi	r23, 0x00	; 0
- 2ae:	86 e7       	ldi	r24, 0x76	; 118
- 2b0:	90 e0       	ldi	r25, 0x00	; 0
- 2b2:	28 d3       	rcall	.+1616   	; 0x904 <memcpy_P>
+ 2a2:	42 e0       	ldi	r20, 0x02	; 2
+ 2a4:	50 e0       	ldi	r21, 0x00	; 0
+ 2a6:	62 e2       	ldi	r22, 0x22	; 34
+ 2a8:	70 e0       	ldi	r23, 0x00	; 0
+ 2aa:	85 e7       	ldi	r24, 0x75	; 117
+ 2ac:	90 e0       	ldi	r25, 0x00	; 0
+ 2ae:	05 d3       	rcall	.+1546   	; 0x8ba <memcpy_P>
 	NRF24_WriteArray(NRF24_CMD_W_REGISTER | NRF24_REG_RX_ADDR_P0, NRF24_Buffer, NRF24_ADDRESS_LEN);
- 2b4:	43 e0       	ldi	r20, 0x03	; 3
- 2b6:	65 e7       	ldi	r22, 0x75	; 117
- 2b8:	70 e0       	ldi	r23, 0x00	; 0
- 2ba:	8a e2       	ldi	r24, 0x2A	; 42
- 2bc:	72 df       	rcall	.-284    	; 0x1a2 <NRF24_WriteArray>
+ 2b0:	43 e0       	ldi	r20, 0x03	; 3
+ 2b2:	64 e7       	ldi	r22, 0x74	; 116
+ 2b4:	70 e0       	ldi	r23, 0x00	; 0
+ 2b6:	8a e2       	ldi	r24, 0x2A	; 42
+ 2b8:	69 df       	rcall	.-302    	; 0x18c <NRF24_WriteArray>
 	NRF24_WriteArray(NRF24_CMD_W_REGISTER | NRF24_REG_TX_ADDR, NRF24_Buffer, NRF24_ADDRESS_LEN);
- 2be:	43 e0       	ldi	r20, 0x03	; 3
- 2c0:	65 e7       	ldi	r22, 0x75	; 117
- 2c2:	70 e0       	ldi	r23, 0x00	; 0
- 2c4:	80 e3       	ldi	r24, 0x30	; 48
- 2c6:	6d df       	rcall	.-294    	; 0x1a2 <NRF24_WriteArray>
+ 2ba:	43 e0       	ldi	r20, 0x03	; 3
+ 2bc:	64 e7       	ldi	r22, 0x74	; 116
+ 2be:	70 e0       	ldi	r23, 0x00	; 0
+ 2c0:	80 e3       	ldi	r24, 0x30	; 48
+ 2c2:	64 df       	rcall	.-312    	; 0x18c <NRF24_WriteArray>
 	NRF24_ReadArray(NRF24_CMD_R_REGISTER | NRF24_REG_TX_ADDR, NRF24_Buffer, NRF24_ADDRESS_LEN);
- 2c8:	43 e0       	ldi	r20, 0x03	; 3
- 2ca:	65 e7       	ldi	r22, 0x75	; 117
- 2cc:	70 e0       	ldi	r23, 0x00	; 0
- 2ce:	80 e1       	ldi	r24, 0x10	; 16
- 2d0:	35 df       	rcall	.-406    	; 0x13c <NRF24_ReadArray>
+ 2c4:	43 e0       	ldi	r20, 0x03	; 3
+ 2c6:	64 e7       	ldi	r22, 0x74	; 116
+ 2c8:	70 e0       	ldi	r23, 0x00	; 0
+ 2ca:	80 e1       	ldi	r24, 0x10	; 16
+ 2cc:	2c df       	rcall	.-424    	; 0x126 <NRF24_ReadArray>
 	return NRF24_Buffer[0] == addr_LSB;
- 2d2:	81 e0       	ldi	r24, 0x01	; 1
- 2d4:	90 91 75 00 	lds	r25, 0x0075
- 2d8:	9c 13       	cpse	r25, r28
- 2da:	80 e0       	ldi	r24, 0x00	; 0
+ 2ce:	81 e0       	ldi	r24, 0x01	; 1
+ 2d0:	90 91 74 00 	lds	r25, 0x0074
+ 2d4:	9c 13       	cpse	r25, r28
+ 2d6:	80 e0       	ldi	r24, 0x00	; 0
 }
- 2dc:	cf 91       	pop	r28
- 2de:	08 95       	ret
+ 2d8:	cf 91       	pop	r28
+ 2da:	08 95       	ret
 
-000002e0 <NRF24_Powerdown>:
-
-void NRF24_Powerdown(void)
-{
+000002dc <NRF24_init>:
 	NRF24_SET_CE_LOW;
- 2e0:	da 98       	cbi	0x1b, 2	; 27
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_CONFIG, NRF24_CONFIG); // Power down
- 2e2:	6c e7       	ldi	r22, 0x7C	; 124
- 2e4:	80 e2       	ldi	r24, 0x20	; 32
- 2e6:	4d cf       	rjmp	.-358    	; 0x182 <NRF24_WriteByte>
-
-000002e8 <NRF24_init>:
 }
 
 void NRF24_init(uint8_t channel) // After init transmit must be delayed
 {
- 2e8:	1f 93       	push	r17
- 2ea:	cf 93       	push	r28
- 2ec:	df 93       	push	r29
- 2ee:	18 2f       	mov	r17, r24
+ 2dc:	1f 93       	push	r17
+ 2de:	cf 93       	push	r28
+ 2e0:	df 93       	push	r29
+ 2e2:	18 2f       	mov	r17, r24
 	NRF24_SET_CSN_HI;
- 2f0:	db 9a       	sbi	0x1b, 3	; 27
- 2f2:	c4 e2       	ldi	r28, 0x24	; 36
- 2f4:	d0 e0       	ldi	r29, 0x00	; 0
+ 2e4:	db 9a       	sbi	0x1b, 3	; 27
+ 2e6:	c4 e2       	ldi	r28, 0x24	; 36
+ 2e8:	d0 e0       	ldi	r29, 0x00	; 0
 	uint8_t i = 0, c, v;
 	do {
 		c = pgm_read_byte(&NRF24_INIT_DATA[i++]);
- 2f6:	fe 01       	movw	r30, r28
- 2f8:	84 91       	lpm	r24, Z
- 2fa:	31 96       	adiw	r30, 0x01	; 1
+ 2ea:	fe 01       	movw	r30, r28
+ 2ec:	84 91       	lpm	r24, Z
+ 2ee:	31 96       	adiw	r30, 0x01	; 1
 		v = pgm_read_byte(&NRF24_INIT_DATA[i++]);
- 2fc:	64 91       	lpm	r22, Z
+ 2f0:	64 91       	lpm	r22, Z
 		NRF24_WriteByte(c, v); 
- 2fe:	41 df       	rcall	.-382    	; 0x182 <NRF24_WriteByte>
- 300:	22 96       	adiw	r28, 0x02	; 2
+ 2f2:	3c df       	rcall	.-392    	; 0x16c <NRF24_WriteByte>
+ 2f4:	22 96       	adiw	r28, 0x02	; 2
 	} while(i < sizeof(NRF24_INIT_DATA));
- 302:	f0 e0       	ldi	r31, 0x00	; 0
- 304:	c2 33       	cpi	r28, 0x32	; 50
- 306:	df 07       	cpc	r29, r31
- 308:	b1 f7       	brne	.-20     	; 0x2f6 <NRF24_init+0xe>
+ 2f6:	f0 e0       	ldi	r31, 0x00	; 0
+ 2f8:	c2 33       	cpi	r28, 0x32	; 50
+ 2fa:	df 07       	cpc	r29, r31
+ 2fc:	b1 f7       	brne	.-20     	; 0x2ea <NRF24_init+0xe>
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_RF_CH,	channel);
- 30a:	61 2f       	mov	r22, r17
- 30c:	85 e2       	ldi	r24, 0x25	; 37
+ 2fe:	61 2f       	mov	r22, r17
+ 300:	85 e2       	ldi	r24, 0x25	; 37
 }
- 30e:	df 91       	pop	r29
- 310:	cf 91       	pop	r28
- 312:	1f 91       	pop	r17
+ 302:	df 91       	pop	r29
+ 304:	cf 91       	pop	r28
+ 306:	1f 91       	pop	r17
 	do {
 		c = pgm_read_byte(&NRF24_INIT_DATA[i++]);
 		v = pgm_read_byte(&NRF24_INIT_DATA[i++]);
 		NRF24_WriteByte(c, v); 
 	} while(i < sizeof(NRF24_INIT_DATA));
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_RF_CH,	channel);
- 314:	36 cf       	rjmp	.-404    	; 0x182 <NRF24_WriteByte>
+ 308:	31 cf       	rjmp	.-414    	; 0x16c <NRF24_WriteByte>
 
-00000316 <__vector_11>:
+0000030a <__vector_11>:
+
 #define SETUP_WATCHDOG WDTCSR = (1<<WDCE) | (1<<WDE); WDTCSR = (1<<WDE) | (0<<WDIE) | (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0); //  Watchdog reset 1 s
 uint8_t LED_Warning = 0, LED_WarningOnCnt = 0, LED_WarningOffCnt = 0;
-uint8_t Timer = 0;
 
 ISR(TIM0_OVF_vect) // 0.10035 sec
 {
- 316:	1f 92       	push	r1
- 318:	0f 92       	push	r0
- 31a:	0f b6       	in	r0, 0x3f	; 63
- 31c:	0f 92       	push	r0
- 31e:	11 24       	eor	r1, r1
- 320:	2f 93       	push	r18
- 322:	3f 93       	push	r19
- 324:	4f 93       	push	r20
- 326:	8f 93       	push	r24
- 328:	9f 93       	push	r25
+ 30a:	1f 92       	push	r1
+ 30c:	0f 92       	push	r0
+ 30e:	0f b6       	in	r0, 0x3f	; 63
+ 310:	0f 92       	push	r0
+ 312:	11 24       	eor	r1, r1
+ 314:	2f 93       	push	r18
+ 316:	3f 93       	push	r19
+ 318:	4f 93       	push	r20
+ 31a:	8f 93       	push	r24
+ 31c:	9f 93       	push	r25
 	if(++TimerCntSec == 10) { // 1 sec
- 32a:	80 91 6a 00 	lds	r24, 0x006A
- 32e:	8f 5f       	subi	r24, 0xFF	; 255
- 330:	8a 30       	cpi	r24, 0x0A	; 10
- 332:	19 f0       	breq	.+6      	; 0x33a <__vector_11+0x24>
- 334:	80 93 6a 00 	sts	0x006A, r24
- 338:	0e c0       	rjmp	.+28     	; 0x356 <__vector_11+0x40>
+ 31e:	80 91 69 00 	lds	r24, 0x0069
+ 322:	8f 5f       	subi	r24, 0xFF	; 255
+ 324:	8a 30       	cpi	r24, 0x0A	; 10
+ 326:	19 f0       	breq	.+6      	; 0x32e <__vector_11+0x24>
+ 328:	80 93 69 00 	sts	0x0069, r24
+ 32c:	0e c0       	rjmp	.+28     	; 0x34a <__vector_11+0x40>
 		TimerCntSec = 0;
- 33a:	10 92 6a 00 	sts	0x006A, r1
+ 32e:	10 92 69 00 	sts	0x0069, r1
 		if(RequestCountdown) RequestCountdown--;
- 33e:	80 91 60 00 	lds	r24, 0x0060
- 342:	88 23       	and	r24, r24
- 344:	19 f0       	breq	.+6      	; 0x34c <__vector_11+0x36>
- 346:	81 50       	subi	r24, 0x01	; 1
- 348:	80 93 60 00 	sts	0x0060, r24
+ 332:	80 91 67 00 	lds	r24, 0x0067
+ 336:	88 23       	and	r24, r24
+ 338:	19 f0       	breq	.+6      	; 0x340 <__vector_11+0x36>
+ 33a:	81 50       	subi	r24, 0x01	; 1
+ 33c:	80 93 67 00 	sts	0x0067, r24
 		Timer++;
- 34c:	80 91 62 00 	lds	r24, 0x0062
- 350:	8f 5f       	subi	r24, 0xFF	; 255
- 352:	80 93 62 00 	sts	0x0062, r24
+ 340:	80 91 68 00 	lds	r24, 0x0068
+ 344:	8f 5f       	subi	r24, 0xFF	; 255
+ 346:	80 93 68 00 	sts	0x0068, r24
 	}
  	if(LED_WarningOnCnt) {
- 356:	80 91 64 00 	lds	r24, 0x0064
- 35a:	88 23       	and	r24, r24
- 35c:	39 f0       	breq	.+14     	; 0x36c <__vector_11+0x56>
+ 34a:	80 91 61 00 	lds	r24, 0x0061
+ 34e:	88 23       	and	r24, r24
+ 350:	39 f0       	breq	.+14     	; 0x360 <__vector_11+0x56>
 	 	LED1_ON;
- 35e:	d9 9a       	sbi	0x1b, 1	; 27
+ 352:	d9 9a       	sbi	0x1b, 1	; 27
 	 	LED_WarningOnCnt--;
- 360:	80 91 64 00 	lds	r24, 0x0064
- 364:	81 50       	subi	r24, 0x01	; 1
- 366:	80 93 64 00 	sts	0x0064, r24
- 36a:	1a c0       	rjmp	.+52     	; 0x3a0 <__vector_11+0x8a>
+ 354:	80 91 61 00 	lds	r24, 0x0061
+ 358:	81 50       	subi	r24, 0x01	; 1
+ 35a:	80 93 61 00 	sts	0x0061, r24
+ 35e:	1a c0       	rjmp	.+52     	; 0x394 <__vector_11+0x8a>
 	} else if(LED_WarningOffCnt) {
- 36c:	80 91 63 00 	lds	r24, 0x0063
- 370:	88 23       	and	r24, r24
- 372:	29 f0       	breq	.+10     	; 0x37e <__vector_11+0x68>
+ 360:	80 91 60 00 	lds	r24, 0x0060
+ 364:	88 23       	and	r24, r24
+ 366:	29 f0       	breq	.+10     	; 0x372 <__vector_11+0x68>
 	 	LED1_OFF;
- 374:	d9 98       	cbi	0x1b, 1	; 27
+ 368:	d9 98       	cbi	0x1b, 1	; 27
 	 	LED_WarningOffCnt--;
- 376:	80 91 63 00 	lds	r24, 0x0063
- 37a:	81 50       	subi	r24, 0x01	; 1
- 37c:	0f c0       	rjmp	.+30     	; 0x39c <__vector_11+0x86>
+ 36a:	80 91 60 00 	lds	r24, 0x0060
+ 36e:	81 50       	subi	r24, 0x01	; 1
+ 370:	0f c0       	rjmp	.+30     	; 0x390 <__vector_11+0x86>
 	} else if(LED_Warning) { // short flashes
- 37e:	80 91 65 00 	lds	r24, 0x0065
- 382:	88 23       	and	r24, r24
- 384:	69 f0       	breq	.+26     	; 0x3a0 <__vector_11+0x8a>
+ 372:	80 91 62 00 	lds	r24, 0x0062
+ 376:	88 23       	and	r24, r24
+ 378:	69 f0       	breq	.+26     	; 0x394 <__vector_11+0x8a>
 	 	LED_WarningOffCnt = 3;
- 386:	93 e0       	ldi	r25, 0x03	; 3
- 388:	90 93 63 00 	sts	0x0063, r25
+ 37a:	93 e0       	ldi	r25, 0x03	; 3
+ 37c:	90 93 60 00 	sts	0x0060, r25
 	 	LED_WarningOnCnt = 3;
- 38c:	90 93 64 00 	sts	0x0064, r25
+ 380:	90 93 61 00 	sts	0x0061, r25
 	 	if(--LED_Warning == 0) LED_WarningOffCnt = 5;
- 390:	81 50       	subi	r24, 0x01	; 1
- 392:	80 93 65 00 	sts	0x0065, r24
- 396:	81 11       	cpse	r24, r1
- 398:	03 c0       	rjmp	.+6      	; 0x3a0 <__vector_11+0x8a>
- 39a:	85 e0       	ldi	r24, 0x05	; 5
- 39c:	80 93 63 00 	sts	0x0063, r24
+ 384:	81 50       	subi	r24, 0x01	; 1
+ 386:	80 93 62 00 	sts	0x0062, r24
+ 38a:	81 11       	cpse	r24, r1
+ 38c:	03 c0       	rjmp	.+6      	; 0x394 <__vector_11+0x8a>
+ 38e:	85 e0       	ldi	r24, 0x05	; 5
+ 390:	80 93 60 00 	sts	0x0060, r24
  	}
-	if(FanSpeed != SpeedSet && setup_mode == 0) {
- 3a0:	80 91 74 00 	lds	r24, 0x0074
- 3a4:	90 91 73 00 	lds	r25, 0x0073
- 3a8:	89 17       	cp	r24, r25
- 3aa:	09 f4       	brne	.+2      	; 0x3ae <__vector_11+0x98>
- 3ac:	6c c0       	rjmp	.+216    	; 0x486 <__vector_11+0x170>
- 3ae:	20 91 67 00 	lds	r18, 0x0067
- 3b2:	21 11       	cpse	r18, r1
- 3b4:	68 c0       	rjmp	.+208    	; 0x486 <__vector_11+0x170>
+	if(FanSpeedOff < 2 && FanSpeed != SpeedSet && setup_mode == 0) {
+ 394:	90 91 6a 00 	lds	r25, 0x006A
+ 398:	92 30       	cpi	r25, 0x02	; 2
+ 39a:	08 f0       	brcs	.+2      	; 0x39e <__vector_11+0x94>
+ 39c:	71 c0       	rjmp	.+226    	; 0x480 <__vector_11+0x176>
+ 39e:	80 91 73 00 	lds	r24, 0x0073
+ 3a2:	20 91 72 00 	lds	r18, 0x0072
+ 3a6:	82 17       	cp	r24, r18
+ 3a8:	09 f4       	brne	.+2      	; 0x3ac <__vector_11+0xa2>
+ 3aa:	6a c0       	rjmp	.+212    	; 0x480 <__vector_11+0x176>
+ 3ac:	30 91 64 00 	lds	r19, 0x0064
+ 3b0:	31 11       	cpse	r19, r1
+ 3b2:	66 c0       	rjmp	.+204    	; 0x480 <__vector_11+0x176>
 		if(PressKeyOffTime) {
- 3b6:	20 91 6f 00 	lds	r18, 0x006F
- 3ba:	22 23       	and	r18, r18
- 3bc:	61 f0       	breq	.+24     	; 0x3d6 <__vector_11+0xc0>
+ 3b4:	30 91 6e 00 	lds	r19, 0x006E
+ 3b8:	33 23       	and	r19, r19
+ 3ba:	61 f0       	breq	.+24     	; 0x3d4 <__vector_11+0xca>
 			if(--PressKeyOffTime == 0) {
- 3be:	8f ef       	ldi	r24, 0xFF	; 255
- 3c0:	82 0f       	add	r24, r18
- 3c2:	80 93 6f 00 	sts	0x006F, r24
- 3c6:	81 11       	cpse	r24, r1
- 3c8:	5e c0       	rjmp	.+188    	; 0x486 <__vector_11+0x170>
+ 3bc:	8f ef       	ldi	r24, 0xFF	; 255
+ 3be:	83 0f       	add	r24, r19
+ 3c0:	80 93 6e 00 	sts	0x006E, r24
+ 3c4:	81 11       	cpse	r24, r1
+ 3c6:	5c c0       	rjmp	.+184    	; 0x480 <__vector_11+0x176>
 				KEYS_DDR |= PressKey; // set Out, level 0 - key pressed
- 3ca:	87 b3       	in	r24, 0x17	; 23
- 3cc:	90 91 70 00 	lds	r25, 0x0070
- 3d0:	89 2b       	or	r24, r25
- 3d2:	87 bb       	out	0x17, r24	; 23
- 3d4:	58 c0       	rjmp	.+176    	; 0x486 <__vector_11+0x170>
+ 3c8:	87 b3       	in	r24, 0x17	; 23
+ 3ca:	90 91 6f 00 	lds	r25, 0x006F
+ 3ce:	89 2b       	or	r24, r25
+ 3d0:	87 bb       	out	0x17, r24	; 23
+ 3d2:	56 c0       	rjmp	.+172    	; 0x480 <__vector_11+0x176>
 			}
 		} else if(PressKeyOnTime) {
- 3d6:	20 91 6e 00 	lds	r18, 0x006E
- 3da:	22 23       	and	r18, r18
- 3dc:	09 f4       	brne	.+2      	; 0x3e0 <__vector_11+0xca>
- 3de:	3d c0       	rjmp	.+122    	; 0x45a <__vector_11+0x144>
+ 3d4:	30 91 6d 00 	lds	r19, 0x006D
+ 3d8:	33 23       	and	r19, r19
+ 3da:	09 f4       	brne	.+2      	; 0x3de <__vector_11+0xd4>
+ 3dc:	3d c0       	rjmp	.+122    	; 0x458 <__vector_11+0x14e>
 			if(--PressKeyOnTime == 0) {
- 3e0:	8f ef       	ldi	r24, 0xFF	; 255
- 3e2:	82 0f       	add	r24, r18
- 3e4:	80 93 6e 00 	sts	0x006E, r24
- 3e8:	81 11       	cpse	r24, r1
- 3ea:	4d c0       	rjmp	.+154    	; 0x486 <__vector_11+0x170>
+ 3de:	8f ef       	ldi	r24, 0xFF	; 255
+ 3e0:	83 0f       	add	r24, r19
+ 3e2:	80 93 6d 00 	sts	0x006D, r24
+ 3e6:	81 11       	cpse	r24, r1
+ 3e8:	4b c0       	rjmp	.+150    	; 0x480 <__vector_11+0x176>
 				KEYS_DDR &= ~PressKey; // set In - key released
- 3ec:	97 b3       	in	r25, 0x17	; 23
- 3ee:	80 91 70 00 	lds	r24, 0x0070
- 3f2:	80 95       	com	r24
- 3f4:	89 23       	and	r24, r25
- 3f6:	87 bb       	out	0x17, r24	; 23
+ 3ea:	97 b3       	in	r25, 0x17	; 23
+ 3ec:	80 91 6f 00 	lds	r24, 0x006F
+ 3f0:	80 95       	com	r24
+ 3f2:	89 23       	and	r24, r25
+ 3f4:	87 bb       	out	0x17, r24	; 23
 				if(PressKey == KEY_PWR) {
- 3f8:	90 91 70 00 	lds	r25, 0x0070
- 3fc:	91 30       	cpi	r25, 0x01	; 1
- 3fe:	61 f4       	brne	.+24     	; 0x418 <__vector_11+0x102>
+ 3f6:	90 91 6f 00 	lds	r25, 0x006F
+ 3fa:	91 30       	cpi	r25, 0x01	; 1
+ 3fc:	61 f4       	brne	.+24     	; 0x416 <__vector_11+0x10c>
 					FanSpeedOff ^= 1;
- 400:	80 91 6b 00 	lds	r24, 0x006B
- 404:	89 27       	eor	r24, r25
- 406:	80 93 6b 00 	sts	0x006B, r24
+ 3fe:	80 91 6a 00 	lds	r24, 0x006A
+ 402:	89 27       	eor	r24, r25
+ 404:	80 93 6a 00 	sts	0x006A, r24
 					if(FanSpeedOff) {
- 40a:	88 23       	and	r24, r24
- 40c:	e1 f1       	breq	.+120    	; 0x486 <__vector_11+0x170>
+ 408:	88 23       	and	r24, r24
+ 40a:	d1 f1       	breq	.+116    	; 0x480 <__vector_11+0x176>
 x_off_ok:				FanSpeed = SpeedSet;
- 40e:	80 91 73 00 	lds	r24, 0x0073
- 412:	80 93 74 00 	sts	0x0074, r24
- 416:	37 c0       	rjmp	.+110    	; 0x486 <__vector_11+0x170>
- 418:	80 91 73 00 	lds	r24, 0x0073
+ 40c:	80 91 72 00 	lds	r24, 0x0072
+ 410:	80 93 73 00 	sts	0x0073, r24
+ 414:	35 c0       	rjmp	.+106    	; 0x480 <__vector_11+0x176>
+ 416:	80 91 72 00 	lds	r24, 0x0072
 					}
 				} else {
 					if(PressKey == KEY_MINUS) SpeedSet--;
- 41c:	92 30       	cpi	r25, 0x02	; 2
- 41e:	11 f4       	brne	.+4      	; 0x424 <__vector_11+0x10e>
- 420:	81 50       	subi	r24, 0x01	; 1
- 422:	01 c0       	rjmp	.+2      	; 0x426 <__vector_11+0x110>
+ 41a:	92 30       	cpi	r25, 0x02	; 2
+ 41c:	11 f4       	brne	.+4      	; 0x422 <__vector_11+0x118>
+ 41e:	81 50       	subi	r24, 0x01	; 1
+ 420:	01 c0       	rjmp	.+2      	; 0x424 <__vector_11+0x11a>
 					else SpeedSet++; // PressKey == KEY_PLUS
- 424:	8f 5f       	subi	r24, 0xFF	; 255
- 426:	80 93 73 00 	sts	0x0073, r24
+ 422:	8f 5f       	subi	r24, 0xFF	; 255
+ 424:	80 93 72 00 	sts	0x0072, r24
 					if(SpeedSet < 1) SpeedSet = 1;
- 42a:	20 91 73 00 	lds	r18, 0x0073
- 42e:	12 16       	cp	r1, r18
- 430:	24 f0       	brlt	.+8      	; 0x43a <__vector_11+0x124>
- 432:	81 e0       	ldi	r24, 0x01	; 1
- 434:	80 93 73 00 	sts	0x0073, r24
- 438:	0c c0       	rjmp	.+24     	; 0x452 <__vector_11+0x13c>
+ 428:	20 91 72 00 	lds	r18, 0x0072
+ 42c:	12 16       	cp	r1, r18
+ 42e:	24 f0       	brlt	.+8      	; 0x438 <__vector_11+0x12e>
+ 430:	81 e0       	ldi	r24, 0x01	; 1
+ 432:	80 93 72 00 	sts	0x0072, r24
+ 436:	0c c0       	rjmp	.+24     	; 0x450 <__vector_11+0x146>
 					else if(SpeedSet > FanSpeedMax) SpeedSet = FanSpeedMax;
- 43a:	40 91 72 00 	lds	r20, 0x0072
- 43e:	33 27       	eor	r19, r19
- 440:	27 fd       	sbrc	r18, 7
- 442:	30 95       	com	r19
- 444:	84 2f       	mov	r24, r20
- 446:	90 e0       	ldi	r25, 0x00	; 0
- 448:	82 17       	cp	r24, r18
- 44a:	93 07       	cpc	r25, r19
- 44c:	14 f4       	brge	.+4      	; 0x452 <__vector_11+0x13c>
- 44e:	40 93 73 00 	sts	0x0073, r20
+ 438:	40 91 71 00 	lds	r20, 0x0071
+ 43c:	33 27       	eor	r19, r19
+ 43e:	27 fd       	sbrc	r18, 7
+ 440:	30 95       	com	r19
+ 442:	84 2f       	mov	r24, r20
+ 444:	90 e0       	ldi	r25, 0x00	; 0
+ 446:	82 17       	cp	r24, r18
+ 448:	93 07       	cpc	r25, r19
+ 44a:	14 f4       	brge	.+4      	; 0x450 <__vector_11+0x146>
+ 44c:	40 93 72 00 	sts	0x0072, r20
 					SpeedSetChanged = 1;
- 452:	81 e0       	ldi	r24, 0x01	; 1
- 454:	80 93 6d 00 	sts	0x006D, r24
- 458:	16 c0       	rjmp	.+44     	; 0x486 <__vector_11+0x170>
- 45a:	20 91 6b 00 	lds	r18, 0x006B
+ 450:	81 e0       	ldi	r24, 0x01	; 1
+ 452:	80 93 6c 00 	sts	0x006C, r24
+ 456:	14 c0       	rjmp	.+40     	; 0x480 <__vector_11+0x176>
 				}
 			}
 		} else {
 			if(FanSpeed <= 0) { // off
- 45e:	18 16       	cp	r1, r24
- 460:	24 f0       	brlt	.+8      	; 0x46a <__vector_11+0x154>
+ 458:	18 16       	cp	r1, r24
+ 45a:	24 f0       	brlt	.+8      	; 0x464 <__vector_11+0x15a>
 				if(FanSpeedOff) goto x_off_ok; // Already off
- 462:	21 11       	cpse	r18, r1
- 464:	d4 cf       	rjmp	.-88     	; 0x40e <__vector_11+0xf8>
+ 45c:	91 11       	cpse	r25, r1
+ 45e:	d6 cf       	rjmp	.-84     	; 0x40c <__vector_11+0x102>
 				PressKey = KEY_PWR;
- 466:	81 e0       	ldi	r24, 0x01	; 1
- 468:	07 c0       	rjmp	.+14     	; 0x478 <__vector_11+0x162>
+ 460:	81 e0       	ldi	r24, 0x01	; 1
+ 462:	07 c0       	rjmp	.+14     	; 0x472 <__vector_11+0x168>
 			} else if(FanSpeedOff) { // switch on, and after set speed
- 46a:	21 11       	cpse	r18, r1
- 46c:	fc cf       	rjmp	.-8      	; 0x466 <__vector_11+0x150>
+ 464:	91 11       	cpse	r25, r1
+ 466:	fc cf       	rjmp	.-8      	; 0x460 <__vector_11+0x156>
 				PressKey = KEY_PWR;
 			} else if(FanSpeed < SpeedSet) { // less
- 46e:	89 17       	cp	r24, r25
- 470:	14 f4       	brge	.+4      	; 0x476 <__vector_11+0x160>
+ 468:	82 17       	cp	r24, r18
+ 46a:	14 f4       	brge	.+4      	; 0x470 <__vector_11+0x166>
 				PressKey = KEY_MINUS;
- 472:	82 e0       	ldi	r24, 0x02	; 2
- 474:	01 c0       	rjmp	.+2      	; 0x478 <__vector_11+0x162>
+ 46c:	82 e0       	ldi	r24, 0x02	; 2
+ 46e:	01 c0       	rjmp	.+2      	; 0x472 <__vector_11+0x168>
 			} else {
 				PressKey = KEY_PLUS;
- 476:	84 e0       	ldi	r24, 0x04	; 4
- 478:	80 93 70 00 	sts	0x0070, r24
+ 470:	84 e0       	ldi	r24, 0x04	; 4
+ 472:	80 93 6f 00 	sts	0x006F, r24
 			}
 			PressKeyOffTime = 2;
- 47c:	82 e0       	ldi	r24, 0x02	; 2
- 47e:	80 93 6f 00 	sts	0x006F, r24
+ 476:	82 e0       	ldi	r24, 0x02	; 2
+ 478:	80 93 6e 00 	sts	0x006E, r24
 			PressKeyOnTime = 2;
- 482:	80 93 6e 00 	sts	0x006E, r24
+ 47c:	80 93 6d 00 	sts	0x006D, r24
 		}
 	}
 }
- 486:	9f 91       	pop	r25
- 488:	8f 91       	pop	r24
- 48a:	4f 91       	pop	r20
- 48c:	3f 91       	pop	r19
- 48e:	2f 91       	pop	r18
- 490:	0f 90       	pop	r0
- 492:	0f be       	out	0x3f, r0	; 63
- 494:	0f 90       	pop	r0
- 496:	1f 90       	pop	r1
- 498:	18 95       	reti
+ 480:	9f 91       	pop	r25
+ 482:	8f 91       	pop	r24
+ 484:	4f 91       	pop	r20
+ 486:	3f 91       	pop	r19
+ 488:	2f 91       	pop	r18
+ 48a:	0f 90       	pop	r0
+ 48c:	0f be       	out	0x3f, r0	; 63
+ 48e:	0f 90       	pop	r0
+ 490:	1f 90       	pop	r1
+ 492:	18 95       	reti
 
-0000049a <NRF_save_registers>:
-
-void NRF_save_registers(void)
-{
- 49a:	ef 92       	push	r14
- 49c:	ff 92       	push	r15
- 49e:	0f 93       	push	r16
- 4a0:	1f 93       	push	r17
- 4a2:	cf 93       	push	r28
- 4a4:	df 93       	push	r29
- 4a6:	1f 92       	push	r1
- 4a8:	cd b7       	in	r28, 0x3d	; 61
- 4aa:	de b7       	in	r29, 0x3e	; 62
-	#define EPROM_SaveRegIdx 0x0F
-	#define EPROM_SaveReg	 0x10
-	#define IDX_MAX			 7
-	uint8_t buf[1];
-	
-	uint8_t idx = EEPROM_read(EPROM_SaveRegIdx);
- 4ac:	8f e0       	ldi	r24, 0x0F	; 15
- 4ae:	dd dd       	rcall	.-1094   	; 0x6a <EEPROM_read>
-	if(idx > IDX_MAX) idx = 0;
- 4b0:	88 30       	cpi	r24, 0x08	; 8
- 4b2:	08 f0       	brcs	.+2      	; 0x4b6 <NRF_save_registers+0x1c>
- 4b4:	80 e0       	ldi	r24, 0x00	; 0
-	idx = EPROM_SaveReg + idx * 0x20;
- 4b6:	18 2f       	mov	r17, r24
- 4b8:	12 95       	swap	r17
- 4ba:	11 0f       	add	r17, r17
- 4bc:	10 7e       	andi	r17, 0xE0	; 224
- 4be:	80 e1       	ldi	r24, 0x10	; 16
- 4c0:	f8 2e       	mov	r15, r24
- 4c2:	f1 0e       	add	r15, r17
-	for(uint8_t i = 0; i <= 0x17; i++) {
- 4c4:	00 e0       	ldi	r16, 0x00	; 0
-		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
- 4c6:	41 e0       	ldi	r20, 0x01	; 1
- 4c8:	be 01       	movw	r22, r28
- 4ca:	6f 5f       	subi	r22, 0xFF	; 255
- 4cc:	7f 4f       	sbci	r23, 0xFF	; 255
- 4ce:	80 2f       	mov	r24, r16
- 4d0:	35 de       	rcall	.-918    	; 0x13c <NRF24_ReadArray>
-		EEPROM_write(idx++, buf[0]);
- 4d2:	ee 24       	eor	r14, r14
- 4d4:	e3 94       	inc	r14
- 4d6:	ef 0c       	add	r14, r15
- 4d8:	69 81       	ldd	r22, Y+1	; 0x01
- 4da:	8f 2d       	mov	r24, r15
- 4dc:	ce dd       	rcall	.-1124   	; 0x7a <EEPROM_write>
-	uint8_t buf[1];
-	
-	uint8_t idx = EEPROM_read(EPROM_SaveRegIdx);
-	if(idx > IDX_MAX) idx = 0;
-	idx = EPROM_SaveReg + idx * 0x20;
-	for(uint8_t i = 0; i <= 0x17; i++) {
- 4de:	0f 5f       	subi	r16, 0xFF	; 255
- 4e0:	08 31       	cpi	r16, 0x18	; 24
- 4e2:	11 f0       	breq	.+4      	; 0x4e8 <NRF_save_registers+0x4e>
-		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
-		EEPROM_write(idx++, buf[0]);
- 4e4:	fe 2c       	mov	r15, r14
- 4e6:	ef cf       	rjmp	.-34     	; 0x4c6 <NRF_save_registers+0x2c>
-	}
-	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1C, buf, 1); // at 0x18
- 4e8:	41 e0       	ldi	r20, 0x01	; 1
- 4ea:	be 01       	movw	r22, r28
- 4ec:	6f 5f       	subi	r22, 0xFF	; 255
- 4ee:	7f 4f       	sbci	r23, 0xFF	; 255
- 4f0:	8c e1       	ldi	r24, 0x1C	; 28
- 4f2:	24 de       	rcall	.-952    	; 0x13c <NRF24_ReadArray>
-	EEPROM_write(idx++, buf[0]);
- 4f4:	69 81       	ldd	r22, Y+1	; 0x01
- 4f6:	88 e2       	ldi	r24, 0x28	; 40
- 4f8:	81 0f       	add	r24, r17
- 4fa:	bf dd       	rcall	.-1154   	; 0x7a <EEPROM_write>
-	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1D, buf, 1); // at 0x19
- 4fc:	41 e0       	ldi	r20, 0x01	; 1
- 4fe:	be 01       	movw	r22, r28
- 500:	6f 5f       	subi	r22, 0xFF	; 255
- 502:	7f 4f       	sbci	r23, 0xFF	; 255
- 504:	8d e1       	ldi	r24, 0x1D	; 29
- 506:	1a de       	rcall	.-972    	; 0x13c <NRF24_ReadArray>
-	EEPROM_write(idx++, buf[0]);
- 508:	69 81       	ldd	r22, Y+1	; 0x01
- 50a:	89 e2       	ldi	r24, 0x29	; 41
- 50c:	81 0f       	add	r24, r17
- 50e:	b5 dd       	rcall	.-1174   	; 0x7a <EEPROM_write>
-	EEPROM_write(idx++, Timer);
- 510:	60 91 62 00 	lds	r22, 0x0062
- 514:	8a e2       	ldi	r24, 0x2A	; 42
- 516:	81 0f       	add	r24, r17
- 518:	b0 dd       	rcall	.-1184   	; 0x7a <EEPROM_write>
-	EEPROM_write(idx++, nrf_last_status);
- 51a:	60 91 68 00 	lds	r22, 0x0068
- 51e:	8b e2       	ldi	r24, 0x2B	; 43
- 520:	81 0f       	add	r24, r17
- 522:	ab dd       	rcall	.-1194   	; 0x7a <EEPROM_write>
-	
-	idx = EEPROM_read(EPROM_SaveRegIdx) + 1;
- 524:	8f e0       	ldi	r24, 0x0F	; 15
- 526:	a1 dd       	rcall	.-1214   	; 0x6a <EEPROM_read>
- 528:	61 e0       	ldi	r22, 0x01	; 1
- 52a:	68 0f       	add	r22, r24
- 52c:	68 30       	cpi	r22, 0x08	; 8
- 52e:	08 f0       	brcs	.+2      	; 0x532 <NRF_save_registers+0x98>
- 530:	67 e0       	ldi	r22, 0x07	; 7
-	if(idx > IDX_MAX) idx = IDX_MAX;
-	EEPROM_write(EPROM_SaveRegIdx, idx);
- 532:	8f e0       	ldi	r24, 0x0F	; 15
- 534:	a2 dd       	rcall	.-1212   	; 0x7a <EEPROM_write>
-}
- 536:	0f 90       	pop	r0
- 538:	df 91       	pop	r29
- 53a:	cf 91       	pop	r28
- 53c:	1f 91       	pop	r17
- 53e:	0f 91       	pop	r16
- 540:	ff 90       	pop	r15
- 542:	ef 90       	pop	r14
- 544:	08 95       	ret
-
-00000546 <main>:
+00000494 <main>:
 
 int main(void)
 {
 	CLKPR = (1<<CLKPCE); CLKPR = (0<<CLKPS3) | (0<<CLKPS2) | (1<<CLKPS1) | (1<<CLKPS0); // Clock prescaler: 8
- 546:	80 e8       	ldi	r24, 0x80	; 128
- 548:	86 bd       	out	0x26, r24	; 38
- 54a:	93 e0       	ldi	r25, 0x03	; 3
- 54c:	96 bd       	out	0x26, r25	; 38
+ 494:	80 e8       	ldi	r24, 0x80	; 128
+ 496:	86 bd       	out	0x26, r24	; 38
+ 498:	93 e0       	ldi	r25, 0x03	; 3
+ 49a:	96 bd       	out	0x26, r25	; 38
 	MCUCR = (1<<SE) | (0<<SM1) | (0<<SM0); // Idle sleep enable
- 54e:	80 e2       	ldi	r24, 0x20	; 32
- 550:	85 bf       	out	0x35, r24	; 53
+ 49c:	80 e2       	ldi	r24, 0x20	; 32
+ 49e:	85 bf       	out	0x35, r24	; 53
 	KEYS_DDR &= ~(KEY_PWR | KEY_MINUS | KEY_PLUS); // In
- 552:	87 b3       	in	r24, 0x17	; 23
- 554:	88 7f       	andi	r24, 0xF8	; 248
- 556:	87 bb       	out	0x17, r24	; 23
+ 4a0:	87 b3       	in	r24, 0x17	; 23
+ 4a2:	88 7f       	andi	r24, 0xF8	; 248
+ 4a4:	87 bb       	out	0x17, r24	; 23
 	KEYS_PORT &= ~(KEY_PWR | KEY_MINUS | KEY_PLUS); // = 0
- 558:	88 b3       	in	r24, 0x18	; 24
- 55a:	88 7f       	andi	r24, 0xF8	; 248
- 55c:	88 bb       	out	0x18, r24	; 24
+ 4a6:	88 b3       	in	r24, 0x18	; 24
+ 4a8:	88 7f       	andi	r24, 0xF8	; 248
+ 4aa:	88 bb       	out	0x18, r24	; 24
 	DDRA = LED1; // Out
- 55e:	82 e0       	ldi	r24, 0x02	; 2
- 560:	8a bb       	out	0x1a, r24	; 26
+ 4ac:	82 e0       	ldi	r24, 0x02	; 2
+ 4ae:	8a bb       	out	0x1a, r24	; 26
 	PORTA = (1<<PORTA7) | (1<<PORTA0); // pullup not used pins
- 562:	81 e8       	ldi	r24, 0x81	; 129
- 564:	8b bb       	out	0x1b, r24	; 27
+ 4b0:	81 e8       	ldi	r24, 0x81	; 129
+ 4b2:	8b bb       	out	0x1b, r24	; 27
+	NRF24_SET_CSN_HI;
+ 4b4:	db 9a       	sbi	0x1b, 3	; 27
 	NRF24_DDR |= NRF24_CE | NRF24_CSN | NRF24_SCK | NRF24_MOSI; // Out
- 566:	8a b3       	in	r24, 0x1a	; 26
- 568:	8c 63       	ori	r24, 0x3C	; 60
- 56a:	8a bb       	out	0x1a, r24	; 26
+ 4b6:	8a b3       	in	r24, 0x1a	; 26
+ 4b8:	8c 63       	ori	r24, 0x3C	; 60
+ 4ba:	8a bb       	out	0x1a, r24	; 26
 //	// Timer 8 bit
  	TCCR0A = (1<<WGM01) | (1<<WGM00);  // Timer0: Fast PWM OCRA
- 56c:	90 bf       	out	0x30, r25	; 48
+ 4bc:	90 bf       	out	0x30, r25	; 48
  	TCCR0B = (1<<WGM02) | (1 << CS02) | (0 << CS01) | (1 << CS00); // Timer0 prescaller: 1024
- 56e:	8d e0       	ldi	r24, 0x0D	; 13
- 570:	83 bf       	out	0x33, r24	; 51
+ 4be:	8d e0       	ldi	r24, 0x0D	; 13
+ 4c0:	83 bf       	out	0x33, r24	; 51
  	TIMSK0 |= (1<<TOIE0); // Timer/Counter0 Overflow Interrupt Enable
- 572:	89 b7       	in	r24, 0x39	; 57
- 574:	81 60       	ori	r24, 0x01	; 1
- 576:	89 bf       	out	0x39, r24	; 57
+ 4c2:	89 b7       	in	r24, 0x39	; 57
+ 4c4:	81 60       	ori	r24, 0x01	; 1
+ 4c6:	89 bf       	out	0x39, r24	; 57
  	OCR0A = 97; // OC0A(TOP)=Fclk/prescaller/Freq - 1; Freq=Fclk/(prescaller*(1+TOP))
- 578:	81 e6       	ldi	r24, 0x61	; 97
- 57a:	86 bf       	out	0x36, r24	; 54
+ 4c8:	81 e6       	ldi	r24, 0x61	; 97
+ 4ca:	86 bf       	out	0x36, r24	; 54
  	//OCR0B = 0; // 0..OCR0A, Half Duty cycle = ((TOP+1)/2-1)
 	//TCCR0A |= (1<<COM0B1); // Start PWM out
 	FanSpeedMax = EEPROM_read(EPROM_FanSpeedMax);
- 57c:	83 e0       	ldi	r24, 0x03	; 3
- 57e:	75 dd       	rcall	.-1302   	; 0x6a <EEPROM_read>
- 580:	80 93 72 00 	sts	0x0072, r24
+ 4cc:	83 e0       	ldi	r24, 0x03	; 3
+ 4ce:	c2 dd       	rcall	.-1148   	; 0x54 <EEPROM_read>
+ 4d0:	80 93 71 00 	sts	0x0071, r24
 	if(FanSpeedMax == 0xFF) {
- 584:	8f 3f       	cpi	r24, 0xFF	; 255
- 586:	91 f4       	brne	.+36     	; 0x5ac <main+0x66>
+ 4d4:	8f 3f       	cpi	r24, 0xFF	; 255
+ 4d6:	a9 f4       	brne	.+42     	; 0x502 <main+0x6e>
 		EEPROM_write(EPROM_OSCCAL, OSCCAL);
- 588:	61 b7       	in	r22, 0x31	; 49
- 58a:	80 e0       	ldi	r24, 0x00	; 0
- 58c:	76 dd       	rcall	.-1300   	; 0x7a <EEPROM_write>
-		EEPROM_write(EPROM_CurrentSpeedAddr, EPROM_CurrentSpeedAddr + 1);
- 58e:	60 e1       	ldi	r22, 0x10	; 16
- 590:	8f e0       	ldi	r24, 0x0F	; 15
- 592:	73 dd       	rcall	.-1306   	; 0x7a <EEPROM_write>
-		EEPROM_write(EPROM_CurrentSpeedAddr + 1, 1);
- 594:	61 e0       	ldi	r22, 0x01	; 1
- 596:	80 e1       	ldi	r24, 0x10	; 16
- 598:	70 dd       	rcall	.-1312   	; 0x7a <EEPROM_write>
-		EEPROM_write(EPROM_FanSpeedMax, 7);
- 59a:	67 e0       	ldi	r22, 0x07	; 7
- 59c:	83 e0       	ldi	r24, 0x03	; 3
- 59e:	6d dd       	rcall	.-1318   	; 0x7a <EEPROM_write>
+ 4d8:	61 b7       	in	r22, 0x31	; 49
+ 4da:	80 e0       	ldi	r24, 0x00	; 0
+ 4dc:	c3 dd       	rcall	.-1146   	; 0x64 <EEPROM_write>
 		EEPROM_write(EPROM_RFAddress, 0xE5);
- 5a0:	65 ee       	ldi	r22, 0xE5	; 229
- 5a2:	81 e0       	ldi	r24, 0x01	; 1
- 5a4:	6a dd       	rcall	.-1324   	; 0x7a <EEPROM_write>
+ 4de:	65 ee       	ldi	r22, 0xE5	; 229
+ 4e0:	81 e0       	ldi	r24, 0x01	; 1
+ 4e2:	c0 dd       	rcall	.-1152   	; 0x64 <EEPROM_write>
 		EEPROM_write(EPROM_RF_Channel, 120);
- 5a6:	68 e7       	ldi	r22, 0x78	; 120
- 5a8:	82 e0       	ldi	r24, 0x02	; 2
- 5aa:	67 dd       	rcall	.-1330   	; 0x7a <EEPROM_write>
+ 4e4:	68 e7       	ldi	r22, 0x78	; 120
+ 4e6:	82 e0       	ldi	r24, 0x02	; 2
+ 4e8:	bd dd       	rcall	.-1158   	; 0x64 <EEPROM_write>
+		EEPROM_write(EPROM_FanSpeedMax, 7);
+ 4ea:	67 e0       	ldi	r22, 0x07	; 7
+ 4ec:	83 e0       	ldi	r24, 0x03	; 3
+ 4ee:	ba dd       	rcall	.-1164   	; 0x64 <EEPROM_write>
+		EEPROM_write(EPROM_PauseWhenError, 30);
+ 4f0:	6e e1       	ldi	r22, 0x1E	; 30
+ 4f2:	84 e0       	ldi	r24, 0x04	; 4
+ 4f4:	b7 dd       	rcall	.-1170   	; 0x64 <EEPROM_write>
+		EEPROM_write(EPROM_CurrentSpeedAddr, EPROM_CurrentSpeedAddr + 1);
+ 4f6:	60 e2       	ldi	r22, 0x20	; 32
+ 4f8:	8f e1       	ldi	r24, 0x1F	; 31
+ 4fa:	b4 dd       	rcall	.-1176   	; 0x64 <EEPROM_write>
+		EEPROM_write(EPROM_CurrentSpeedAddr + 1, 1);
+ 4fc:	61 e0       	ldi	r22, 0x01	; 1
+ 4fe:	80 e2       	ldi	r24, 0x20	; 32
+ 500:	b1 dd       	rcall	.-1182   	; 0x64 <EEPROM_write>
 	}
 	//OSCCAL = EEPROM_read(EPROM_OSCCAL);
 	uint8_t addr = EEPROM_read(EPROM_CurrentSpeedAddr);
- 5ac:	8f e0       	ldi	r24, 0x0F	; 15
- 5ae:	5d dd       	rcall	.-1350   	; 0x6a <EEPROM_read>
+ 502:	8f e1       	ldi	r24, 0x1F	; 31
+ 504:	a7 dd       	rcall	.-1202   	; 0x54 <EEPROM_read>
 	if(addr && (SpeedSet = EEPROM_read(addr)) <= FanSpeedMax) {
- 5b0:	88 23       	and	r24, r24
- 5b2:	69 f0       	breq	.+26     	; 0x5ce <main+0x88>
- 5b4:	5a dd       	rcall	.-1356   	; 0x6a <EEPROM_read>
- 5b6:	80 93 73 00 	sts	0x0073, r24
- 5ba:	48 2f       	mov	r20, r24
- 5bc:	55 27       	eor	r21, r21
- 5be:	47 fd       	sbrc	r20, 7
- 5c0:	50 95       	com	r21
- 5c2:	20 91 72 00 	lds	r18, 0x0072
- 5c6:	30 e0       	ldi	r19, 0x00	; 0
- 5c8:	24 17       	cp	r18, r20
- 5ca:	35 07       	cpc	r19, r21
- 5cc:	2c f4       	brge	.+10     	; 0x5d8 <main+0x92>
+ 506:	88 23       	and	r24, r24
+ 508:	69 f0       	breq	.+26     	; 0x524 <main+0x90>
+ 50a:	a4 dd       	rcall	.-1208   	; 0x54 <EEPROM_read>
+ 50c:	80 93 72 00 	sts	0x0072, r24
+ 510:	48 2f       	mov	r20, r24
+ 512:	55 27       	eor	r21, r21
+ 514:	47 fd       	sbrc	r20, 7
+ 516:	50 95       	com	r21
+ 518:	20 91 71 00 	lds	r18, 0x0071
+ 51c:	30 e0       	ldi	r19, 0x00	; 0
+ 51e:	24 17       	cp	r18, r20
+ 520:	35 07       	cpc	r19, r21
+ 522:	2c f4       	brge	.+10     	; 0x52e <main+0x9a>
 		FanSpeed = SpeedSet;
 	} else { // Speed not saved - set 1
 		SpeedSet = FanSpeedMax;
- 5ce:	80 91 72 00 	lds	r24, 0x0072
- 5d2:	80 93 73 00 	sts	0x0073, r24
+ 524:	80 91 71 00 	lds	r24, 0x0071
+ 528:	80 93 72 00 	sts	0x0072, r24
 		FanSpeed = 1;
- 5d6:	81 e0       	ldi	r24, 0x01	; 1
- 5d8:	80 93 74 00 	sts	0x0074, r24
+ 52c:	81 e0       	ldi	r24, 0x01	; 1
+ 52e:	80 93 73 00 	sts	0x0073, r24
 	}
-	NRF24_init(EEPROM_read(EPROM_RF_Channel)); // After init transmit must be delayed
- 5dc:	82 e0       	ldi	r24, 0x02	; 2
- 5de:	45 dd       	rcall	.-1398   	; 0x6a <EEPROM_read>
- 5e0:	83 de       	rcall	.-762    	; 0x2e8 <NRF24_init>
+	RequestCountdown = EEPROM_read(EPROM_InitPause);
+ 532:	85 e0       	ldi	r24, 0x05	; 5
+ 534:	8f dd       	rcall	.-1250   	; 0x54 <EEPROM_read>
+ 536:	80 93 67 00 	sts	0x0067, r24
 	KEYS_INTR_INIT;
- 5e2:	8b b7       	in	r24, 0x3b	; 59
- 5e4:	80 62       	ori	r24, 0x20	; 32
- 5e6:	8b bf       	out	0x3b, r24	; 59
- 5e8:	80 b5       	in	r24, 0x20	; 32
- 5ea:	87 60       	ori	r24, 0x07	; 7
- 5ec:	80 bd       	out	0x20, r24	; 32
+ 53a:	8b b7       	in	r24, 0x3b	; 59
+ 53c:	80 62       	ori	r24, 0x20	; 32
+ 53e:	8b bf       	out	0x3b, r24	; 59
+ 540:	80 b5       	in	r24, 0x20	; 32
+ 542:	87 60       	ori	r24, 0x07	; 7
+ 544:	80 bd       	out	0x20, r24	; 32
 	SETUP_WATCHDOG;
- 5ee:	88 e1       	ldi	r24, 0x18	; 24
- 5f0:	81 bd       	out	0x21, r24	; 33
- 5f2:	8e e0       	ldi	r24, 0x0E	; 14
- 5f4:	81 bd       	out	0x21, r24	; 33
+ 546:	88 e1       	ldi	r24, 0x18	; 24
+ 548:	81 bd       	out	0x21, r24	; 33
+ 54a:	8e e0       	ldi	r24, 0x0E	; 14
+ 54c:	81 bd       	out	0x21, r24	; 33
 	sei();
- 5f6:	78 94       	sei
+ 54e:	78 94       	sei
+	FlashLED(1, 1, 1);
+ 550:	41 e0       	ldi	r20, 0x01	; 1
+ 552:	61 e0       	ldi	r22, 0x01	; 1
+ 554:	81 e0       	ldi	r24, 0x01	; 1
+ 556:	c4 dd       	rcall	.-1144   	; 0xe0 <FlashLED>
+	NRF24_init(EEPROM_read(EPROM_RF_Channel)); // After init transmit must be delayed
+ 558:	82 e0       	ldi	r24, 0x02	; 2
+ 55a:	7c dd       	rcall	.-1288   	; 0x54 <EEPROM_read>
+ 55c:	bf de       	rcall	.-642    	; 0x2dc <NRF24_init>
  	while(!NRF24_SetAddresses(EEPROM_read(EPROM_RFAddress))) {
- 5f8:	81 e0       	ldi	r24, 0x01	; 1
- 5fa:	37 dd       	rcall	.-1426   	; 0x6a <EEPROM_read>
- 5fc:	50 de       	rcall	.-864    	; 0x29e <NRF24_SetAddresses>
- 5fe:	81 11       	cpse	r24, r1
- 600:	05 c0       	rjmp	.+10     	; 0x60c <main+0xc6>
+ 55e:	81 e0       	ldi	r24, 0x01	; 1
+ 560:	79 dd       	rcall	.-1294   	; 0x54 <EEPROM_read>
+ 562:	9b de       	rcall	.-714    	; 0x29a <NRF24_SetAddresses>
+ 564:	81 11       	cpse	r24, r1
+ 566:	05 c0       	rjmp	.+10     	; 0x572 <main+0xde>
  		FlashLED(1, 50, 20);
- 602:	44 e1       	ldi	r20, 0x14	; 20
- 604:	62 e3       	ldi	r22, 0x32	; 50
- 606:	81 e0       	ldi	r24, 0x01	; 1
- 608:	76 dd       	rcall	.-1300   	; 0xf6 <FlashLED>
- 60a:	f6 cf       	rjmp	.-20     	; 0x5f8 <main+0xb2>
+ 568:	44 e1       	ldi	r20, 0x14	; 20
+ 56a:	62 e3       	ldi	r22, 0x32	; 50
+ 56c:	81 e0       	ldi	r24, 0x01	; 1
+ 56e:	b8 dd       	rcall	.-1168   	; 0xe0 <FlashLED>
+ 570:	f6 cf       	rjmp	.-20     	; 0x55e <main+0xca>
+ 	}
+	NRF24_SetMode(NRF24_TransmitMode);
+ 572:	80 e0       	ldi	r24, 0x00	; 0
+ 574:	31 de       	rcall	.-926    	; 0x1d8 <NRF24_SetMode>
 					LED1_ON;
 					Delay100ms(10);
 					while(keys) {
 						wdt_reset(); // wait keys release
 						if((keys & KEY_MINUS) && (keys & KEY_PLUS)) {
 							setup_mode = 1;
- 60c:	11 e0       	ldi	r17, 0x01	; 1
- 60e:	c1 e0       	ldi	r28, 0x01	; 1
+ 576:	c1 e0       	ldi	r28, 0x01	; 1
 							FlashLED(5, 2, 2);
 							Delay100ms(30);
 							RequestCountdown = 30;
- 610:	de e1       	ldi	r29, 0x1E	; 30
+ 578:	de e1       	ldi	r29, 0x1E	; 30
 x_save_speed:
 				if(EEPROM_read(addr) != SpeedSet) {
 					EEPROM_write(addr, SpeedSet);
 					if(EEPROM_read(addr) != SpeedSet) { // EEPROM cell broken
 						FlashLED(10, 2, 2);
 						send_data = 0xEE;
- 612:	0e ee       	ldi	r16, 0xEE	; 238
- 		FlashLED(1, 50, 20);
+ 57a:	1e ee       	ldi	r17, 0xEE	; 238
  	}
+	NRF24_SetMode(NRF24_TransmitMode);
 	while(1)
 	{
 		__asm__ volatile ("" ::: "memory"); // Need memory barrier
 		sleep_cpu();
- 614:	88 95       	sleep
+ 57c:	88 95       	sleep
 		wdt_reset();
- 616:	a8 95       	wdr
+ 57e:	a8 95       	wdr
 		if(keys) {
- 618:	80 91 71 00 	lds	r24, 0x0071
- 61c:	88 23       	and	r24, r24
- 61e:	09 f4       	brne	.+2      	; 0x622 <main+0xdc>
- 620:	d5 c0       	rjmp	.+426    	; 0x7cc <main+0x286>
+ 580:	80 91 70 00 	lds	r24, 0x0070
+ 584:	88 23       	and	r24, r24
+ 586:	09 f4       	brne	.+2      	; 0x58a <main+0xf6>
+ 588:	ea c0       	rjmp	.+468    	; 0x75e <main+0x2ca>
 			if(keys & KEY_PWR) {
- 622:	80 91 71 00 	lds	r24, 0x0071
- 626:	80 ff       	sbrs	r24, 0
- 628:	0e c0       	rjmp	.+28     	; 0x646 <main+0x100>
-				FanSpeedOff ^= 1;
- 62a:	80 91 6b 00 	lds	r24, 0x006B
- 62e:	81 27       	eor	r24, r17
- 630:	80 93 6b 00 	sts	0x006B, r24
-				if(FanSpeedOff == 0 && setup_mode) setup_mode = 0;
- 634:	81 11       	cpse	r24, r1
- 636:	05 c0       	rjmp	.+10     	; 0x642 <main+0xfc>
- 638:	80 91 67 00 	lds	r24, 0x0067
- 63c:	81 11       	cpse	r24, r1
- 63e:	10 92 67 00 	sts	0x0067, r1
+ 58a:	80 91 70 00 	lds	r24, 0x0070
+ 58e:	80 ff       	sbrs	r24, 0
+ 590:	1b c0       	rjmp	.+54     	; 0x5c8 <main+0x134>
+				if(FanSpeedOff) {
+ 592:	80 91 6a 00 	lds	r24, 0x006A
+ 596:	88 23       	and	r24, r24
+ 598:	49 f0       	breq	.+18     	; 0x5ac <main+0x118>
+					FanSpeedOff = 0;
+ 59a:	10 92 6a 00 	sts	0x006A, r1
+					if(setup_mode) setup_mode = 0;
+ 59e:	80 91 64 00 	lds	r24, 0x0064
+ 5a2:	88 23       	and	r24, r24
+ 5a4:	79 f0       	breq	.+30     	; 0x5c4 <main+0x130>
+ 5a6:	10 92 64 00 	sts	0x0064, r1
+ 5aa:	0c c0       	rjmp	.+24     	; 0x5c4 <main+0x130>
+				} else {
+					FanSpeedOff = 2;
+ 5ac:	82 e0       	ldi	r24, 0x02	; 2
+ 5ae:	80 93 6a 00 	sts	0x006A, r24
+					PressKeyOnTime = 0;
+ 5b2:	10 92 6d 00 	sts	0x006D, r1
+					PressKeyOffTime = 0;
+ 5b6:	10 92 6e 00 	sts	0x006E, r1
+					KEYS_DDR &= ~(KEY_MINUS | KEY_PLUS);
+ 5ba:	87 b3       	in	r24, 0x17	; 23
+ 5bc:	89 7f       	andi	r24, 0xF9	; 249
+ 5be:	87 bb       	out	0x17, r24	; 23
+					RequestCountdown = 0;
+ 5c0:	10 92 67 00 	sts	0x0067, r1
+				}
 				SendOffStatus = 1;
- 642:	c0 93 69 00 	sts	0x0069, r28
+ 5c4:	c0 93 66 00 	sts	0x0066, r28
 			}
 			if(FanSpeedOff == 0) {
- 646:	80 91 6b 00 	lds	r24, 0x006B
- 64a:	81 11       	cpse	r24, r1
- 64c:	52 c0       	rjmp	.+164    	; 0x6f2 <main+0x1ac>
+ 5c8:	80 91 6a 00 	lds	r24, 0x006A
+ 5cc:	81 11       	cpse	r24, r1
+ 5ce:	52 c0       	rjmp	.+164    	; 0x674 <main+0x1e0>
 				if(keys & KEY_MINUS) {
- 64e:	80 91 71 00 	lds	r24, 0x0071
- 652:	81 ff       	sbrs	r24, 1
- 654:	19 c0       	rjmp	.+50     	; 0x688 <main+0x142>
+ 5d0:	80 91 70 00 	lds	r24, 0x0070
+ 5d4:	81 ff       	sbrs	r24, 1
+ 5d6:	19 c0       	rjmp	.+50     	; 0x60a <main+0x176>
 					if(FanSpeedOverride > -8) {
- 656:	80 91 6c 00 	lds	r24, 0x006C
- 65a:	89 3f       	cpi	r24, 0xF9	; 249
- 65c:	ac f0       	brlt	.+42     	; 0x688 <main+0x142>
+ 5d8:	80 91 6b 00 	lds	r24, 0x006B
+ 5dc:	89 3f       	cpi	r24, 0xF9	; 249
+ 5de:	ac f0       	brlt	.+42     	; 0x60a <main+0x176>
 						FanSpeedOverride--;
- 65e:	81 50       	subi	r24, 0x01	; 1
- 660:	80 93 6c 00 	sts	0x006C, r24
+ 5e0:	81 50       	subi	r24, 0x01	; 1
+ 5e2:	80 93 6b 00 	sts	0x006B, r24
     return 1;
 }
 
 static __inline__ uint8_t __iCliRetVal(void)
 {
     cli();
- 664:	f8 94       	cli
- 666:	80 91 74 00 	lds	r24, 0x0074
- 66a:	90 91 73 00 	lds	r25, 0x0073
+ 5e6:	f8 94       	cli
+ 5e8:	80 91 73 00 	lds	r24, 0x0073
+ 5ec:	90 91 72 00 	lds	r25, 0x0072
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
 							if(FanSpeed > 1) FanSpeed--;
- 66e:	82 30       	cpi	r24, 0x02	; 2
- 670:	0c f0       	brlt	.+2      	; 0x674 <main+0x12e>
- 672:	81 50       	subi	r24, 0x01	; 1
- 674:	80 93 74 00 	sts	0x0074, r24
+ 5f0:	82 30       	cpi	r24, 0x02	; 2
+ 5f2:	0c f0       	brlt	.+2      	; 0x5f6 <main+0x162>
+ 5f4:	81 50       	subi	r24, 0x01	; 1
+ 5f6:	80 93 73 00 	sts	0x0073, r24
 							if(SpeedSet > 1) SpeedSet--;
- 678:	92 30       	cpi	r25, 0x02	; 2
- 67a:	24 f4       	brge	.+8      	; 0x684 <main+0x13e>
- 67c:	90 93 73 00 	sts	0x0073, r25
+ 5fa:	92 30       	cpi	r25, 0x02	; 2
+ 5fc:	24 f4       	brge	.+8      	; 0x606 <main+0x172>
+ 5fe:	90 93 72 00 	sts	0x0072, r25
     return 1;
 }
 
 static __inline__ void __iSeiParam(const uint8_t *__s)
 {
     sei();
- 680:	78 94       	sei
+ 602:	78 94       	sei
     __asm__ volatile ("" ::: "memory");
- 682:	02 c0       	rjmp	.+4      	; 0x688 <main+0x142>
- 684:	91 50       	subi	r25, 0x01	; 1
- 686:	fa cf       	rjmp	.-12     	; 0x67c <main+0x136>
+ 604:	02 c0       	rjmp	.+4      	; 0x60a <main+0x176>
+ 606:	91 50       	subi	r25, 0x01	; 1
+ 608:	fa cf       	rjmp	.-12     	; 0x5fe <main+0x16a>
 						}
 					}
 				}
 				if(keys & KEY_PLUS) {
- 688:	80 91 71 00 	lds	r24, 0x0071
- 68c:	82 ff       	sbrs	r24, 2
- 68e:	90 c0       	rjmp	.+288    	; 0x7b0 <main+0x26a>
+ 60a:	80 91 70 00 	lds	r24, 0x0070
+ 60e:	82 ff       	sbrs	r24, 2
+ 610:	8e c0       	rjmp	.+284    	; 0x72e <main+0x29a>
 					if(FanSpeedOverride < 7) {
- 690:	80 91 6c 00 	lds	r24, 0x006C
- 694:	87 30       	cpi	r24, 0x07	; 7
- 696:	0c f0       	brlt	.+2      	; 0x69a <main+0x154>
- 698:	8b c0       	rjmp	.+278    	; 0x7b0 <main+0x26a>
+ 612:	80 91 6b 00 	lds	r24, 0x006B
+ 616:	87 30       	cpi	r24, 0x07	; 7
+ 618:	0c f0       	brlt	.+2      	; 0x61c <main+0x188>
+ 61a:	89 c0       	rjmp	.+274    	; 0x72e <main+0x29a>
 						FanSpeedOverride++;
- 69a:	8f 5f       	subi	r24, 0xFF	; 255
- 69c:	80 93 6c 00 	sts	0x006C, r24
+ 61c:	8f 5f       	subi	r24, 0xFF	; 255
+ 61e:	80 93 6b 00 	sts	0x006B, r24
     return 1;
 }
 
 static __inline__ uint8_t __iCliRetVal(void)
 {
     cli();
- 6a0:	f8 94       	cli
+ 622:	f8 94       	cli
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
 							if(FanSpeed < FanSpeedMax) FanSpeed++;
- 6a2:	80 91 72 00 	lds	r24, 0x0072
- 6a6:	90 e0       	ldi	r25, 0x00	; 0
- 6a8:	40 91 74 00 	lds	r20, 0x0074
- 6ac:	50 91 73 00 	lds	r21, 0x0073
+ 624:	80 91 71 00 	lds	r24, 0x0071
+ 628:	90 e0       	ldi	r25, 0x00	; 0
+ 62a:	40 91 73 00 	lds	r20, 0x0073
+ 62e:	50 91 72 00 	lds	r21, 0x0072
 					}
 				}
 				if(keys & KEY_PLUS) {
 					if(FanSpeedOverride < 7) {
 						FanSpeedOverride++;
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
- 6b0:	21 e0       	ldi	r18, 0x01	; 1
- 6b2:	65 2f       	mov	r22, r21
- 6b4:	22 23       	and	r18, r18
- 6b6:	c1 f0       	breq	.+48     	; 0x6e8 <main+0x1a2>
+ 632:	21 e0       	ldi	r18, 0x01	; 1
+ 634:	65 2f       	mov	r22, r21
+ 636:	22 23       	and	r18, r18
+ 638:	c1 f0       	breq	.+48     	; 0x66a <main+0x1d6>
 							if(FanSpeed < FanSpeedMax) FanSpeed++;
- 6b8:	24 2f       	mov	r18, r20
- 6ba:	33 27       	eor	r19, r19
- 6bc:	27 fd       	sbrc	r18, 7
- 6be:	30 95       	com	r19
- 6c0:	28 17       	cp	r18, r24
- 6c2:	39 07       	cpc	r19, r25
- 6c4:	0c f4       	brge	.+2      	; 0x6c8 <main+0x182>
- 6c6:	4f 5f       	subi	r20, 0xFF	; 255
- 6c8:	5f 5f       	subi	r21, 0xFF	; 255
+ 63a:	24 2f       	mov	r18, r20
+ 63c:	33 27       	eor	r19, r19
+ 63e:	27 fd       	sbrc	r18, 7
+ 640:	30 95       	com	r19
+ 642:	28 17       	cp	r18, r24
+ 644:	39 07       	cpc	r19, r25
+ 646:	0c f4       	brge	.+2      	; 0x64a <main+0x1b6>
+ 648:	4f 5f       	subi	r20, 0xFF	; 255
+ 64a:	5f 5f       	subi	r21, 0xFF	; 255
 							if(SpeedSet < FanSpeedMax) SpeedSet++;
- 6ca:	26 2f       	mov	r18, r22
- 6cc:	33 27       	eor	r19, r19
- 6ce:	27 fd       	sbrc	r18, 7
- 6d0:	30 95       	com	r19
- 6d2:	28 17       	cp	r18, r24
- 6d4:	39 07       	cpc	r19, r25
- 6d6:	34 f0       	brlt	.+12     	; 0x6e4 <main+0x19e>
- 6d8:	40 93 74 00 	sts	0x0074, r20
- 6dc:	60 93 73 00 	sts	0x0073, r22
+ 64c:	26 2f       	mov	r18, r22
+ 64e:	33 27       	eor	r19, r19
+ 650:	27 fd       	sbrc	r18, 7
+ 652:	30 95       	com	r19
+ 654:	28 17       	cp	r18, r24
+ 656:	39 07       	cpc	r19, r25
+ 658:	34 f0       	brlt	.+12     	; 0x666 <main+0x1d2>
+ 65a:	40 93 73 00 	sts	0x0073, r20
+ 65e:	60 93 72 00 	sts	0x0072, r22
     return 1;
 }
 
 static __inline__ void __iSeiParam(const uint8_t *__s)
 {
     sei();
- 6e0:	78 94       	sei
+ 662:	78 94       	sei
     __asm__ volatile ("" ::: "memory");
- 6e2:	66 c0       	rjmp	.+204    	; 0x7b0 <main+0x26a>
+ 664:	64 c0       	rjmp	.+200    	; 0x72e <main+0x29a>
 					}
 				}
 				if(keys & KEY_PLUS) {
 					if(FanSpeedOverride < 7) {
 						FanSpeedOverride++;
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
- 6e4:	20 e0       	ldi	r18, 0x00	; 0
- 6e6:	e5 cf       	rjmp	.-54     	; 0x6b2 <main+0x16c>
- 6e8:	40 93 74 00 	sts	0x0074, r20
- 6ec:	50 93 73 00 	sts	0x0073, r21
- 6f0:	f7 cf       	rjmp	.-18     	; 0x6e0 <main+0x19a>
+ 666:	20 e0       	ldi	r18, 0x00	; 0
+ 668:	e5 cf       	rjmp	.-54     	; 0x634 <main+0x1a0>
+ 66a:	40 93 73 00 	sts	0x0073, r20
+ 66e:	50 93 72 00 	sts	0x0072, r21
+ 672:	f7 cf       	rjmp	.-18     	; 0x662 <main+0x1ce>
 							if(FanSpeed < FanSpeedMax) FanSpeed++;
 							if(SpeedSet < FanSpeedMax) SpeedSet++;
 						}
 					}
 				}
 			} else if(setup_mode) {
- 6f2:	80 91 67 00 	lds	r24, 0x0067
- 6f6:	88 23       	and	r24, r24
- 6f8:	79 f1       	breq	.+94     	; 0x758 <main+0x212>
+ 674:	90 91 64 00 	lds	r25, 0x0064
+ 678:	99 23       	and	r25, r25
+ 67a:	79 f1       	breq	.+94     	; 0x6da <main+0x246>
 				if(keys & KEY_MINUS) {
- 6fa:	80 91 71 00 	lds	r24, 0x0071
- 6fe:	81 ff       	sbrs	r24, 1
- 700:	05 c0       	rjmp	.+10     	; 0x70c <main+0x1c6>
+ 67c:	80 91 70 00 	lds	r24, 0x0070
+ 680:	81 ff       	sbrs	r24, 1
+ 682:	05 c0       	rjmp	.+10     	; 0x68e <main+0x1fa>
 					SpeedSet--;
- 702:	80 91 73 00 	lds	r24, 0x0073
- 706:	81 50       	subi	r24, 0x01	; 1
- 708:	80 93 73 00 	sts	0x0073, r24
+ 684:	80 91 72 00 	lds	r24, 0x0072
+ 688:	81 50       	subi	r24, 0x01	; 1
+ 68a:	80 93 72 00 	sts	0x0072, r24
 				}
 				if(keys & KEY_PLUS) {
- 70c:	80 91 71 00 	lds	r24, 0x0071
- 710:	82 ff       	sbrs	r24, 2
- 712:	05 c0       	rjmp	.+10     	; 0x71e <main+0x1d8>
+ 68e:	80 91 70 00 	lds	r24, 0x0070
+ 692:	82 ff       	sbrs	r24, 2
+ 694:	05 c0       	rjmp	.+10     	; 0x6a0 <main+0x20c>
 					SpeedSet++;
- 714:	80 91 73 00 	lds	r24, 0x0073
- 718:	8f 5f       	subi	r24, 0xFF	; 255
- 71a:	80 93 73 00 	sts	0x0073, r24
+ 696:	80 91 72 00 	lds	r24, 0x0072
+ 69a:	8f 5f       	subi	r24, 0xFF	; 255
+ 69c:	80 93 72 00 	sts	0x0072, r24
 				}
 				if(SpeedSet < 1) SpeedSet = 1;
- 71e:	20 91 73 00 	lds	r18, 0x0073
- 722:	12 16       	cp	r1, r18
- 724:	1c f0       	brlt	.+6      	; 0x72c <main+0x1e6>
- 726:	c0 93 73 00 	sts	0x0073, r28
- 72a:	0c c0       	rjmp	.+24     	; 0x744 <main+0x1fe>
+ 6a0:	20 91 72 00 	lds	r18, 0x0072
+ 6a4:	12 16       	cp	r1, r18
+ 6a6:	1c f0       	brlt	.+6      	; 0x6ae <main+0x21a>
+ 6a8:	c0 93 72 00 	sts	0x0072, r28
+ 6ac:	0c c0       	rjmp	.+24     	; 0x6c6 <main+0x232>
 				else if(SpeedSet > FanSpeedMax) SpeedSet = FanSpeedMax;
- 72c:	40 91 72 00 	lds	r20, 0x0072
- 730:	33 27       	eor	r19, r19
- 732:	27 fd       	sbrc	r18, 7
- 734:	30 95       	com	r19
- 736:	84 2f       	mov	r24, r20
- 738:	90 e0       	ldi	r25, 0x00	; 0
- 73a:	82 17       	cp	r24, r18
- 73c:	93 07       	cpc	r25, r19
- 73e:	14 f4       	brge	.+4      	; 0x744 <main+0x1fe>
- 740:	40 93 73 00 	sts	0x0073, r20
+ 6ae:	40 91 71 00 	lds	r20, 0x0071
+ 6b2:	33 27       	eor	r19, r19
+ 6b4:	27 fd       	sbrc	r18, 7
+ 6b6:	30 95       	com	r19
+ 6b8:	84 2f       	mov	r24, r20
+ 6ba:	90 e0       	ldi	r25, 0x00	; 0
+ 6bc:	82 17       	cp	r24, r18
+ 6be:	93 07       	cpc	r25, r19
+ 6c0:	14 f4       	brge	.+4      	; 0x6c6 <main+0x232>
+ 6c2:	40 93 72 00 	sts	0x0072, r20
 				FlashLED(SpeedSet, 5, 5);
- 744:	45 e0       	ldi	r20, 0x05	; 5
- 746:	65 e0       	ldi	r22, 0x05	; 5
- 748:	80 91 73 00 	lds	r24, 0x0073
- 74c:	d4 dc       	rcall	.-1624   	; 0xf6 <FlashLED>
+ 6c6:	45 e0       	ldi	r20, 0x05	; 5
+ 6c8:	65 e0       	ldi	r22, 0x05	; 5
+ 6ca:	80 91 72 00 	lds	r24, 0x0072
+ 6ce:	08 dd       	rcall	.-1520   	; 0xe0 <FlashLED>
 				RequestCountdown = 30;
- 74e:	d0 93 60 00 	sts	0x0060, r29
+ 6d0:	d0 93 67 00 	sts	0x0067, r29
 				SpeedSetChanged = 1;
- 752:	c0 93 6d 00 	sts	0x006D, r28
- 756:	2c c0       	rjmp	.+88     	; 0x7b0 <main+0x26a>
-			} else if((keys & KEY_MINUS) || (keys & KEY_PLUS)) {
- 758:	80 91 71 00 	lds	r24, 0x0071
- 75c:	81 fd       	sbrc	r24, 1
- 75e:	04 c0       	rjmp	.+8      	; 0x768 <main+0x222>
- 760:	80 91 71 00 	lds	r24, 0x0071
- 764:	82 ff       	sbrs	r24, 2
- 766:	24 c0       	rjmp	.+72     	; 0x7b0 <main+0x26a>
+ 6d4:	c0 93 6c 00 	sts	0x006C, r28
+ 6d8:	2a c0       	rjmp	.+84     	; 0x72e <main+0x29a>
+			} else if(FanSpeedOff == 2 && (keys & (KEY_MINUS | KEY_PLUS))) {
+ 6da:	82 30       	cpi	r24, 0x02	; 2
+ 6dc:	41 f5       	brne	.+80     	; 0x72e <main+0x29a>
+ 6de:	80 91 70 00 	lds	r24, 0x0070
+ 6e2:	86 70       	andi	r24, 0x06	; 6
+ 6e4:	21 f1       	breq	.+72     	; 0x72e <main+0x29a>
 				if(PressKeyOnTime == 0 && PressKeyOffTime == 0) { // not in changing process
- 768:	80 91 6e 00 	lds	r24, 0x006E
- 76c:	81 11       	cpse	r24, r1
- 76e:	20 c0       	rjmp	.+64     	; 0x7b0 <main+0x26a>
- 770:	80 91 6f 00 	lds	r24, 0x006F
- 774:	81 11       	cpse	r24, r1
- 776:	1c c0       	rjmp	.+56     	; 0x7b0 <main+0x26a>
+ 6e6:	80 91 6d 00 	lds	r24, 0x006D
+ 6ea:	81 11       	cpse	r24, r1
+ 6ec:	20 c0       	rjmp	.+64     	; 0x72e <main+0x29a>
+ 6ee:	80 91 6e 00 	lds	r24, 0x006E
+ 6f2:	81 11       	cpse	r24, r1
+ 6f4:	1c c0       	rjmp	.+56     	; 0x72e <main+0x29a>
 					LED1_ON;
- 778:	d9 9a       	sbi	0x1b, 1	; 27
+ 6f6:	d9 9a       	sbi	0x1b, 1	; 27
 					Delay100ms(10);
- 77a:	8a e0       	ldi	r24, 0x0A	; 10
- 77c:	90 e0       	ldi	r25, 0x00	; 0
- 77e:	af dc       	rcall	.-1698   	; 0xde <Delay100ms>
+ 6f8:	8a e0       	ldi	r24, 0x0A	; 10
+ 6fa:	90 e0       	ldi	r25, 0x00	; 0
+ 6fc:	e5 dc       	rcall	.-1590   	; 0xc8 <Delay100ms>
 					while(keys) {
- 780:	80 91 71 00 	lds	r24, 0x0071
- 784:	88 23       	and	r24, r24
- 786:	a1 f0       	breq	.+40     	; 0x7b0 <main+0x26a>
+ 6fe:	80 91 70 00 	lds	r24, 0x0070
+ 702:	88 23       	and	r24, r24
+ 704:	a1 f0       	breq	.+40     	; 0x72e <main+0x29a>
 						wdt_reset(); // wait keys release
- 788:	a8 95       	wdr
+ 706:	a8 95       	wdr
 						if((keys & KEY_MINUS) && (keys & KEY_PLUS)) {
- 78a:	80 91 71 00 	lds	r24, 0x0071
- 78e:	81 ff       	sbrs	r24, 1
- 790:	f7 cf       	rjmp	.-18     	; 0x780 <main+0x23a>
- 792:	80 91 71 00 	lds	r24, 0x0071
- 796:	82 ff       	sbrs	r24, 2
- 798:	f3 cf       	rjmp	.-26     	; 0x780 <main+0x23a>
+ 708:	80 91 70 00 	lds	r24, 0x0070
+ 70c:	81 ff       	sbrs	r24, 1
+ 70e:	f7 cf       	rjmp	.-18     	; 0x6fe <main+0x26a>
+ 710:	80 91 70 00 	lds	r24, 0x0070
+ 714:	82 ff       	sbrs	r24, 2
+ 716:	f3 cf       	rjmp	.-26     	; 0x6fe <main+0x26a>
 							setup_mode = 1;
- 79a:	c0 93 67 00 	sts	0x0067, r28
+ 718:	c0 93 64 00 	sts	0x0064, r28
 							FlashLED(5, 2, 2);
- 79e:	42 e0       	ldi	r20, 0x02	; 2
- 7a0:	62 e0       	ldi	r22, 0x02	; 2
- 7a2:	85 e0       	ldi	r24, 0x05	; 5
- 7a4:	a8 dc       	rcall	.-1712   	; 0xf6 <FlashLED>
+ 71c:	42 e0       	ldi	r20, 0x02	; 2
+ 71e:	62 e0       	ldi	r22, 0x02	; 2
+ 720:	85 e0       	ldi	r24, 0x05	; 5
+ 722:	de dc       	rcall	.-1604   	; 0xe0 <FlashLED>
 							Delay100ms(30);
- 7a6:	8e e1       	ldi	r24, 0x1E	; 30
- 7a8:	90 e0       	ldi	r25, 0x00	; 0
- 7aa:	99 dc       	rcall	.-1742   	; 0xde <Delay100ms>
+ 724:	8e e1       	ldi	r24, 0x1E	; 30
+ 726:	90 e0       	ldi	r25, 0x00	; 0
+ 728:	cf dc       	rcall	.-1634   	; 0xc8 <Delay100ms>
 							RequestCountdown = 30;
- 7ac:	d0 93 60 00 	sts	0x0060, r29
+ 72a:	d0 93 67 00 	sts	0x0067, r29
 							break;
 						}
 					}
 				}
 			}
 			LED1_ON;
- 7b0:	d9 9a       	sbi	0x1b, 1	; 27
-			while(keys) wdt_reset(); // wait keys release
- 7b2:	80 91 71 00 	lds	r24, 0x0071
- 7b6:	88 23       	and	r24, r24
- 7b8:	11 f0       	breq	.+4      	; 0x7be <main+0x278>
- 7ba:	a8 95       	wdr
- 7bc:	fa cf       	rjmp	.-12     	; 0x7b2 <main+0x26c>
- 7be:	8b e4       	ldi	r24, 0x4B	; 75
- 7c0:	9d e1       	ldi	r25, 0x1D	; 29
- 7c2:	01 97       	sbiw	r24, 0x01	; 1
- 7c4:	f1 f7       	brne	.-4      	; 0x7c2 <main+0x27c>
- 7c6:	00 c0       	rjmp	.+0      	; 0x7c8 <main+0x282>
- 7c8:	00 00       	nop
+ 72e:	d9 9a       	sbi	0x1b, 1	; 27
+ 730:	8b e4       	ldi	r24, 0x4B	; 75
+ 732:	9d e1       	ldi	r25, 0x1D	; 29
+ 734:	01 97       	sbiw	r24, 0x01	; 1
+ 736:	f1 f7       	brne	.-4      	; 0x734 <main+0x2a0>
+ 738:	00 c0       	rjmp	.+0      	; 0x73a <main+0x2a6>
+ 73a:	00 00       	nop
+			_delay_ms(30);
+			while((~KEYS_PIN) & (KEY_PWR | KEY_MINUS | KEY_PLUS)) wdt_reset(); // wait keys release
+ 73c:	86 b3       	in	r24, 0x16	; 22
+ 73e:	90 e0       	ldi	r25, 0x00	; 0
+ 740:	80 95       	com	r24
+ 742:	90 95       	com	r25
+ 744:	87 70       	andi	r24, 0x07	; 7
+ 746:	99 27       	eor	r25, r25
+ 748:	89 2b       	or	r24, r25
+ 74a:	11 f0       	breq	.+4      	; 0x750 <main+0x2bc>
+ 74c:	a8 95       	wdr
+ 74e:	f6 cf       	rjmp	.-20     	; 0x73c <main+0x2a8>
+ 750:	8b e4       	ldi	r24, 0x4B	; 75
+ 752:	9d e1       	ldi	r25, 0x1D	; 29
+ 754:	01 97       	sbiw	r24, 0x01	; 1
+ 756:	f1 f7       	brne	.-4      	; 0x754 <main+0x2c0>
+ 758:	00 c0       	rjmp	.+0      	; 0x75a <main+0x2c6>
+ 75a:	00 00       	nop
 			_delay_ms(30);
 			LED1_OFF;
- 7ca:	d9 98       	cbi	0x1b, 1	; 27
+ 75c:	d9 98       	cbi	0x1b, 1	; 27
 		}
 		__asm__ volatile ("" ::: "memory"); // Need memory barrier
 		if(SpeedSetChanged) {
- 7cc:	80 91 6d 00 	lds	r24, 0x006D
- 7d0:	88 23       	and	r24, r24
- 7d2:	91 f1       	breq	.+100    	; 0x838 <main+0x2f2>
+ 75e:	80 91 6c 00 	lds	r24, 0x006C
+ 762:	88 23       	and	r24, r24
+ 764:	91 f1       	breq	.+100    	; 0x7ca <main+0x336>
 			uint8_t addr = EEPROM_read(EPROM_CurrentSpeedAddr);
- 7d4:	8f e0       	ldi	r24, 0x0F	; 15
- 7d6:	49 dc       	rcall	.-1902   	; 0x6a <EEPROM_read>
- 7d8:	f8 2e       	mov	r15, r24
+ 766:	8f e1       	ldi	r24, 0x1F	; 31
+ 768:	75 dc       	rcall	.-1814   	; 0x54 <EEPROM_read>
+ 76a:	08 2f       	mov	r16, r24
 			if(addr) {
- 7da:	88 23       	and	r24, r24
- 7dc:	59 f1       	breq	.+86     	; 0x834 <main+0x2ee>
+ 76c:	88 23       	and	r24, r24
+ 76e:	59 f1       	breq	.+86     	; 0x7c6 <main+0x332>
 x_save_speed:
 				if(EEPROM_read(addr) != SpeedSet) {
- 7de:	8f 2d       	mov	r24, r15
- 7e0:	44 dc       	rcall	.-1912   	; 0x6a <EEPROM_read>
- 7e2:	60 91 73 00 	lds	r22, 0x0073
- 7e6:	48 2f       	mov	r20, r24
- 7e8:	50 e0       	ldi	r21, 0x00	; 0
- 7ea:	26 2f       	mov	r18, r22
- 7ec:	33 27       	eor	r19, r19
- 7ee:	27 fd       	sbrc	r18, 7
- 7f0:	30 95       	com	r19
- 7f2:	42 17       	cp	r20, r18
- 7f4:	53 07       	cpc	r21, r19
- 7f6:	f1 f0       	breq	.+60     	; 0x834 <main+0x2ee>
+ 770:	80 2f       	mov	r24, r16
+ 772:	70 dc       	rcall	.-1824   	; 0x54 <EEPROM_read>
+ 774:	60 91 72 00 	lds	r22, 0x0072
+ 778:	48 2f       	mov	r20, r24
+ 77a:	50 e0       	ldi	r21, 0x00	; 0
+ 77c:	26 2f       	mov	r18, r22
+ 77e:	33 27       	eor	r19, r19
+ 780:	27 fd       	sbrc	r18, 7
+ 782:	30 95       	com	r19
+ 784:	42 17       	cp	r20, r18
+ 786:	53 07       	cpc	r21, r19
+ 788:	f1 f0       	breq	.+60     	; 0x7c6 <main+0x332>
 					EEPROM_write(addr, SpeedSet);
- 7f8:	8f 2d       	mov	r24, r15
- 7fa:	3f dc       	rcall	.-1922   	; 0x7a <EEPROM_write>
+ 78a:	80 2f       	mov	r24, r16
+ 78c:	6b dc       	rcall	.-1834   	; 0x64 <EEPROM_write>
 					if(EEPROM_read(addr) != SpeedSet) { // EEPROM cell broken
- 7fc:	8f 2d       	mov	r24, r15
- 7fe:	35 dc       	rcall	.-1942   	; 0x6a <EEPROM_read>
- 800:	48 2f       	mov	r20, r24
- 802:	50 e0       	ldi	r21, 0x00	; 0
- 804:	20 91 73 00 	lds	r18, 0x0073
- 808:	33 27       	eor	r19, r19
- 80a:	27 fd       	sbrc	r18, 7
- 80c:	30 95       	com	r19
- 80e:	42 17       	cp	r20, r18
- 810:	53 07       	cpc	r21, r19
- 812:	81 f0       	breq	.+32     	; 0x834 <main+0x2ee>
+ 78e:	80 2f       	mov	r24, r16
+ 790:	61 dc       	rcall	.-1854   	; 0x54 <EEPROM_read>
+ 792:	48 2f       	mov	r20, r24
+ 794:	50 e0       	ldi	r21, 0x00	; 0
+ 796:	20 91 72 00 	lds	r18, 0x0072
+ 79a:	33 27       	eor	r19, r19
+ 79c:	27 fd       	sbrc	r18, 7
+ 79e:	30 95       	com	r19
+ 7a0:	42 17       	cp	r20, r18
+ 7a2:	53 07       	cpc	r21, r19
+ 7a4:	81 f0       	breq	.+32     	; 0x7c6 <main+0x332>
 						FlashLED(10, 2, 2);
- 814:	42 e0       	ldi	r20, 0x02	; 2
- 816:	62 e0       	ldi	r22, 0x02	; 2
- 818:	8a e0       	ldi	r24, 0x0A	; 10
- 81a:	6d dc       	rcall	.-1830   	; 0xf6 <FlashLED>
+ 7a6:	42 e0       	ldi	r20, 0x02	; 2
+ 7a8:	62 e0       	ldi	r22, 0x02	; 2
+ 7aa:	8a e0       	ldi	r24, 0x0A	; 10
+ 7ac:	99 dc       	rcall	.-1742   	; 0xe0 <FlashLED>
 						send_data = 0xEE;
- 81c:	00 93 66 00 	sts	0x0066, r16
+ 7ae:	10 93 63 00 	sts	0x0063, r17
 						EEPROM_write(EPROM_CurrentSpeedAddr, ++addr);
- 820:	f3 94       	inc	r15
- 822:	6f 2d       	mov	r22, r15
- 824:	8f e0       	ldi	r24, 0x0F	; 15
- 826:	29 dc       	rcall	.-1966   	; 0x7a <EEPROM_write>
+ 7b2:	0f 5f       	subi	r16, 0xFF	; 255
+ 7b4:	60 2f       	mov	r22, r16
+ 7b6:	8f e1       	ldi	r24, 0x1F	; 31
+ 7b8:	55 dc       	rcall	.-1878   	; 0x64 <EEPROM_write>
 						if(addr == 0) { // memory ends
- 828:	f1 10       	cpse	r15, r1
- 82a:	d9 cf       	rjmp	.-78     	; 0x7de <main+0x298>
+ 7ba:	01 11       	cpse	r16, r1
+ 7bc:	d9 cf       	rjmp	.-78     	; 0x770 <main+0x2dc>
 							FlashLED(10, 2, 2);
- 82c:	42 e0       	ldi	r20, 0x02	; 2
- 82e:	62 e0       	ldi	r22, 0x02	; 2
- 830:	8a e0       	ldi	r24, 0x0A	; 10
- 832:	61 dc       	rcall	.-1854   	; 0xf6 <FlashLED>
+ 7be:	42 e0       	ldi	r20, 0x02	; 2
+ 7c0:	62 e0       	ldi	r22, 0x02	; 2
+ 7c2:	8a e0       	ldi	r24, 0x0A	; 10
+ 7c4:	8d dc       	rcall	.-1766   	; 0xe0 <FlashLED>
 							goto x_save_speed;
 						}
 					}
 				}
 			}
 			SpeedSetChanged = 0;
- 834:	10 92 6d 00 	sts	0x006D, r1
+ 7c6:	10 92 6c 00 	sts	0x006C, r1
 		}
 		if(RequestCountdown == 0) {
- 838:	80 91 60 00 	lds	r24, 0x0060
- 83c:	81 11       	cpse	r24, r1
- 83e:	ea ce       	rjmp	.-556    	; 0x614 <main+0xce>
+ 7ca:	80 91 67 00 	lds	r24, 0x0067
+ 7ce:	81 11       	cpse	r24, r1
+ 7d0:	d5 ce       	rjmp	.-598    	; 0x57c <main+0xe8>
 			if(setup_mode == 0) {
- 840:	80 91 67 00 	lds	r24, 0x0067
- 844:	81 11       	cpse	r24, r1
- 846:	5b c0       	rjmp	.+182    	; 0x8fe <main+0x3b8>
+ 7d2:	80 91 64 00 	lds	r24, 0x0064
+ 7d6:	81 11       	cpse	r24, r1
+ 7d8:	6d c0       	rjmp	.+218    	; 0x8b4 <main+0x420>
 				//if(1) {
-				if(FanSpeedOff == 0 || SendOffStatus == 1) {
- 848:	80 91 6b 00 	lds	r24, 0x006B
- 84c:	88 23       	and	r24, r24
- 84e:	29 f0       	breq	.+10     	; 0x85a <main+0x314>
- 850:	90 91 69 00 	lds	r25, 0x0069
- 854:	91 30       	cpi	r25, 0x01	; 1
- 856:	09 f0       	breq	.+2      	; 0x85a <main+0x314>
- 858:	4f c0       	rjmp	.+158    	; 0x8f8 <main+0x3b2>
-					if(send_data != 0xEE) send_data = (nrf_last_status << 5) | (FanSpeedOff << 4) | (FanSpeedOverride & 0x0F); // 11123333
- 85a:	90 91 66 00 	lds	r25, 0x0066
- 85e:	9e 3e       	cpi	r25, 0xEE	; 238
- 860:	71 f0       	breq	.+28     	; 0x87e <main+0x338>
- 862:	90 91 68 00 	lds	r25, 0x0068
- 866:	92 95       	swap	r25
- 868:	99 0f       	add	r25, r25
- 86a:	90 7e       	andi	r25, 0xE0	; 224
- 86c:	82 95       	swap	r24
- 86e:	80 7f       	andi	r24, 0xF0	; 240
- 870:	89 2b       	or	r24, r25
- 872:	90 91 6c 00 	lds	r25, 0x006C
- 876:	9f 70       	andi	r25, 0x0F	; 15
- 878:	89 2b       	or	r24, r25
- 87a:	80 93 66 00 	sts	0x0066, r24
-//					if(FanSpeedOff) send_data = NRF24_SendCommand(NRF24_CMD_NOP);
-//					else if(FanSpeedOverride == 1) send_data = NRF24_SendCommand(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS);
+				if(FanSpeedOff < 2 || SendOffStatus == 1) {
+ 7da:	20 91 6a 00 	lds	r18, 0x006A
+ 7de:	22 30       	cpi	r18, 0x02	; 2
+ 7e0:	28 f0       	brcs	.+10     	; 0x7ec <main+0x358>
+ 7e2:	80 91 66 00 	lds	r24, 0x0066
+ 7e6:	81 30       	cpi	r24, 0x01	; 1
+ 7e8:	09 f0       	breq	.+2      	; 0x7ec <main+0x358>
+ 7ea:	61 c0       	rjmp	.+194    	; 0x8ae <main+0x41a>
+					if(send_data != 0xEE) send_data = (nrf_last_status << 5) | ((FanSpeedOff == 2) << 4) | (FanSpeedOverride & 0x0F); // 11123333
+ 7ec:	80 91 63 00 	lds	r24, 0x0063
+ 7f0:	8e 3e       	cpi	r24, 0xEE	; 238
+ 7f2:	a1 f0       	breq	.+40     	; 0x81c <main+0x388>
+ 7f4:	80 91 65 00 	lds	r24, 0x0065
+ 7f8:	90 e0       	ldi	r25, 0x00	; 0
+ 7fa:	35 e0       	ldi	r19, 0x05	; 5
+ 7fc:	88 0f       	add	r24, r24
+ 7fe:	99 1f       	adc	r25, r25
+ 800:	3a 95       	dec	r19
+ 802:	e1 f7       	brne	.-8      	; 0x7fc <main+0x368>
+ 804:	22 30       	cpi	r18, 0x02	; 2
+ 806:	11 f4       	brne	.+4      	; 0x80c <main+0x378>
+ 808:	20 e1       	ldi	r18, 0x10	; 16
+ 80a:	01 c0       	rjmp	.+2      	; 0x80e <main+0x37a>
+ 80c:	20 e0       	ldi	r18, 0x00	; 0
+ 80e:	90 91 6b 00 	lds	r25, 0x006B
+ 812:	9f 70       	andi	r25, 0x0F	; 15
+ 814:	98 2b       	or	r25, r24
+ 816:	92 2b       	or	r25, r18
+ 818:	90 93 63 00 	sts	0x0063, r25
 					NRF24_Buffer[0] = send_data;
- 87e:	80 91 66 00 	lds	r24, 0x0066
- 882:	80 93 75 00 	sts	0x0075, r24
-					NRF24_SetMode(NRF24_TransmitMode);
- 886:	80 e0       	ldi	r24, 0x00	; 0
- 888:	b2 dc       	rcall	.-1692   	; 0x1ee <NRF24_SetMode>
+ 81c:	80 91 63 00 	lds	r24, 0x0063
+ 820:	80 93 74 00 	sts	0x0074, r24
 					nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
- 88a:	64 e0       	ldi	r22, 0x04	; 4
- 88c:	81 e0       	ldi	r24, 0x01	; 1
- 88e:	bd dc       	rcall	.-1670   	; 0x20a <NRF24_TransmitShockBurst>
- 890:	80 93 68 00 	sts	0x0068, r24
-					
-					NRF_save_registers();
- 894:	02 de       	rcall	.-1020   	; 0x49a <NRF_save_registers>
-					
+ 824:	64 e0       	ldi	r22, 0x04	; 4
+ 826:	81 e0       	ldi	r24, 0x01	; 1
+ 828:	e5 dc       	rcall	.-1590   	; 0x1f4 <NRF24_TransmitShockBurst>
+ 82a:	80 93 65 00 	sts	0x0065, r24
 					if(nrf_last_status) { // some problem
- 896:	80 91 68 00 	lds	r24, 0x0068
- 89a:	88 23       	and	r24, r24
- 89c:	29 f0       	breq	.+10     	; 0x8a8 <main+0x362>
+ 82e:	88 23       	and	r24, r24
+ 830:	29 f0       	breq	.+10     	; 0x83c <main+0x3a8>
 						LED_Warning = nrf_last_status;
- 89e:	80 93 65 00 	sts	0x0065, r24
-						RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
- 8a2:	84 e0       	ldi	r24, 0x04	; 4
- 8a4:	e2 db       	rcall	.-2108   	; 0x6a <EEPROM_read>
- 8a6:	1c c0       	rjmp	.+56     	; 0x8e0 <main+0x39a>
+ 832:	80 93 62 00 	sts	0x0062, r24
+x_continue:				RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
+ 836:	84 e0       	ldi	r24, 0x04	; 4
+ 838:	0d dc       	rcall	.-2022   	; 0x54 <EEPROM_read>
+ 83a:	2d c0       	rjmp	.+90     	; 0x896 <main+0x402>
+					} else {
+						if(((master_data*)NRF24_Buffer)->CO2level == 0xFDEF) { // EEPROM write
+ 83c:	80 91 74 00 	lds	r24, 0x0074
+ 840:	90 91 75 00 	lds	r25, 0x0075
+ 844:	8f 3e       	cpi	r24, 0xEF	; 239
+ 846:	9d 4f       	sbci	r25, 0xFD	; 253
+ 848:	51 f4       	brne	.+20     	; 0x85e <main+0x3ca>
+							EEPROM_write(((master_data*)NRF24_Buffer)->FanSpeed, ((master_data*)NRF24_Buffer)->Pause);
+ 84a:	60 91 77 00 	lds	r22, 0x0077
+ 84e:	80 91 76 00 	lds	r24, 0x0076
+ 852:	08 dc       	rcall	.-2032   	; 0x64 <EEPROM_write>
+							FlashLED(7, 2, 2);
+ 854:	42 e0       	ldi	r20, 0x02	; 2
+ 856:	62 e0       	ldi	r22, 0x02	; 2
+ 858:	87 e0       	ldi	r24, 0x07	; 7
+ 85a:	42 dc       	rcall	.-1916   	; 0xe0 <FlashLED>
+							goto x_continue;
+ 85c:	ec cf       	rjmp	.-40     	; 0x836 <main+0x3a2>
     return 1;
 }
 
 static __inline__ uint8_t __iCliRetVal(void)
 {
     cli();
- 8a8:	f8 94       	cli
-					} else {
+ 85e:	f8 94       	cli
+						}
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
-							FanSpeed = ((master_data*) NRF24_Buffer)->FanSpeed + FanSpeedOverride;
- 8aa:	20 91 6c 00 	lds	r18, 0x006C
- 8ae:	80 91 77 00 	lds	r24, 0x0077
- 8b2:	28 0f       	add	r18, r24
- 8b4:	20 93 74 00 	sts	0x0074, r18
+							FanSpeed = ((master_data*)NRF24_Buffer)->FanSpeed + FanSpeedOverride;
+ 860:	20 91 6b 00 	lds	r18, 0x006B
+ 864:	80 91 76 00 	lds	r24, 0x0076
+ 868:	28 0f       	add	r18, r24
+ 86a:	20 93 73 00 	sts	0x0073, r18
 							if(FanSpeed < 0) FanSpeed = 0; // off
- 8b8:	27 ff       	sbrs	r18, 7
- 8ba:	03 c0       	rjmp	.+6      	; 0x8c2 <main+0x37c>
- 8bc:	10 92 74 00 	sts	0x0074, r1
- 8c0:	0c c0       	rjmp	.+24     	; 0x8da <main+0x394>
+ 86e:	27 ff       	sbrs	r18, 7
+ 870:	03 c0       	rjmp	.+6      	; 0x878 <main+0x3e4>
+ 872:	10 92 73 00 	sts	0x0073, r1
+ 876:	0c c0       	rjmp	.+24     	; 0x890 <main+0x3fc>
 							else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
- 8c2:	40 91 72 00 	lds	r20, 0x0072
- 8c6:	33 27       	eor	r19, r19
- 8c8:	27 fd       	sbrc	r18, 7
- 8ca:	30 95       	com	r19
- 8cc:	84 2f       	mov	r24, r20
- 8ce:	90 e0       	ldi	r25, 0x00	; 0
- 8d0:	82 17       	cp	r24, r18
- 8d2:	93 07       	cpc	r25, r19
- 8d4:	14 f4       	brge	.+4      	; 0x8da <main+0x394>
- 8d6:	40 93 74 00 	sts	0x0074, r20
+ 878:	40 91 71 00 	lds	r20, 0x0071
+ 87c:	33 27       	eor	r19, r19
+ 87e:	27 fd       	sbrc	r18, 7
+ 880:	30 95       	com	r19
+ 882:	84 2f       	mov	r24, r20
+ 884:	90 e0       	ldi	r25, 0x00	; 0
+ 886:	82 17       	cp	r24, r18
+ 888:	93 07       	cpc	r25, r19
+ 88a:	14 f4       	brge	.+4      	; 0x890 <main+0x3fc>
+ 88c:	40 93 73 00 	sts	0x0073, r20
     return 1;
 }
 
 static __inline__ void __iSeiParam(const uint8_t *__s)
 {
     sei();
- 8da:	78 94       	sei
+ 890:	78 94       	sei
 						}
-						RequestCountdown = ((master_data*) NRF24_Buffer)->Pause;
- 8dc:	80 91 78 00 	lds	r24, 0x0078
- 8e0:	80 93 60 00 	sts	0x0060, r24
+						RequestCountdown = ((master_data*)NRF24_Buffer)->Pause;
+ 892:	80 91 77 00 	lds	r24, 0x0077
+ 896:	80 93 67 00 	sts	0x0067, r24
 //						FlashLED(FanSpeed, 5, 10);
 					}
 					if(nrf_last_status <= 1) { // Status was send successfully
- 8e4:	80 91 68 00 	lds	r24, 0x0068
- 8e8:	82 30       	cpi	r24, 0x02	; 2
- 8ea:	20 f4       	brcc	.+8      	; 0x8f4 <main+0x3ae>
+ 89a:	80 91 65 00 	lds	r24, 0x0065
+ 89e:	82 30       	cpi	r24, 0x02	; 2
+ 8a0:	08 f0       	brcs	.+2      	; 0x8a4 <main+0x410>
+ 8a2:	6c ce       	rjmp	.-808    	; 0x57c <main+0xe8>
 						SendOffStatus = 0;
- 8ec:	10 92 69 00 	sts	0x0069, r1
+ 8a4:	10 92 66 00 	sts	0x0066, r1
 						send_data = 0;
- 8f0:	10 92 66 00 	sts	0x0066, r1
+ 8a8:	10 92 63 00 	sts	0x0063, r1
+ 8ac:	67 ce       	rjmp	.-818    	; 0x57c <main+0xe8>
 					}
-					NRF24_Powerdown();
- 8f4:	f5 dc       	rcall	.-1558   	; 0x2e0 <NRF24_Powerdown>
- 8f6:	8e ce       	rjmp	.-740    	; 0x614 <main+0xce>
 				} else {
 					RequestCountdown = 1; // sec
- 8f8:	c0 93 60 00 	sts	0x0060, r28
- 8fc:	8b ce       	rjmp	.-746    	; 0x614 <main+0xce>
+ 8ae:	c0 93 67 00 	sts	0x0067, r28
+ 8b2:	64 ce       	rjmp	.-824    	; 0x57c <main+0xe8>
 				}
 			} else { // setup mode timeout
 				setup_mode = 0;
- 8fe:	10 92 67 00 	sts	0x0067, r1
- 902:	88 ce       	rjmp	.-752    	; 0x614 <main+0xce>
+ 8b4:	10 92 64 00 	sts	0x0064, r1
+ 8b8:	61 ce       	rjmp	.-830    	; 0x57c <main+0xe8>
 
-00000904 <memcpy_P>:
- 904:	fb 01       	movw	r30, r22
- 906:	dc 01       	movw	r26, r24
- 908:	02 c0       	rjmp	.+4      	; 0x90e <memcpy_P+0xa>
- 90a:	05 90       	lpm	r0, Z+
- 90c:	0d 92       	st	X+, r0
- 90e:	41 50       	subi	r20, 0x01	; 1
- 910:	50 40       	sbci	r21, 0x00	; 0
- 912:	d8 f7       	brcc	.-10     	; 0x90a <memcpy_P+0x6>
- 914:	08 95       	ret
+000008ba <memcpy_P>:
+ 8ba:	fb 01       	movw	r30, r22
+ 8bc:	dc 01       	movw	r26, r24
+ 8be:	02 c0       	rjmp	.+4      	; 0x8c4 <memcpy_P+0xa>
+ 8c0:	05 90       	lpm	r0, Z+
+ 8c2:	0d 92       	st	X+, r0
+ 8c4:	41 50       	subi	r20, 0x01	; 1
+ 8c6:	50 40       	sbci	r21, 0x00	; 0
+ 8c8:	d8 f7       	brcc	.-10     	; 0x8c0 <memcpy_P+0x6>
+ 8ca:	08 95       	ret
 
-00000916 <_exit>:
- 916:	f8 94       	cli
+000008cc <_exit>:
+ 8cc:	f8 94       	cli
 
-00000918 <__stop_program>:
- 918:	ff cf       	rjmp	.-2      	; 0x918 <__stop_program>
+000008ce <__stop_program>:
+ 8ce:	ff cf       	rjmp	.-2      	; 0x8ce <__stop_program>

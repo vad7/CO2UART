@@ -149,13 +149,14 @@ void ICACHE_FLASH_ATTR web_fans_xml(TCP_SERV_CONN *ts_conn)
 	}
 	while(web_conn->msgbuflen + 250 <= web_conn->msgbufsize)
 	{ // +max string size
-		CFG_FAN *f = &cfg_fans[web_conn->udata_start];
+		CFG_FAN *cf = &cfg_fans[web_conn->udata_start];
+		FAN *f = &fans[web_conn->udata_start];
 		tcp_puts_fd("<fan id=\"%d\"><name>", web_conn->udata_start);
-		web_conn->msgbuflen += htmlcode(&web_conn->msgbuf[web_conn->msgbuflen], f->name, sizeof(f->name) * 6, sizeof(f->name));
+		web_conn->msgbuflen += htmlcode(&web_conn->msgbuf[web_conn->msgbuflen], cf->name, sizeof(cf->name) * 6, sizeof(cf->name));
 		tcp_puts_fd("</name><fl>%u</fl>"
 				//"<rf>%d</rf><addr>%d</addr><ovd>%d</ovd><ovn>%d</ovn><spmax>%d</spmax><spmin>%d</spmin><spd>%d</spd><spn>%d</spn>"
 				"<fspt>%u</fspt><spc>%d</spc><tst>%d</tst><off>%d</off><adj>%d</adj><ttm>%u</ttm></fan>\n",
-			f->flags,
+			cf->flags,
 			//f->rf_channel, f->address_LSB, f->override_day, f->override_night, f->speed_max, f->speed_min, f->speed_day, f->speed_night,
 			f->forced_speed_timeout, f->speed_current, f->transmit_last_status, f->powered_off, f->adjust_speed, sntp_local_to_UTC_time(f->transmit_ok_last_time));
 		if(++web_conn->udata_start >= web_conn->udata_stop) {
@@ -882,6 +883,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 		        else ifcmp("flags") tcp_puts("%d", f->flags);
 		        else ifcmp("broken") tcp_puts("%u", f->broken_cell_last_time);
 		        else ifcmp("pause") tcp_puts("%u", f->pause);
+		        else ifcmp("timeout") tcp_puts("%u", f->timeout);
 		    }
 			else ifcmp("vars_") { // cfg_
 				cstr += 5;
@@ -1332,7 +1334,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         	ifcmp("previous") tcp_puts("%d", fan_speed_previous);
         	else {
         		uint8 idx = rom_atoi(cstr);
-        		if(idx < cfg_glo.fans) tcp_puts("%d", cfg_fans[idx].speed_current);
+        		if(idx < cfg_glo.fans) tcp_puts("%d", fans[idx].speed_current);
         	}
         }
         else ifcmp("history_addr") tcp_puts("0x%x", (uint32)history_co2);
@@ -1351,6 +1353,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         	else ifcmp("ram") dbg_tcp_send(ts_conn);
         }
 #endif
+        else ifcmp("mktime") tcp_puts("%s %s", __DATE__, __TIME__); // make date time
 //
 		else tcp_put('?');
 }

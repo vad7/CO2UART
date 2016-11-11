@@ -377,7 +377,13 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 			else ifcmp("save") {
 				if(val == 1) {
 					cstr += 4;
-					ifcmp("_fans") write_wireless_fans_cfg();
+					ifcmp("_fans") {
+						if(WriteFanEEPROM_addr) {
+							WriteFanEEPROM = Web_cfg_fan_ + 1;
+						} else {
+							write_wireless_fans_cfg();
+						}
+					}
 					else write_wireless_co2_cfg();
 				}
 			}
@@ -394,27 +400,15 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 	        	cstr += 8;
 		        ifcmp("_night") f->override_night = val;
 		        else ifcmp("_day") f->override_day = val;
-		        else {
-		        	if(pvar[0] == 'p') {
-		        		f->speed_current++;
-		        		f->flags |= (1<<FAN_SPEED_FORCED_BIT);
-		        	} else if(pvar[0] == 'm') {
-		        		f->speed_current--;
-		        		f->flags |= (1<<FAN_SPEED_FORCED_BIT);
-		        	} else {
-		        		f->flags &= ~(1<<FAN_SPEED_FORCED_BIT);
-		        	}
-		    		if(f->speed_current < f->speed_min) f->speed_current = f->speed_min;
-		    		if(f->speed_current > f->speed_max) f->speed_current = f->speed_max;
-		    		if(1<<FAN_SPEED_FORCED_BIT) f->forced_speed_timeout = ahextoul(pvar + 1) * 60;
-		    		send_fans_speed_now(Web_cfg_fan_, !(f->flags & (1<<FAN_SPEED_FORCED_BIT)));
-		        }
 	        }
 	        else ifcmp("day") f->speed_day = val;
 	        else ifcmp("night") f->speed_night = val;
 	        else ifcmp("flags") f->flags = val;
 	        else ifcmp("broken") { if(val) f->broken_cell_last_time = 0; }
 	        else ifcmp("pause") f->pause = val;
+	        else ifcmp("timeout") f->timeout = val;
+	        else ifcmp("waddr") WriteFanEEPROM_addr = val;
+	        else ifcmp("wval") WriteFanEEPROM_value = val;
 	        else Web_cfg_fan_ = val < cfg_glo.fans ? val : 0; // "cfg_fan_"
 		}
 		else ifcmp("vars_") { // cfg_
@@ -459,7 +453,7 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 		}
 #endif
 #ifdef USE_SNTP
-		else ifcmp("sntp") {
+		else ifcmp("sntp") { // cfg_
 			cstr += 4;
 			ifcmp("_time") sntp_set_time(val);
 			else {
@@ -480,6 +474,30 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 		else os_printf(" - none!\n");
 #endif
 		// sys_write_cfg();
+	}
+	else ifcmp("fan_") {
+		cstr += 4;
+		ifcmp("set_") {
+			cstr += 4;
+			uint8_t fan = ahextoul(cstr);
+			if(fan < cfg_glo.fans) {
+				CFG_FAN *cf = &cfg_fans[fan];
+				FAN *f = &fans[fan];
+				if(pvar[0] == 'a') { // auto speed
+					f->forced_speed_timeout = 0;
+				} else {
+					if(pvar[0] == 'p') { // +
+						f->speed_current++;
+					} else if(pvar[0] == 'm') { // -
+						f->speed_current--;
+					}
+					if(f->speed_current < cf->speed_min) f->speed_current = cf->speed_min;
+					if(f->speed_current > cf->speed_max) f->speed_current = cf->speed_max;
+					f->forced_speed_timeout = ahextoul(pvar + 1) * 60;
+				}
+				send_fans_speed_now(fan, f->forced_speed_timeout == 0);
+			}
+		}
 	}
 	else ifcmp("ChartMaxDays") Web_ChartMaxDays = val;
 	else ifcmp("ShowByDay") Web_ShowByDay = val;

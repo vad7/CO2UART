@@ -50,11 +50,10 @@ inc:menu.inc
 CO2_current
 fan_speed_previous
 CO2_last_time
-CO2_r_flags
-CO2_r_speed
 now_night
 iot_LastSt_time
 iot_LastSt
+mktime
 wifi_ap_ssid
 sys_webver
 sys_sdkver
@@ -177,6 +176,7 @@ inc:menumain.inc
 cfg_fan_name
 cfg_fan_addr_LSB
 cfg_fan_pause
+cfg_fan_timeout
 cfg_glo_FSPM
 cfg_fan_min
 cfg_glo_FSPM

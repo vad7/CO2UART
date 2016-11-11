@@ -52,12 +52,12 @@ int8_t  FanSpeed;						 // 1..FanSpeedMax, negative number - off
 int8_t  SpeedSet;
 uint8_t SpeedSetChanged				= 0;
 int8_t  FanSpeedOverride			= 0; // +-
-uint8_t FanSpeedOff					= 0; // off/on state
+uint8_t FanSpeedOff					= 0; // 0 - on, 1 - remote off, 2 - manual off
 uint8_t FanSpeedChange				= 0;
-//uint16_t FanSpeedOverrideTimer		= 0;
 
 uint8_t TimerCntSec					= 0;
-uint8_t RequestCountdown			= 10; // sec
+uint8_t Timer						= 0;
+uint8_t RequestCountdown			= 0; // sec
 uint8_t RequestStatus				= 0; // 0 - pause, 1 - need send request, 2 - waiting response
 uint8_t SendOffStatus				= 0;
 uint8_t nrf_last_status				= 0;
@@ -67,17 +67,17 @@ uint8_t setup_mode					= 0;
 #define EPROM_RFAddress				0x01 // = 0xE5, Enhanced ShockBurst address LSB
 #define EPROM_RF_Channel			0x02 // 120
 #define EPROM_FanSpeedMax			0x03 // 7, max value = 127
-#define EPROM_PauseWhenError		0x04 // 20, sec
-#define EPROM_CurrentSpeedAddr		0x0F // +1..until end, if = 0 speed don't saved - after boot set 1
+#define EPROM_PauseWhenError		0x04 // 30, sec
+#define EPROM_InitPause				0x05 // 15, sec
+#define EPROM_CurrentSpeedAddr		0x1F // +1..until end, if = 0 speed don't saved - after boot set 1
 //                                  0xFF
-
 
 uint8_t send_data = 0; // send: (Previous error << 5) | (Off/On << 4) | Override speed(-8..+7); or 0xEE - EEPROM cell drained
 
 typedef struct {
-	uint16_t CO2level;
-	uint8_t FanSpeed; // 0 = off, Speed = 1..FanSpeedMax
-	uint8_t Pause; // sec, between next scan
+	uint16_t CO2level;	// 0xFDEF -> EEPROM_write(FanSpeed, Pause)
+	uint8_t FanSpeed;	// 0 = off, Speed = 1..FanSpeedMax
+	uint8_t Pause;		// sec, between next scan
 } __attribute__ ((packed)) master_data; // = 4 bytes
 
 #define FLAG_LowLight				0x01
@@ -140,7 +140,6 @@ static void EEPROM_write(uint8_t ucAddress, uint8_t ucData) // ATtiny24A/44A onl
 
 #define SETUP_WATCHDOG WDTCSR = (1<<WDCE) | (1<<WDE); WDTCSR = (1<<WDE) | (0<<WDIE) | (0<<WDP3) | (1<<WDP2) | (1<<WDP1) | (0<<WDP0); //  Watchdog reset 1 s
 uint8_t LED_Warning = 0, LED_WarningOnCnt = 0, LED_WarningOffCnt = 0;
-uint8_t Timer = 0;
 
 ISR(TIM0_OVF_vect) // 0.10035 sec
 {
@@ -160,7 +159,7 @@ ISR(TIM0_OVF_vect) // 0.10035 sec
 	 	LED_WarningOnCnt = 3;
 	 	if(--LED_Warning == 0) LED_WarningOffCnt = 5;
  	}
-	if(FanSpeed != SpeedSet && setup_mode == 0) {
+	if(FanSpeedOff < 2 && FanSpeed != SpeedSet && setup_mode == 0) {
 		if(PressKeyOffTime) {
 			if(--PressKeyOffTime == 0) {
 				KEYS_DDR |= PressKey; // set Out, level 0 - key pressed
@@ -198,32 +197,6 @@ x_off_ok:				FanSpeed = SpeedSet;
 	}
 }
 
-void NRF_save_registers(void)
-{
-	#define EPROM_SaveRegIdx 0x0F
-	#define EPROM_SaveReg	 0x10
-	#define IDX_MAX			 7
-	uint8_t buf[1];
-	
-	uint8_t idx = EEPROM_read(EPROM_SaveRegIdx);
-	if(idx > IDX_MAX) idx = 0;
-	idx = EPROM_SaveReg + idx * 0x20;
-	for(uint8_t i = 0; i <= 0x17; i++) {
-		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
-		EEPROM_write(idx++, buf[0]);
-	}
-	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1C, buf, 1); // at 0x18
-	EEPROM_write(idx++, buf[0]);
-	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1D, buf, 1); // at 0x19
-	EEPROM_write(idx++, buf[0]);
-	EEPROM_write(idx++, Timer);
-	EEPROM_write(idx++, nrf_last_status);
-	
-	idx = EEPROM_read(EPROM_SaveRegIdx) + 1;
-	if(idx > IDX_MAX) idx = IDX_MAX;
-	EEPROM_write(EPROM_SaveRegIdx, idx);
-}
-
 int main(void)
 {
 	CLKPR = (1<<CLKPCE); CLKPR = (0<<CLKPS3) | (0<<CLKPS2) | (1<<CLKPS1) | (1<<CLKPS0); // Clock prescaler: 8
@@ -232,6 +205,7 @@ int main(void)
 	KEYS_PORT &= ~(KEY_PWR | KEY_MINUS | KEY_PLUS); // = 0
 	DDRA = LED1; // Out
 	PORTA = (1<<PORTA7) | (1<<PORTA0); // pullup not used pins
+	NRF24_SET_CSN_HI;
 	NRF24_DDR |= NRF24_CE | NRF24_CSN | NRF24_SCK | NRF24_MOSI; // Out
 //	// Timer 8 bit
  	TCCR0A = (1<<WGM01) | (1<<WGM00);  // Timer0: Fast PWM OCRA
@@ -243,11 +217,12 @@ int main(void)
 	FanSpeedMax = EEPROM_read(EPROM_FanSpeedMax);
 	if(FanSpeedMax == 0xFF) {
 		EEPROM_write(EPROM_OSCCAL, OSCCAL);
-		EEPROM_write(EPROM_CurrentSpeedAddr, EPROM_CurrentSpeedAddr + 1);
-		EEPROM_write(EPROM_CurrentSpeedAddr + 1, 1);
-		EEPROM_write(EPROM_FanSpeedMax, 7);
 		EEPROM_write(EPROM_RFAddress, 0xE5);
 		EEPROM_write(EPROM_RF_Channel, 120);
+		EEPROM_write(EPROM_FanSpeedMax, 7);
+		EEPROM_write(EPROM_PauseWhenError, 30);
+		EEPROM_write(EPROM_CurrentSpeedAddr, EPROM_CurrentSpeedAddr + 1);
+		EEPROM_write(EPROM_CurrentSpeedAddr + 1, 1);
 	}
 	//OSCCAL = EEPROM_read(EPROM_OSCCAL);
 	uint8_t addr = EEPROM_read(EPROM_CurrentSpeedAddr);
@@ -257,13 +232,16 @@ int main(void)
 		SpeedSet = FanSpeedMax;
 		FanSpeed = 1;
 	}
-	NRF24_init(EEPROM_read(EPROM_RF_Channel)); // After init transmit must be delayed
+	RequestCountdown = EEPROM_read(EPROM_InitPause);
 	KEYS_INTR_INIT;
 	SETUP_WATCHDOG;
 	sei();
+	FlashLED(1, 1, 1);
+	NRF24_init(EEPROM_read(EPROM_RF_Channel)); // After init transmit must be delayed
  	while(!NRF24_SetAddresses(EEPROM_read(EPROM_RFAddress))) {
  		FlashLED(1, 50, 20);
  	}
+	NRF24_SetMode(NRF24_TransmitMode);
 	while(1)
 	{
 		__asm__ volatile ("" ::: "memory"); // Need memory barrier
@@ -271,8 +249,16 @@ int main(void)
 		wdt_reset();
 		if(keys) {
 			if(keys & KEY_PWR) {
-				FanSpeedOff ^= 1;
-				if(FanSpeedOff == 0 && setup_mode) setup_mode = 0;
+				if(FanSpeedOff) {
+					FanSpeedOff = 0;
+					if(setup_mode) setup_mode = 0;
+				} else {
+					FanSpeedOff = 2;
+					PressKeyOnTime = 0;
+					PressKeyOffTime = 0;
+					KEYS_DDR &= ~(KEY_MINUS | KEY_PLUS);
+					RequestCountdown = 0;
+				}
 				SendOffStatus = 1;
 			}
 			if(FanSpeedOff == 0) {
@@ -306,7 +292,7 @@ int main(void)
 				FlashLED(SpeedSet, 5, 5);
 				RequestCountdown = 30;
 				SpeedSetChanged = 1;
-			} else if((keys & KEY_MINUS) || (keys & KEY_PLUS)) {
+			} else if(FanSpeedOff == 2 && (keys & (KEY_MINUS | KEY_PLUS))) {
 				if(PressKeyOnTime == 0 && PressKeyOffTime == 0) { // not in changing process
 					LED1_ON;
 					Delay100ms(10);
@@ -323,7 +309,8 @@ int main(void)
 				}
 			}
 			LED1_ON;
-			while(keys) wdt_reset(); // wait keys release
+			_delay_ms(30);
+			while((~KEYS_PIN) & (KEY_PWR | KEY_MINUS | KEY_PLUS)) wdt_reset(); // wait keys release
 			_delay_ms(30);
 			LED1_OFF;
 		}
@@ -351,33 +338,31 @@ x_save_speed:
 		if(RequestCountdown == 0) {
 			if(setup_mode == 0) {
 				//if(1) {
-				if(FanSpeedOff == 0 || SendOffStatus == 1) {
-					if(send_data != 0xEE) send_data = (nrf_last_status << 5) | (FanSpeedOff << 4) | (FanSpeedOverride & 0x0F); // 11123333
-//					if(FanSpeedOff) send_data = NRF24_SendCommand(NRF24_CMD_NOP);
-//					else if(FanSpeedOverride == 1) send_data = NRF24_SendCommand(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS);
+				if(FanSpeedOff < 2 || SendOffStatus == 1) {
+					if(send_data != 0xEE) send_data = (nrf_last_status << 5) | ((FanSpeedOff == 2) << 4) | (FanSpeedOverride & 0x0F); // 11123333
 					NRF24_Buffer[0] = send_data;
-					NRF24_SetMode(NRF24_TransmitMode);
 					nrf_last_status = NRF24_TransmitShockBurst(1, sizeof(master_data)); // Enhanced ShockBurst, ACK with payload
-					
-					NRF_save_registers();
-					
 					if(nrf_last_status) { // some problem
 						LED_Warning = nrf_last_status;
-						RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
+x_continue:				RequestCountdown = EEPROM_read(EPROM_PauseWhenError); // sec
 					} else {
+						if(((master_data*)NRF24_Buffer)->CO2level == 0xFDEF) { // EEPROM write
+							EEPROM_write(((master_data*)NRF24_Buffer)->FanSpeed, ((master_data*)NRF24_Buffer)->Pause);
+							FlashLED(7, 2, 2);
+							goto x_continue;
+						}
 						ATOMIC_BLOCK(ATOMIC_FORCEON) {
-							FanSpeed = ((master_data*) NRF24_Buffer)->FanSpeed + FanSpeedOverride;
+							FanSpeed = ((master_data*)NRF24_Buffer)->FanSpeed + FanSpeedOverride;
 							if(FanSpeed < 0) FanSpeed = 0; // off
 							else if(FanSpeed > FanSpeedMax) FanSpeed = FanSpeedMax;
 						}
-						RequestCountdown = ((master_data*) NRF24_Buffer)->Pause;
+						RequestCountdown = ((master_data*)NRF24_Buffer)->Pause;
 //						FlashLED(FanSpeed, 5, 10);
 					}
 					if(nrf_last_status <= 1) { // Status was send successfully
 						SendOffStatus = 0;
 						send_data = 0;
 					}
-					NRF24_Powerdown();
 				} else {
 					RequestCountdown = 1; // sec
 				}

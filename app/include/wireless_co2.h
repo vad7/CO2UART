@@ -34,13 +34,9 @@ typedef enum
 
 typedef struct __attribute__((packed)) {
 	char name[16];
-	time_t transmit_ok_last_time;
-	uint32 forced_speed_timeout; // sec
-	uint8 transmit_last_status;	// NRF24 status: 0-ok, 1-Payload not returned, 2-Max retransmit reached, 3-return payload len error, 4-module not responding.
-	int8  adjust_speed;			// Override speed(-8..+7)
-	uint8 powered_off;			// Off/On
 	uint8 flags;				// CFG_FAN_FLAGS enum
 	uint8 pause;				// sec, pause between next NRF request
+	uint8 timeout;				// sec
 //	uint8 rf_channel;
 	uint8 address_LSB;
 	int8  speed_min;
@@ -49,15 +45,24 @@ typedef struct __attribute__((packed)) {
 	int8  speed_day;			// day
 	uint8 override_night;		// 0 - no, 1 - set =speed_night, 2 - set +speed_night
 	int8  speed_night;
-	uint8 speed_current;
 	time_t broken_cell_last_time;
 } CFG_FAN;
 CFG_FAN __attribute__((aligned(4))) cfg_fans[FANS_MAX]; // Actual number of fans stored in cfg_co2.fans
 
+typedef struct __attribute__((packed)) {
+	time_t transmit_ok_last_time;
+	uint32 forced_speed_timeout; // sec
+	uint8 transmit_last_status;	// NRF24 status: 0-ok, 1-Payload not returned, 2-Max retransmit reached, 3-return payload len error, 4-module not responding, +8-silence.
+	int8  adjust_speed;			// Override speed(-8..+7)
+	uint8 powered_off;			// Off/On
+	int8  speed_current;
+} FAN;
+FAN __attribute__((aligned(4))) fans[FANS_MAX]; // Actual number of fans stored in cfg_co2.fans
+
 typedef struct __attribute__ ((packed)) {
-	uint16_t CO2level;
-	uint8_t FanSpeed;
-	uint8_t Pause; // sec, between next scan
+	uint16_t CO2level;	// 0xFDEF -> EEPROM_write(FanSpeed, Pause)
+	uint8_t FanSpeed;	// 0 = off, Speed = 1..FanSpeedMax
+	uint8_t Pause; 		// sec, between next scan
 } CO2_SEND_DATA;
 CO2_SEND_DATA __attribute__((aligned(4))) co2_send_data;
 
@@ -84,8 +89,10 @@ uint8  now_night_override; // 0 - use now_night, 1 - not night, 2 - night
 uint32 Web_ChartMaxDays; 	// ~ChartMaxDays~
 uint32 Web_ShowByDay; 		// ~ShowByDay~
 uint32 Web_cfg_fan_;		// fan idx for change setting
-
 //
+uint8_t WriteFanEEPROM;		// Number of Fan (1..MAX)
+uint8_t	WriteFanEEPROM_addr;
+uint8_t	WriteFanEEPROM_value;
 
 void send_fans_speed_now(uint8 fan, uint8 calc_speed) ICACHE_FLASH_ATTR;
 void wireless_co2_init(uint8 index) ICACHE_FLASH_ATTR;

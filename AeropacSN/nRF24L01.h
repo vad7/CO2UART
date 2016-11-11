@@ -163,6 +163,34 @@ uint8_t NRF24_SendCommand(uint8_t cmd) // Send command & receive status
 	return result;
 }
 
+// for debug
+void NRF_save_registers(uint8_t st, uint8_t cnt)
+{
+	#define EPROM_SaveRegIdx 0x0E
+	#define EPROM_SaveReg	 0x10
+	#define IDX_MAX			 6
+	uint8_t buf[1];
+	
+	uint8_t idx = EEPROM_read(EPROM_SaveRegIdx);
+	if(idx == 0xFF) idx = 0;
+	idx = EPROM_SaveReg + idx * 0x20;
+	for(uint8_t i = 0; i <= 0x17; i++) {
+		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
+		EEPROM_write(idx++, buf[0]);
+	}
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1C, buf, 1); // at 0x18
+	EEPROM_write(idx++, buf[0]);
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1D, buf, 1); // at 0x19
+	EEPROM_write(idx++, buf[0]);
+	EEPROM_write(idx++, st);
+	EEPROM_write(idx++, cnt);
+	EEPROM_write(idx++, Timer);
+	
+	idx = EEPROM_read(EPROM_SaveRegIdx) + 1;
+	if(idx > IDX_MAX) idx = 0;
+	EEPROM_write(EPROM_SaveRegIdx, idx);
+}
+
 void NRF24_SetMode(uint8_t mode) // Set mode in CONFIG reg
 {
 	NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_CONFIG, NRF24_CONFIG | (1<<NRF24_BIT_PWR_UP) | mode);
@@ -219,14 +247,20 @@ uint8_t NRF24_TransmitShockBurst(uint8_t send_len, uint8_t receive_len)
 	}
 	NRF24_SET_CE_LOW;
 	if(i == 0) return 4;
-	if(st & (1<<NRF24_BIT_MAX_RT)) return 2;
-	if(st & (1<<NRF24_BIT_RX_DR)) {
+	// debug
+	//NRF_save_registers(st, i);
+	//
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER | NRF24_REG_FIFO_STATUS, NRF24_Buffer, 1); // get FIFO_STATUS
+	if((st & (1<<NRF24_BIT_RX_DR)) || (NRF24_Buffer[0] & (1<<NRF24_BIT_RX_EMPTY)) == 0) {
 		NRF24_Buffer[0] = 0xFF;
 		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
 		if(NRF24_Buffer[0] > 32 || NRF24_Buffer[0] < receive_len) return 3;
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, NRF24_Buffer, receive_len); // get RX payload len
 		return  0;
-	} else return 1;
+	} else {
+		if(st & (1<<NRF24_BIT_MAX_RT)) return 2;
+		return 1;
+	}
 }
 
 uint8_t NRF24_SetAddresses(uint8_t addr_LSB) // Set addresses: NRF24_BASE_ADDR + addr_LSB, return 1 if success

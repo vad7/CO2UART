@@ -29,6 +29,10 @@
 					<td><input title='0..255' name='cfg_fan_pause' maxlength='3' value='~cfg_fan_pause~'></td>
 				</tr>
 				<tr>
+					<td class="label">Timeout, sec:</td>
+					<td><input title='0..255' name='cfg_fan_timeout' maxlength='3' value='~cfg_fan_timeout~'></td>
+				</tr>
+				<tr>
 					<td class="label">Speed Min (0..~cfg_glo_FSPM~):</td>
 					<td><input name='cfg_fan_min' maxlength='4' value='~cfg_fan_min~'></td>
 				</tr>
@@ -57,12 +61,18 @@
 					<td><select name='cfg_fan_flags'>
 						<option value='0'>-</option>
 						<option value='1'>Skip fan</option>
-						<option value='2'>Forced speed</option>
 					</select></td>
+				</tr>
+				<tr>
+					<td></td><td><br></td>
 				</tr>
 				<tr>
 					<td class="label">EEPROM broken cell at:</td>
 					<td><span id="time_broken">~cfg_fan_broken~</span> &nbsp; <input type='checkbox' name='cfg_fan_broken' value='0'> clear</td>
+				</tr>
+				<tr>
+					<td class="label">Write to fan EEPROM:</td>
+					<td><input name='cfg_fan_waddr' size='5' value='---'>=<input name='cfg_fan_wval' size='5' value=''></td>
 				</tr>
  			</table>
 		<p class="center">

@@ -35,7 +35,7 @@ uint8 CO2_send_flag;		// 0 - ready to send, 1 - sending
 uint8 CO2_send_fan_idx;
 uint8 nrf_last_rf_channel = 255;
 uint16 receive_timeout; // sec
-#define CO2LevelAverageArrayLength 6
+#define CO2LevelAverageArrayLength 10
 uint16_t CO2LevelAverageIdx = CO2LevelAverageArrayLength;
 uint16_t CO2LevelAverageArray[CO2LevelAverageArrayLength];
 
@@ -59,8 +59,8 @@ void ICACHE_FLASH_ATTR CO2_Averaging(void)
 	if(CO2LevelAverageIdx == CO2LevelAverageArrayLength) { // First time
 		for(i = 1; i < CO2LevelAverageArrayLength; i++)	CO2LevelAverageArray[i] = CO2level;
 	}
-	if(CO2LevelAverageIdx >= CO2LevelAverageArrayLength) CO2LevelAverageIdx = 0;
-	CO2LevelAverageArray[CO2LevelAverageIdx++] = CO2level;
+	if(++CO2LevelAverageIdx >= CO2LevelAverageArrayLength) CO2LevelAverageIdx = 0;
+	CO2LevelAverageArray[CO2LevelAverageIdx] = CO2level;
 }
 
 // fan = 255 - all
@@ -103,8 +103,8 @@ void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 		nfan = cfg_glo.fans;
 	} else fan = nfan++;
 	for(; fan < nfan; fan++) {
+		if(fans[fan].forced_speed_timeout) continue;
 		CFG_FAN *f = &cfg_fans[fan];
-		if(f->flags & (1<<FAN_SPEED_FORCED_BIT)) continue;
 		int8_t fsp = fanspeed;
 		if(night) {
 			if(f->override_night == 1) fsp = f->speed_night; // =
@@ -115,7 +115,7 @@ void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 		}
 		if(fsp < f->speed_min) fsp = f->speed_min;
 		if(fsp > f->speed_max) fsp = f->speed_max;
-		f->speed_current = fsp;
+		fans[fan].speed_current = fsp;
 	}
 }
 
@@ -192,11 +192,11 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 {
 	uint8 fan;
 	for(fan = 0; fan < cfg_glo.fans; fan++) {
-		if(cfg_fans[fan].flags & (1<<FAN_SPEED_FORCED_BIT)) {
-			if(cfg_fans[fan].forced_speed_timeout) if(--cfg_fans[fan].forced_speed_timeout == 0) cfg_fans[fan].flags &= ~(1<<FAN_SPEED_FORCED_BIT);
-		}
+		FAN *f = &fans[fan];
+		if(f->forced_speed_timeout) f->forced_speed_timeout--;
+		if(!f->powered_off && get_sntp_localtime() - f->transmit_ok_last_time > cfg_fans[fan].timeout) f->transmit_last_status |= 8;
 	}
-	if(sntp_status == 1) { // New time - send to CO2 meter
+	if(sntp_status == 1) { // New time - send it to CO2 meter
 		sntp_status = 2;
 		uart_drv_start();
 		uart_tx_buf(AZ_7798_Command_SetTime, 2 + ets_sprintf(&AZ_7798_Command_SetTime[2], "%u\r", get_sntp_localtime() - AZ_7798_Command_SetTimeOffset));
@@ -204,7 +204,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 	}
 	if(receive_timeout)	receive_timeout--;
 	if(receive_timeout == 0) {
-		if(CO2_work_flag == 0) { // init
+		if(CO2_work_flag == 0) { // Send request to CO2 meter
 			os_memset(UART_Buffer, 0, UART_Buffer_size);
 			UART_Buffer_idx = 0;
 			uart_drv_start();
@@ -216,9 +216,16 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 				for(fan = 0; fan < cfg_glo.fans; fan++) {
 					CFG_FAN *f = &cfg_fans[fan];
 					if(f->flags & (1<<FAN_SKIP_BIT)) continue;
-					co2_send_data.FanSpeed = f->speed_current;
-					co2_send_data.CO2level = CO2level;
-					co2_send_data.Pause = f->pause;
+					if(WriteFanEEPROM && (WriteFanEEPROM-1) == fan) {
+						co2_send_data.CO2level = 0xFDEF;
+						co2_send_data.FanSpeed = WriteFanEEPROM_addr;
+						co2_send_data.Pause = WriteFanEEPROM_value;
+						WriteFanEEPROM = 0;
+					} else {
+						co2_send_data.CO2level = CO2level;
+						co2_send_data.FanSpeed = fans[fan].speed_current;
+						co2_send_data.Pause = f->pause;
+					}
 					NRF24_WriteArray(NRF24_CMD_W_ACK_PAYLOAD + fan, (uint8 *)&co2_send_data, sizeof(co2_send_data));
 					#if DEBUGSOO > 4
 						os_printf("NRF%d->%d, %d\n", fan, co2_send_data.FanSpeed, co2_send_data.Pause);
@@ -239,11 +246,11 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			#endif
 			dump_NRF_registers();
 			if(pipe < cfg_glo.fans) {
-				CFG_FAN *f = &cfg_fans[pipe];
+				FAN *f = &fans[pipe];
 				uint8_t st = NRF24_Buffer[0];
 				f->transmit_ok_last_time = get_sntp_localtime();
 				if(st == 0xEE) { // broken EEPROM cell
-					f->broken_cell_last_time = f->transmit_ok_last_time;
+					cfg_fans[pipe].broken_cell_last_time = f->transmit_ok_last_time;
 					write_wireless_fans_cfg();
 				} else {
 					f->transmit_last_status = (st >> 5) & 0b111;
@@ -255,7 +262,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 					if(Debug_RAM_addr != NULL && f->transmit_last_status) {
 						struct tm tm;
 						_localtime(&CO2_last_time, &tm);
-						dbg_printf("%d %d:%d:%d NRF%d=%X\n", tm.tm_mday, 1+tm.tm_mon, tm.tm_hour, tm.tm_min, tm.tm_sec, pipe, st);
+						dbg_printf("%02d:%02d:%02d NRF%d=%X\n", tm.tm_hour, tm.tm_min, tm.tm_sec, pipe, st);
 					}
 				#endif
 			}
@@ -275,7 +282,7 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	if(flash_read_cfg(&cfg_glo, ID_CFG_CO2, sizeof(cfg_glo)) <= 0) {
 		// defaults
 		os_memset(&cfg_glo, 0, sizeof(cfg_glo));
-		cfg_glo.page_refresh_time = 5000;
+		cfg_glo.page_refresh_time = 2000;
 		cfg_glo.csv_delimiter = ',';
 		cfg_glo.sensor_rf_channel = 120;
 		cfg_glo.fans = 0;
@@ -291,21 +298,16 @@ void ICACHE_FLASH_ATTR wireless_co2_init(uint8 index)
 	if(flash_read_cfg(&cfg_fans, ID_CFG_FANS, sizeof(cfg_fans)) != sizeof(cfg_fans)) {
 		os_memset(&cfg_fans, 0, sizeof(cfg_fans));
 	}
-	uint8 i;
-	for(i = 0; i < cfg_glo.fans; i++) {
-		cfg_fans[i].transmit_last_status = 0;
-		cfg_fans[i].transmit_ok_last_time = 0;
-	}
 	if(flash_read_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars)) <= 0) {
 		os_memset(&global_vars, 0, sizeof(global_vars));
 		global_vars.receive_timeout = 20;
 	}
-	receive_timeout = global_vars.receive_timeout;
+	receive_timeout = global_vars.receive_timeout * 2;
 	fan_speed_previous = 0;
+	os_memset(&fans, 0, sizeof(fans));
 	//ets_timer_disarm(&user_loop_timer);
 	os_timer_setfn(&user_loop_timer, (os_timer_func_t *)user_loop, NULL);
 	ets_timer_arm_new(&user_loop_timer, 1000, 1, 1); // 1s, repeat
-	receive_timeout = 1;
 	NRF24_init(); // After init transmit must be delayed
 	set_new_rf_channel(cfg_glo.sensor_rf_channel);
 	uint8 fan, ok = 0;

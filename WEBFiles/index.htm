@@ -12,7 +12,7 @@
 <p class="center"><span id="time_co2">~CO2_last_time~</span></p>
 <p id="now_night" class="center"></p>
 <table id="fans" class="mdbtab">
-	<tr><th>№</th><th>Место</th><th>Скорость</th><th>Отправлена</th><th colspan="3" width="36%">Корректировка на &nbsp;<input title="0 - неограничено" id="fsp_time" size="3" maxlength="5" onchange="updCookie('fsp_time')">&nbsp; мин.</th></tr>
+	<tr><th>№</th><th>Место</th><th>Скорость</th><th>Отправлена</th><th colspan="3" width="36%">Корректировка на &nbsp;<input title="0 - неограничено" id="fsp_time" size="3" maxlength="10" onchange="updCookie('fsp_time')">&nbsp; мин.</th></tr>
 </table>
 <br>
 <form method="post">
@@ -36,9 +36,9 @@ function CreateTable() {
 		r.insertCell(1);
 		r.insertCell(2);
 		r.insertCell(3);
-		c=r.insertCell(4);c.innerHTML="+";c.idx=i;c.onclick=function(){newAJAXCommand("?cfg_fan_="+this.idx+"&cfg_fan_override=p"+getCookie('fsp_time'))};c.className='s';
-		c=r.insertCell(5);c.innerHTML="-";c.idx=i;c.onclick=function(){newAJAXCommand("?cfg_fan_="+this.idx+"&cfg_fan_override=m"+getCookie('fsp_time'))};c.className='s';
-		c=r.insertCell(6);c.innerHTML="*";c.idx=i;c.onclick=function(){newAJAXCommand("?cfg_fan_="+this.idx+"&cfg_fan_override=c0")};c.className='s';
+		c=r.insertCell(4);c.innerHTML="+";c.idx=i;c.onclick=function(){newAJAXCommand("?fan_set_"+this.idx+"=p"+getCookie('fsp_time'))};c.className='s';
+		c=r.insertCell(5);c.innerHTML="-";c.idx=i;c.onclick=function(){newAJAXCommand("?fan_set_"+this.idx+"=m"+getCookie('fsp_time'))};c.className='s';
+		c=r.insertCell(6);c.innerHTML="*";c.idx=i;c.onclick=function(){newAJAXCommand("?fan_set_"+this.idx+"=a")};c.className='s';
 	}
 	newAJAXCommand('fans.xml', updateStatus, true);
 }
@@ -66,18 +66,20 @@ function updateStatus(xmlData) {
 		if(adj != 0) {
 			r.cells[2].innerHTML = r.cells[2].innerHTML + '(' + (adj>0 ? '+' : '') + adj + ')';
 		}
-		if(getXMLValue(f, 'off') == 1) r.cells[2].innerHTML = r.cells[2].innerHTML + ' выкл.';
+		if(getXMLValue(f, 'off') == 1) r.cells[2].innerHTML = r.cells[2].innerHTML + ' выкл';
 		r.cells[2].style.color = (fl & 2) ? 'red' : '';
-		if(fl & 2) {
-		    var n = Number(getXMLValue(f, 'fspt'));
-			if(n == 0) r.title = 'Безвременная корректировка...';
-			else r.cells[2].title = 'Корректировка закончится через ' + Math.round(n / 60) + ' мин.';
+	    var n = Number(getXMLValue(f, 'fspt'));
+		if(n != 0) {
+			r.cells[2].title = 'Корректировка закончится через ' + Math.round(n / 60) + ' мин.';
 		}
 		var du = getXMLValue(f, 'ttm') * 1000; d = new Date(du);
 		r.cells[3].innerHTML = du == 0 ? '---' : d.toTimeString().substr(0,8);
 		var err = getXMLValue(f, 'tst');
 		r.cells[3].style.color = (err > 0) ? 'red' : '';
-		r.cells[3].title = err;
+		r.cells[3].title = "";
+		if(err & 8) r.cells[3].title = "нет связи ";
+		var errstr = ["", "нет данных", "плохая связь", "ошибка", "завис"];
+		if((err & 7) > 0) r.cells[3].title = r.cells[3].title + (err & 8 ? ", ":"") + ((err & 7) <= 4 ? errstr[err & 7] : err);
 	}
 	updTime();
 	nextimeout = ~cfg_glo_refresh_t~;
