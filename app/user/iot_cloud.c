@@ -98,6 +98,11 @@ err_t ICACHE_FLASH_ATTR tc_recv(TCP_SERV_CONN *ts_conn) {
 #if DEBUGSOO > 4
     os_printf("IOT_Rec(%u): %s\n", len, pstr);
 #endif
+#ifdef DEBUG_TO_RAM
+	if(Debug_level == 3) {
+		dbg_printf("IOT< %s\n", pstr);
+	}
+#endif
     os_memset(iot_last_status, 0, sizeof(iot_last_status));
     os_strncpy(iot_last_status, (char *)pstr, mMIN(sizeof(iot_last_status)-1, len)); // status/error
     iot_last_status_time = get_sntp_time();
@@ -193,6 +198,12 @@ err_t ICACHE_FLASH_ATTR tc_listen(TCP_SERV_CONN *ts_conn) {
 	tcpsrv_print_remote_info(ts_conn);
 	os_printf("tc_listen, send(%d): %s\n", len, buf);
 #endif
+#ifdef DEBUG_TO_RAM
+	if(Debug_level == 3) {
+		dbg_printf("IOT> %s\n", buf);
+	}
+#endif
+
 	err_t err = tcpsrv_int_sent_data(ts_conn, buf, len);
 	os_free(p);
 	return err;
