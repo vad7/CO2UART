@@ -39,8 +39,8 @@ uint16 receive_timeout; // sec
 uint16_t CO2LevelAverageIdx = CO2LevelAverageArrayLength;
 uint16_t CO2LevelAverageArray[CO2LevelAverageArrayLength];
 
-//void dump_NRF_registers(void) ICACHE_FLASH_ATTR;
-#define dump_NRF_registers()
+void dump_NRF_registers(void) ICACHE_FLASH_ATTR;
+//#define dump_NRF_registers()
 
 void ICACHE_FLASH_ATTR set_new_rf_channel(uint8 ch)
 {
@@ -211,7 +211,12 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			uart_tx_buf(AZ_7798_Command_GetValues, sizeof(AZ_7798_Command_GetValues));
 		} else if(CO2_work_flag == 1) { // New CO2
 			if(CO2level) {
-				NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
+				dump_NRF_registers();
+				uint8_t st = NRF24_SendCommand(NRF24_CMD_NOP);
+				NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, st & ((1<<NRF24_BIT_RX_DR)|(1<<NRF24_BIT_TX_DS)|(1<<NRF24_BIT_MAX_RT)));
+				if((st & ((1<<NRF24_BIT_RX_DR)|(1<<NRF24_BIT_TX_DS)|(1<<NRF24_BIT_MAX_RT))) == ((1<<NRF24_BIT_RX_DR)|(1<<NRF24_BIT_TX_DS))
+				|| (st & (1<<NRF24_BIT_ST_TX_FULL)))
+					NRF24_SendCommand(NRF24_CMD_FLUSH_TX); // Received and ACK was received by TX device
 				uint8 fan;
 				for(fan = 0; fan < cfg_glo.fans; fan++) {
 					CFG_FAN *f = &cfg_fans[fan];
@@ -355,25 +360,30 @@ bool ICACHE_FLASH_ATTR write_global_vars_cfg(void) {
 	return flash_save_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars));
 }
 
-/*
+///*
 void ICACHE_FLASH_ATTR dump_NRF_registers(void)
 {
+	#if DEBUGSOO == 0
+		if(Debug_level != 2) return;
+	#endif
 	uint8 i;
 	uint8 buf[4];
 	dbg_printf("\nNR: ");
 	#if DEBUGSOO > 4
 	os_printf("\nNR: ");
 	#endif
-	for(i = 0; i <= 0x1D; i++) {
+	for(i = 0; i <= 0x17; i++) {
 		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
 		dbg_printf("%X=%2x ", i, buf[0]);
 		#if DEBUGSOO > 4
 		os_printf("%X=%2x ", i, buf[0]);
 		#endif
 	}
-	dbg_printf("\n");
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1C, buf, 1);
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1D, buf+1, 1);
+	dbg_printf("1C=%2x 1D=%2x\n", buf[0], buf[1]);
 	#if DEBUGSOO > 4
-	os_printf("\n");
+	od_printf("1C=%2x 1D=%2x\n", buf[0], buf[1]);
 	#endif
 }
 //*/

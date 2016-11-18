@@ -124,8 +124,8 @@ uint8_t ICACHE_FLASH_ATTR NRF24_Receive(uint8_t *payload)
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, payload, NRF24_PAYLOAD_LEN);
 #endif
 		pipe = ((st >> NRF24_BIT_RX_P_NO) & 0b111);
-		// Clear RX status, TX,MAX_RT status - for ACK payload
-		NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR) | (1<<NRF24_BIT_TX_DS) | (1<<NRF24_BIT_MAX_RT));
+		// Clear RX status, TX, MAX_RT status - for ACK payload
+		NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, st & ((1<<NRF24_BIT_RX_DR) | (1<<NRF24_BIT_TX_DS) | (1<<NRF24_BIT_MAX_RT)));
 	}
 	return pipe;
 }

@@ -71,7 +71,7 @@ uint8_t NRF24_Buffer[NRF24_PAYLOAD_LEN]; // MUST be EQUAL or GREATER than Addres
 #define NRF24_BIT_TX_DS			5
 #define NRF24_BIT_MAX_RT		4
 #define NRF24_BIT_RX_P_NO		1
-#define NRF24_BIT_F_TX_FULL		0
+#define NRF24_BIT_ST_TX_FULL	0
 #define NRF24_BIT_PLOS_CNT		4
 #define NRF24_BIT_ARC_CNT		0
 #define NRF24_BIT_TX_REUSE		6
