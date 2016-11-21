@@ -111,7 +111,8 @@ void ICACHE_FLASH_ATTR NRF24_SetMode(uint8_t mode)
 uint8_t ICACHE_FLASH_ATTR NRF24_Receive(uint8_t *payload)
 {
 	uint8_t pipe = NRF24_RX_FIFO_EMPTY, st;
-	if((st = NRF24_SendCommand(NRF24_CMD_NOP)) & (1<<NRF24_BIT_RX_DR))
+	st = NRF24_SendCommand(NRF24_CMD_NOP);
+	if((st & (1<<NRF24_BIT_RX_DR)) || (st & (0b111<<NRF24_BIT_RX_P_NO)) != (0b111<<NRF24_BIT_RX_P_NO)) // flag RX set or RX payload ready
 	{
 		#if DEBUGSOO > 4
 			os_printf("NRF Received ST = %X\n", st);
@@ -125,7 +126,9 @@ uint8_t ICACHE_FLASH_ATTR NRF24_Receive(uint8_t *payload)
 #endif
 		pipe = ((st >> NRF24_BIT_RX_P_NO) & 0b111);
 		// Clear RX status, TX, MAX_RT status - for ACK payload
-		NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, st & ((1<<NRF24_BIT_RX_DR) | (1<<NRF24_BIT_TX_DS) | (1<<NRF24_BIT_MAX_RT)));
+		NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR));
+	} else {
+		if(st & ((1<<NRF24_BIT_TX_DS)|(1<<NRF24_BIT_MAX_RT))) NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, st & ((1<<NRF24_BIT_TX_DS)|(1<<NRF24_BIT_MAX_RT)));
 	}
 	return pipe;
 }
@@ -207,7 +210,7 @@ void ICACHE_FLASH_ATTR NRF24_Powerdown(void)
 void ICACHE_FLASH_ATTR NRF24_init(void)
 {
 	ets_intr_lock();
-	spi_init(1000); // SPI clock, kHz
+	spi_init(4000); // SPI clock, kHz
 #ifdef NRF24_CE_GPIO
 	SET_PIN_FUNC(NRF24_CE_GPIO, (MUX_FUN_IO_PORT(NRF24_CE_GPIO) )); // установить функцию GPIOx в режим порта i/o
 	SET_PIN_PULLUP_DIS(NRF24_CE_GPIO);

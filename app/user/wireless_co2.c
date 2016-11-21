@@ -212,11 +212,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 		} else if(CO2_work_flag == 1) { // New CO2
 			if(CO2level) {
 				dump_NRF_registers();
-				uint8_t st = NRF24_SendCommand(NRF24_CMD_NOP);
-				NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, st & ((1<<NRF24_BIT_RX_DR)|(1<<NRF24_BIT_TX_DS)|(1<<NRF24_BIT_MAX_RT)));
-				if((st & ((1<<NRF24_BIT_RX_DR)|(1<<NRF24_BIT_TX_DS)|(1<<NRF24_BIT_MAX_RT))) == ((1<<NRF24_BIT_RX_DR)|(1<<NRF24_BIT_TX_DS))
-				|| (st & (1<<NRF24_BIT_ST_TX_FULL)))
-					NRF24_SendCommand(NRF24_CMD_FLUSH_TX); // Received and ACK was received by TX device
+				NRF24_SendCommand(NRF24_CMD_FLUSH_TX); // Received and ACK was received by TX device
 				uint8 fan;
 				for(fan = 0; fan < cfg_glo.fans; fan++) {
 					CFG_FAN *f = &cfg_fans[fan];
@@ -374,16 +370,16 @@ void ICACHE_FLASH_ATTR dump_NRF_registers(void)
 	#endif
 	for(i = 0; i <= 0x17; i++) {
 		NRF24_ReadArray(NRF24_CMD_R_REGISTER + i, buf, 1);
-		dbg_printf("%X=%2x ", i, buf[0]);
+		dbg_printf("%X:%02x ", i, buf[0]);
 		#if DEBUGSOO > 4
-		os_printf("%X=%2x ", i, buf[0]);
+		os_printf("%X=%02x ", i, buf[0]);
 		#endif
 	}
 	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1C, buf, 1);
 	NRF24_ReadArray(NRF24_CMD_R_REGISTER + 0x1D, buf+1, 1);
-	dbg_printf("1C=%2x 1D=%2x\n", buf[0], buf[1]);
+	dbg_printf("1C:%02x 1D:%02x\n", buf[0], buf[1]);
 	#if DEBUGSOO > 4
-	od_printf("1C=%2x 1D=%2x\n", buf[0], buf[1]);
+	od_printf("1C=%2x 1D=%02x\n", buf[0], buf[1]);
 	#endif
 }
 //*/
