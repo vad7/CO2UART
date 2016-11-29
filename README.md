@@ -21,6 +21,8 @@ WiFi модуль esp8266 используется в качестве веб-с
 Для этого нужно нажать кнопку "Выкл" на проветривателе, затем одновременно кнопки "-" и "+" до частого мигания светодиода.
 Далее кнопками "-" и "+" подстроить скорость. Светодиод будет ее промигивать.  
 
+Более подробно здесь: ([http://vad-7.blogspot.ru/2016/11/aeropac-sn-co2-az-7798-uart.html](http://vad-7.blogspot.ru/2016/11/aeropac-sn-co2-az-7798-uart.html))
+
 График c зумом строится с помощью open-source библиотеки <a href="http://d3js.org">d3j (Data-Driven Documents)</a> :
 
 ![alt tag](https://github.com/vad7/CO2UART/blob/master/history_screen.jpg)
