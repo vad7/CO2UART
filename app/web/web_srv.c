@@ -1227,7 +1227,7 @@ int ICACHE_FLASH_ATTR OTA_write_header(uint8 fwrite)
 {
 	uint32 *tmpbuf = os_malloc(flashchip_sector_size);
 	if(tmpbuf == NULL) return 500;
-	spi_flash_read(esp_init_data_default_addr, tmpbuf, flashchip_sector_size);
+	spi_flash_read(faddr_esp_init_data_default, tmpbuf, flashchip_sector_size);
 	OTA_flash_struct *OTA = (OTA_flash_struct *)((uint8 *)tmpbuf + MAX_SYS_CONST_BLOCK);
 	if(fwrite) {
 		OTA->id = OTA_flash_struct_id;
@@ -1240,8 +1240,8 @@ int ICACHE_FLASH_ATTR OTA_write_header(uint8 fwrite)
 		if(OTA->id != OTA_flash_struct_id) goto xEnd;
 		os_memset(OTA, 0xFF, sizeof(OTA_flash_struct));
 	}
-	spi_flash_erase_sector(esp_init_data_default_sec);
-	spi_flash_write(esp_init_data_default_addr, tmpbuf, flashchip_sector_size);
+	spi_flash_erase_sector(fsec_esp_init_data_default);
+	spi_flash_write(faddr_esp_init_data_default, tmpbuf, flashchip_sector_size);
 xEnd:
 	os_free(tmpbuf);
 	return 0;
@@ -1392,7 +1392,7 @@ LOCAL int ICACHE_FLASH_ATTR upload_boundary(TCP_SERV_CONN *ts_conn) // HTTP_UPLO
 #endif
 					else if(rom_xstrcmp(pupload->name, sysconst_filename)) {
 						pupload->fsize = SIZE_SYS_CONST;
-						pupload->faddr = esp_init_data_default_addr;
+						pupload->faddr = faddr_esp_init_data_default;
 						pupload->status = 2; // = 2 загрузка файла во flash
 						break;
 					}

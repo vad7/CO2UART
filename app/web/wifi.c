@@ -222,6 +222,9 @@ uint32 ICACHE_FLASH_ATTR Read_WiFi_config(struct wifi_config *wcfg,
  * FunctionName : Set_wifi
  ******************************************************************************/
 uint32 ICACHE_FLASH_ATTR Set_WiFi(struct wifi_config *wcfg, uint32 wifi_set_mask) {
+#if DEBUGSOO > 1
+	os_printf("Set_WiFi %0X\n", wifi_set_mask);
+#endif
 	uwifi_chg wset; wset.ui = wifi_set_mask;
 	uwifi_chg werr; werr.ui = 0;
 	WiFi_up_from_sleep();
@@ -349,6 +352,9 @@ uint32 ICACHE_FLASH_ATTR Set_WiFi(struct wifi_config *wcfg, uint32 wifi_set_mask
  ******************************************************************************/
 void ICACHE_FLASH_ATTR Set_default_wificfg(struct wifi_config *wcfg,
 		uint32 wifi_set_mask) {
+#if DEBUGSOO > 3
+		os_printf("Set default WiFi cfg\n");
+#endif
 	os_memset(wcfg, 0, sizeof(wificonfig));
 	uwifi_chg wset;
 	wset.ui = wifi_set_mask;

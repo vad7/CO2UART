@@ -95,7 +95,7 @@ uint8_t	WriteFanEEPROM_addr;
 uint8_t	WriteFanEEPROM_value;
 
 void send_fans_speed_now(uint8 fan, uint8 calc_speed) ICACHE_FLASH_ATTR;
-void wireless_co2_init(uint8 index) ICACHE_FLASH_ATTR;
+void user_initialize(uint8 index) ICACHE_FLASH_ATTR;
 void user_loop(void) ICACHE_FLASH_ATTR;
 bool write_wireless_co2_cfg(void) ICACHE_FLASH_ATTR;
 bool write_wireless_fans_cfg(void) ICACHE_FLASH_ATTR;

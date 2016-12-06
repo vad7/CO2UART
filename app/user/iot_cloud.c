@@ -393,6 +393,13 @@ void ICACHE_FLASH_ATTR iot_data_clear(void)
 // 1 - start, 0 - end
 void ICACHE_FLASH_ATTR iot_cloud_send(uint8 fwork)
 {
+	if(wifi_station_get_connect_status() != STATION_GOT_IP) return; // st connected?
+	if(!flg_open_all_service) {// some problem with WiFi here
+		wifi_station_connect();
+		#ifdef DEBUG_TO_RAM
+			dbg_printf("WiFi reconnect\n");
+		#endif
+	}
 	if(!cfg_glo.iot_cloud_enable) return; // iot cloud disabled
 	#if DEBUGSOO > 4
 		os_printf("iot_send: %d, %d: %x %x, IP%d(%d)\n", tc_init_flg, fwork, iot_data_first, iot_data_processing, wifi_station_get_connect_status(), flg_open_all_service);
@@ -405,13 +412,6 @@ void ICACHE_FLASH_ATTR iot_cloud_send(uint8 fwork)
 		return;
 	}
 	if((tc_init_flg & TC_RUNNING)) return; // exit if process active
-	if(wifi_station_get_connect_status() != STATION_GOT_IP) return; // st connected?
-	if(!flg_open_all_service) {// some problem with WiFi here
-		wifi_station_connect();
-		#ifdef DEBUG_TO_RAM
-			dbg_printf("WiFi reconnect\n");
-		#endif
-	}
 	if(iot_data_first != NULL) {
 		if(iot_data_processing == NULL) iot_data_processing = iot_data_first;
 		tc_go_next();

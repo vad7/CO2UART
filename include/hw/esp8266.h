@@ -9,6 +9,9 @@
 #define ESP8266_H
 
 //#include "hw/eagle_soc.h"
+#ifndef _C_TYPES_H_
+#include "c_types.h"
+#endif
 
 #define	Q_CLK_FREQ	26000000ul	// unit: Hz, 40000000 Hz
 
@@ -83,10 +86,10 @@ extern volatile uint32 io4_regs_[384];	// 0x60009800
 #define IRAM_SIZE		0x00008000	// Size: 32768 bytes
 /* FLASH */
 #define FLASH_BASE		0x40200000
-#define FLASH_MIN_SIZE	0x00080000	// 512 k
+#define FLASH_MIN_SIZE	0x00040000	// 256 k
 #define FLASH_MAX_SIZE	0x01000000
 #define FLASH_CACHE_MAX_SIZE	0x100000 // размер "кешируемой" области Flash
-#define FLASH_SYSCONST_ADR 0x0007C000
+#define MASK_ADDR_FLASH_ICACHE_DATA	(FLASH_CACHE_MAX_SIZE-1)
 
 /* interrupt related */
 #define ETS_SLC_INUM		1
@@ -478,7 +481,7 @@ typedef enum {
 #define GPIO_PIN_WAKEUP_ENABLE_S               10
 #define GPIO_PIN_INT_TYPE                      0x00000007
 #define GPIO_PIN_INT_TYPE_S                    7
-#define GPIO_PIN_DRIVER                        BIT2  // Open-drain, 0 = normal
+#define GPIO_PIN_DRIVER                        BIT2 // Open-drain, 0 = normal
 #define GPIO_PIN_DRIVER_S                      2
 #define GPIO_PIN_SOURCE                        1
 #define GPIO_PIN_SOURCE_S                      0

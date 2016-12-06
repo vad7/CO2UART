@@ -25,9 +25,9 @@
 * SOFTWARE.
 */
 #include "user_config.h"
+#include "driver/spi.h"
 #ifdef USE_HSPI
 #include "hw/pin_mux_register.h"
-#include "../include/driver/spi.h"
 #include "sdk/rom2ram.h"
 #include "hw/esp8266.h"
 

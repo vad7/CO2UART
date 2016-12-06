@@ -118,7 +118,7 @@ void timer0_init(void *func, uint32 par)
 #endif
 {
 #if DEBUGSOO > 3
-	os_printf("timer0_init(%d)\n", flg);
+	os_printf("timer0_init(%d)\n", nmi_flg);
 #endif
 	timer0_stop();
 	timer0_cb = func;

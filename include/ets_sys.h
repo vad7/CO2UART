@@ -61,6 +61,9 @@ typedef struct _ETSTIMER_ {
 #define ETS_FRC_TIMER1_INTR_ATTACH(func, arg) \
     ets_isr_attach(ETS_FRC_TIMER1_INUM, (func), (void *)(arg))
 
+#define ETS_FRC_TIMER1_NMI_INTR_ATTACH(func) \
+	NmiTimSetFunc(func)
+
 #define ETS_GPIO_INTR_ATTACH(func, arg) \
     ets_isr_attach(ETS_GPIO_INUM, (func), (void *)(arg))
 
@@ -79,6 +82,9 @@ typedef struct _ETSTIMER_ {
 #define ETS_SPI_INTR_ENABLE() \
     ETS_INTR_ENABLE(ETS_SPI_INUM)
 
+#define ETS_SPI_INTR_DISABLE() \
+    ETS_INTR_DISABLE(ETS_SPI_INUM)
+
 #define ETS_UART_INTR_ENABLE() \
     ETS_INTR_ENABLE(ETS_UART_INUM)
 
@@ -86,10 +92,10 @@ typedef struct _ETSTIMER_ {
     ETS_INTR_DISABLE(ETS_UART_INUM)
 
 #define ETS_FRC1_INTR_ENABLE() \
-	ETS_INTR_ENABLE(ETS_FRC_TIMER0_INUM)
+	ETS_INTR_ENABLE(ETS_FRC_TIMER1_INUM)
 
 #define ETS_FRC1_INTR_DISABLE() \
-	ETS_INTR_DISABLE(ETS_FRC_TIMER0_INUM)
+	ETS_INTR_DISABLE(ETS_FRC_TIMER1_INUM)
 
 #define ETS_GPIO_INTR_ENABLE() \
     ETS_INTR_ENABLE(ETS_GPIO_INUM)
