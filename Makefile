@@ -18,14 +18,13 @@ SPI_SPEED?=40
 # SPI_MODE: QIO, DIO, QOUT, DOUT
 SPI_MODE?=QIO
 # SPI_SIZE: 512KB for all size Flash ! (512 kbytes .. 16 Mbytes Flash autodetect)
-SPI_SIZE?=512
+SPI_SIZE?=4096
 # 
 ADDR_FW1 = 0x00000
 ADDR_FW2 = 0x07000
 # 
-#USERFADDR = 0x3E000
-#USERFADDR = $(shell printf '0x%X\n' $$(( ($$(stat --printf="%s" $(OUTBIN2)) + 0xFFF + $(ADDR_FW2)) & (0xFFFFF000) )) )
-USERFADDR = 0x80000
+USERFADDR = $(shell printf '0x%X\n' $$(( ($$(stat --printf="%s" $(OUTBIN2)) + 0xFFF + $(ADDR_FW2)) & (0xFFFFF000) )) )
+#USERFADDR = 0x80000
 USERFBIN = ./webbin/WEBFiles.bin
 #
 FIRMWAREDIR := bin
@@ -162,18 +161,21 @@ else
         flash = 1024
 		flashimageoptions += -fs 8m
 		CCFLAGS += -DFIX_SDK_FLASH_SIZE=1048576
+		USERFADDR = 0x80000
     else
         ifeq ($(SPI_SIZE), 2048)
             size = 3
             flash = 1024
 			flashimageoptions += -fs 16m
 			CCFLAGS += -DFIX_SDK_FLASH_SIZE=1048576			
+			USERFADDR = 0x80000
         else
             ifeq ($(SPI_SIZE), 4096)
                 size = 4
                 flash = 1024
 				flashimageoptions += -fs 32m
 				CCFLAGS += -DFIX_SDK_FLASH_SIZE=1048576			
+				USERFADDR = 0x80000
             else
                 size = 0
                 flash = 512
@@ -229,7 +231,7 @@ endif
 #	$(OVLTOOL) $< ../ld/labels.ld
 #	@make -C ../ovls
 #
-	@$(PYTHON) ../bin/make_firmware_image.py 1024 ../bin/
+	@$(PYTHON) ../bin/make_firmware_image.py $(SPI_SIZE) ../bin/
 #	@echo "Fullflash firmware.bin size  : " $(shell printf '%u\n' $$(stat --printf="%s" ../$(FIRMWAREDIR)/firmware.bin) )
 #	@echo "Max firmware.bin size for OTA: " $(shell printf '%u\n' $$((0x7B000 - (($$(stat --printf="%s" ../$(OUTBIN2)) + 0xFFF + $(ADDR_FW2)) & (0xFFFFF000)) )) )
 #	@echo "*Space available to allow OTA: " $(shell printf '%d\n' $$((0x7B000 - (($$(stat --printf="%s" ../$(OUTBIN2)) + 0xFFF + $(ADDR_FW2)) & (0xFFFFF000)) - $$(stat --printf="%s" ../$(FIRMWAREDIR)/firmware.bin) )) )

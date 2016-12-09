@@ -86,7 +86,7 @@ extern volatile uint32 io4_regs_[384];	// 0x60009800
 #define IRAM_SIZE		0x00008000	// Size: 32768 bytes
 /* FLASH */
 #define FLASH_BASE		0x40200000
-#define FLASH_MIN_SIZE	0x00040000	// 256 k
+#define FLASH_MIN_SIZE	0x00080000	// 512 k
 #define FLASH_MAX_SIZE	0x01000000
 #define FLASH_CACHE_MAX_SIZE	0x100000 // размер "кешируемой" области Flash
 #define MASK_ADDR_FLASH_ICACHE_DATA	(FLASH_CACHE_MAX_SIZE-1)

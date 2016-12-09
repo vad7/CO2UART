@@ -599,6 +599,8 @@ void ICACHE_FLASH_ATTR startup(void)
 #if	STARTUP_CPU_CLK == 160
 	system_overclock(); // set CPU CLK 160 MHz
 #endif
+	// Set GPIO0: GPIO input, pullup
+	GPIO0_MUX = VAL_MUX_GPIO0_SDK_DEF;
 #ifdef DEBUG_UART
 	startup_uart_init();
 	os_printf("\n\nmeSDK %s\n", SDK_VERSION);
@@ -642,6 +644,8 @@ void ICACHE_FLASH_ATTR startup(void)
 	//
 	prvHeapInit(); // инициализация менеджера памяти heap
 	//
+	ets_timer_init();
+	//
 	user_initialize(1); // init CFG, GPIO
 	//
 #if DEF_SDK_VERSION >= 2000
@@ -661,7 +665,6 @@ void ICACHE_FLASH_ATTR startup(void)
 	// начальный IP, mask, gw для AP
 	info.ap_gw = info.ap_ip = DEFAULT_SOFTAP_IP; // 0x104A8C0; ip 192.168.4.1
 	info.ap_mask = DEFAULT_SOFTAP_MASK; // 0x00FFFFFF; 255.255.255.0
-	ets_timer_init();
 	lwip_init();
 //	espconn_init(); // данный баг не используется
 #if DEF_SDK_VERSION >= 1200
