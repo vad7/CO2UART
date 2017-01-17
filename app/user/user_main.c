@@ -109,6 +109,7 @@ extern void gdbstub_init(void);
 	gdbstub_init();
 #endif
 #if DEBUGSOO > 0
+	os_printf("Reset reason: %u, %u\n", system_get_rst_info()->reason, rtc_get_reset_reason());
 	if(eraminfo.size > 0) os_printf("Found free IRAM: base: %p, size: %d bytes\n", eraminfo.base,  eraminfo.size);
 	os_printf("System memory:\n");
     system_print_meminfo();

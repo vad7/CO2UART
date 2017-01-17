@@ -152,6 +152,10 @@ void ICACHE_FLASH_ATTR os_print_reset_error(void)
 			while(1) WDT_FEED = WDT_FEED_MAGIC; // WDT
 		}
 		#endif
+	} else {
+		os_printf("\nReset default.\n");
+		os_printf_plus((const char *)aFatalException, rst_inf->exccause);
+		os_printf_plus((const char *)aEpc10x08xEpc20, rst_inf->epc1, rst_inf->epc2, rst_inf->epc3, rst_inf->excvaddr, rst_inf->depc);
 	}
 	// rst_inf->reason = 0;
 }

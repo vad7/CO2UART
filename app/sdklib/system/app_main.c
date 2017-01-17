@@ -17,6 +17,7 @@
 #include "sdk/add_func.h"
 #include "sdk/flash.h"
 #include "sdk/wdt.h"
+#include "sdk/sdk_config.h"
 #include "lwip/init.h"
 #include "lwip/netif.h"
 #include "lwip/timers.h"
@@ -82,7 +83,7 @@ const uint8 esp_init_data_default[128] ICACHE_RODATA_ATTR = {
 	 0xE1,  0xA,    0,    0,    0,    0,    0,    0,    0,    0,    1, 0x93, 0x43,    0,    0,    0,
 	    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
 	    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-	    3,    0,    2,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0
+	    3,    0,    1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0
 };
 #elif DEF_SDK_VERSION >= 1200
 const uint8 esp_init_data_default[128] ICACHE_RODATA_ATTR = {
@@ -482,7 +483,7 @@ void ICACHE_FLASH_ATTR tst_cfg_wifi(void)
 	wifi_config->field_880 = 0;
 	wifi_config->field_884 = 0;
 	
-	//g_ic.c[257] = 0; // ?
+	g_ic.c[257] = 0; // ?
 
 	if(wifi_config->field_316 >= 6) wifi_config->field_316 = 1;
 	if(wifi_config->field_169 >= 2) wifi_config->field_169 = 0; // +169
@@ -600,7 +601,7 @@ void ICACHE_FLASH_ATTR startup(void)
 	system_overclock(); // set CPU CLK 160 MHz
 #endif
 	// Set GPIO0: GPIO input, pullup
-	GPIO0_MUX = VAL_MUX_GPIO0_SDK_DEF;
+	//GPIO0_MUX = VAL_MUX_GPIO0_SDK_DEF;
 #ifdef DEBUG_UART
 	startup_uart_init();
 	os_printf("\n\nmeSDK %s\n", SDK_VERSION);
@@ -793,7 +794,7 @@ void ICACHE_FLASH_ATTR startup(void)
 	//
 #if DEF_SDK_VERSION >= 1400 // (SDK 1.4.0)
 	system_rtc_mem_read(0, &rst_if, sizeof(rst_if));
-//	os_printf("RTC_MEM(0) = %u,%u,%p \n", rst_if.reason, IO_RTC_SCRATCH0, RTC_RAM_BASE[0x78>>2]);
+	//os_printf("RTC_MEM(0) = %u,%u,%p \n", rst_if.reason, IO_RTC_SCRATCH0, RTC_RAM_BASE[0x78>>2]);
 #if DEF_SDK_VERSION >= 1520
 	{
 		uint32 reset_reason = IO_RTC_SCRATCH0;
