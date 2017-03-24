@@ -840,11 +840,17 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 //		        else ifcmp("addr_LSB") tcp_puts("0x%X", cfg_glo.address_LSB);
 		        else ifcmp("fans") {
 		        	cstr += 4;
-		        	ifcmp("_speed_th") {
+		        	ifcmp("_speed_") {
+		        		cstr += 7;
 						int16_t i;
-						for(i = 0; i < FAN_SPEED_MAX; i++) tcp_puts("%u%s", cfg_glo.fans_speed_threshold[i], i < FAN_SPEED_MAX-1 ? "," : "");
+			        	ifcmp("th") {
+							for(i = 0; i < FAN_SPEED_MAX; i++) tcp_puts("%u%s", cfg_glo.fans_speed_threshold[i], i < FAN_SPEED_MAX-1 ? "," : "");
+			        	} else ifcmp("dth") {
+			    			for(i = 0; i < sizeof(cfg_glo.temp_threshold_dec)/sizeof(cfg_glo.temp_threshold_dec[0]); i++) {
+			    				tcp_puts("%d%s", cfg_glo.temp_threshold_dec[i], i < sizeof(cfg_glo.temp_threshold_dec)/sizeof(cfg_glo.temp_threshold_dec[0])-1 ? "," : "");
+			    			}
+			        	} else ifcmp("delta") tcp_puts("%u", cfg_glo.fans_speed_delta);
 					}
-			        else ifcmp("_speed_delta") tcp_puts("%u", cfg_glo.fans_speed_delta);
 		        	else tcp_puts("%d", cfg_glo.fans);
 		        }
 		        else ifcmp("night_") {
@@ -1116,7 +1122,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
             		}
             		else ifcmp("disk") {
             			web_conn->udata_start = WEBFS_base_addr();
-            			web_conn->udata_stop = web_conn->udata_start + WEBFS_curent_size();
+            			web_conn->udata_stop = web_conn->udata_start + WEBFS_current_size();
             			web_get_flash(ts_conn);
             		}
             		else ifcmp("settings") {
@@ -1232,7 +1238,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         	cstr+=4;
         	ifcmp("files") tcp_puts("%u", numFiles);
         	else ifcmp("addr") tcp_puts("0x%08x", WEBFS_base_addr());
-        	else ifcmp("size") tcp_puts("%u", WEBFS_curent_size());
+        	else ifcmp("size") tcp_puts("%u", WEBFS_current_size());
         	else ifcmp("max_size") tcp_puts("%u", WEBFS_max_size());
         	else tcp_put('?');
         }

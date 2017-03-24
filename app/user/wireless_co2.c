@@ -67,7 +67,7 @@ void ICACHE_FLASH_ATTR CO2_Averaging(void)
 void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 {
 	uint32_t average = 0;
-	uint16_t i;
+	int16_t i;
 	for(i = 0; i < CO2LevelAverageArrayLength; i++) average += CO2LevelAverageArray[i];
 	average /= CO2LevelAverageArrayLength;
 	int8_t fanspeed;
@@ -79,7 +79,14 @@ void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 		}
 	}
 	fan_speed_previous = fanspeed;
-	if((fanspeed += global_vars.fans_speed_override) > FAN_SPEED_MAX) fanspeed = FAN_SPEED_MAX;
+	fanspeed += global_vars.fans_speed_override;
+	for(i = sizeof(cfg_glo.temp_threshold_dec)/sizeof(cfg_glo.temp_threshold_dec[0]) - 1; i >= 0 ; i--) {
+		if(Temperature < cfg_glo.temp_threshold_dec[i]) {
+			fanspeed -= i;
+			break;
+		}
+	}
+	if(fanspeed > FAN_SPEED_MAX) fanspeed = FAN_SPEED_MAX;
 	if(fanspeed < 0) fanspeed = 0;
 	struct tm tm;
 	time_t t = get_sntp_localtime();
@@ -307,6 +314,10 @@ void ICACHE_FLASH_ATTR user_initialize(uint8 index)
 			cfg_glo.fans_speed_threshold[4] = 800;
 			cfg_glo.fans_speed_threshold[5] = 900;
 			cfg_glo.fans_speed_delta = 30;
+			uint8 i;
+			for(i = 0; i < sizeof(cfg_glo.temp_threshold_dec)/sizeof(cfg_glo.temp_threshold_dec[0]); i++) {
+				cfg_glo.temp_threshold_dec[i] = -50 - i;
+			}
 		}
 		if(cfg_glo.history_size <= 9) cfg_glo.history_size = 9999; // bytes
 		if(flash_read_cfg(&cfg_fans, ID_CFG_FANS, sizeof(cfg_fans)) != sizeof(cfg_fans)) {

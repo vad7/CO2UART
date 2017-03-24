@@ -197,6 +197,7 @@ cfg_glo_rf_ch
 cfg_glo_fans
 cfg_glo_fans_speed_th
 cfg_glo_fans_speed_delta
+cfg_glo_fans_speed_dth
 cfg_glo_night_start
 cfg_glo_night_end
 cfg_glo_night_start_wd

@@ -16,12 +16,13 @@ typedef struct __attribute__((packed)) {
 	uint16	night_end_wd;			// hh,mm at weekend
 	uint8	fans;					// numbers of fans
 	uint8 	sensor_rf_channel;		// 0..126 nrf24l01 channel
-//	uint8	address_LSB;			// Address LSB for receiving
+	uint8	address_LSB;			// not used, Address LSB for receiving
 	uint8	iot_cloud_enable;		// use "protect/iot_cloud.ini" to send data to IoT cloud
 	char	csv_delimiter; 			// ','
 	uint8	fans_speed_night_max;	// speed max at night
 	uint16	page_refresh_time;		// ms
 	uint16	history_size;			// CO2 store RAM buffer size, must be divided by 3 without remains!
+	int16_t temp_threshold_dec[4];	// *10 (C), decrease fans speed: if temp < [i] then speed -= i
 //	char sntp_server[20];
 } CFG_GLO;
 CFG_GLO __attribute__((aligned(4))) cfg_glo;

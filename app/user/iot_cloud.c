@@ -395,10 +395,11 @@ void ICACHE_FLASH_ATTR iot_cloud_send(uint8 fwork)
 {
 	if(wifi_station_get_connect_status() != STATION_GOT_IP) return; // st connected?
 	if(!flg_open_all_service) {// some problem with WiFi here
-		wifi_station_connect();
+		wifi_station_disconnect();
 		#ifdef DEBUG_TO_RAM
-			dbg_printf("WiFi reconnect\n");
+			dbg_printf("WiFiR %u\n");
 		#endif
+		wifi_station_connect();
 	}
 	if(!cfg_glo.iot_cloud_enable) return; // iot cloud disabled
 	#if DEBUGSOO > 4

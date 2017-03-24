@@ -339,9 +339,12 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 //	        else ifcmp("addr_LSB") cfg_glo.address_LSB = val;
 	        else ifcmp("fans") {
 	        	cstr += 4;
-	        	ifcmp("_speed_th") str_array_w(pvar, cfg_glo.fans_speed_threshold, FAN_SPEED_MAX);
-	        	else ifcmp("_speed_delta") cfg_glo.fans_speed_delta = val;
-	        	else {
+	        	ifcmp("_speed_") {
+	        		cstr += 7;
+	        		ifcmp("th") str_array_w(pvar, cfg_glo.fans_speed_threshold, FAN_SPEED_MAX);
+	        		else ifcmp("dth") str_array_w(pvar, cfg_glo.temp_threshold_dec, sizeof(cfg_glo.temp_threshold_dec)/sizeof(cfg_glo.temp_threshold_dec[0]));
+		        	else ifcmp("delta") cfg_glo.fans_speed_delta = val;
+	        	} else {
 	        		cfg_glo.fans = val == 0 ? 1 : val;
 	        		if(cfg_glo.fans > FANS_MAX) cfg_glo.fans = FANS_MAX;
 	        	}

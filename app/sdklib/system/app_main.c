@@ -123,7 +123,7 @@ static void set_qspi_flash_cache(void)
 #ifdef USE_ALTBOOT
 
 #endif
-	flashchip->chip_size = 512*1024; // песочница для SDK в 512 килобайт flash
+	flashchip->chip_size = sdk_flashchip_size; // песочница для SDK в 512 килобайт flash
 	// Всё - включаем кеширование, далее можно вызывать процедуры из flash
 	Cache_Read_Enable_def();
 }
