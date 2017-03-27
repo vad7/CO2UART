@@ -82,7 +82,7 @@ void ICACHE_FLASH_ATTR CO2_set_fans_speed_current(uint8 nfan)
 	fanspeed += global_vars.fans_speed_override;
 	for(i = sizeof(cfg_glo.temp_threshold_dec)/sizeof(cfg_glo.temp_threshold_dec[0]) - 1; i >= 0 ; i--) {
 		if(Temperature < cfg_glo.temp_threshold_dec[i]) {
-			fanspeed -= i;
+			fanspeed -= i + 1;
 			break;
 		}
 	}
