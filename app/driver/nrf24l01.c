@@ -112,7 +112,7 @@ uint8_t ICACHE_FLASH_ATTR NRF24_Receive(uint8_t *payload)
 {
 	uint8_t pipe = NRF24_RX_FIFO_EMPTY, st;
 	st = NRF24_SendCommand(NRF24_CMD_NOP);
-	if((st & (1<<NRF24_BIT_RX_DR)) || (st & (0b111<<NRF24_BIT_RX_P_NO)) != (0b111<<NRF24_BIT_RX_P_NO)) // flag RX set or RX payload ready
+	if((st & (1<<NRF24_BIT_RX_DR)) || ((st & (0b111<<NRF24_BIT_RX_P_NO)) != (0b111<<NRF24_BIT_RX_P_NO))) // flag RX set or RX payload ready
 	{
 		#if DEBUGSOO > 4
 			os_printf("NRF Received ST = %X\n", st);
