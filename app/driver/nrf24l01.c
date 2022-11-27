@@ -114,17 +114,20 @@ uint8_t ICACHE_FLASH_ATTR NRF24_Receive(uint8_t *payload)
 	st = NRF24_SendCommand(NRF24_CMD_NOP);
 	if(st & (1<<NRF24_BIT_RX_DR)) // flag RX set or RX payload ready
 	{
+		pipe = ((st >> NRF24_BIT_RX_P_NO) & 0b111);
 		#if DEBUGSOO > 4
 			os_printf("NRF Received ST = %X\n", st);
 		#endif
 #ifdef NRF24_USE_DYNAMIC_PAYLOAD
-		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
-		if(NRF24_Buffer[0] > 32) return pipe;
-		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, payload, NRF24_Buffer[0]);
+		NRF24_Buffer[0] = NRF24_CMD_R_RX_PL_WID;
+		NRF24_Buffer[1] = 0;
+		NRF24_ReadWriteArray(NRF24_Buffer, 2); // get RX payload len
+		uint8_t len = NRF24_Buffer[1];
+		if(len > 32 || len == 0) len = 32;
+		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, payload, len);
 #else
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, payload, NRF24_PAYLOAD_LEN);
 #endif
-		pipe = ((st >> NRF24_BIT_RX_P_NO) & 0b111);
 		// Clear RX status, TX, MAX_RT status - for ACK payload
 		NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_RX_DR));
 	} else {

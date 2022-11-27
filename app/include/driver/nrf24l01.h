@@ -119,6 +119,7 @@ extern uint8_t NRF24_Buffer[NRF24_PAYLOAD_LEN];
 uint8_t NRF24_SendCommand(uint8_t cmd) ICACHE_FLASH_ATTR; // Send command & receive status
 void NRF24_WriteByte(uint8_t cmd, uint8_t value) ICACHE_FLASH_ATTR;
 #define NRF24_ReadArray(cmd, array, len) spi_write_read_block(SPI_RECEIVE, cmd, array, len)
+#define NRF24_ReadWriteArray(array, len) spi_write_read_block(SPI_SEND+SPI_RECEIVE, 0, array, len)
 #define NRF24_WriteArray(cmd, array, len) spi_write_read_block(SPI_SEND, cmd, array, len)
 
 
