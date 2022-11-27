@@ -224,6 +224,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 			if(CO2level) {
 				dump_NRF_registers();
 				NRF24_SendCommand(NRF24_CMD_FLUSH_TX); // Received and ACK was received by TX device
+				NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_STATUS, (1<<NRF24_BIT_TX_DS));
 				uint8 fan;
 				for(fan = 0; fan < cfg_glo.fans; fan++) {
 					CFG_FAN *f = &cfg_fans[fan];
