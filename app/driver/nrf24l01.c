@@ -119,11 +119,10 @@ uint8_t ICACHE_FLASH_ATTR NRF24_Receive(uint8_t *payload)
 			os_printf("NRF Received ST = %X\n", st);
 		#endif
 #ifdef NRF24_USE_DYNAMIC_PAYLOAD
-		NRF24_Buffer[0] = NRF24_CMD_R_RX_PL_WID;
-		NRF24_Buffer[1] = 0;
-		NRF24_ReadWriteArray(NRF24_Buffer, 2); // get RX payload len
-		uint8_t len = NRF24_Buffer[1];
-		if(len > 32 || len == 0) len = 32;
+		NRF24_Buffer[0] = 0;
+		NRF24_ReadArray(NRF24_CMD_R_RX_PL_WID, NRF24_Buffer, 1); // get RX payload len
+		uint8_t len = NRF24_Buffer[0];
+		if(len > NRF24_PAYLOAD_LEN || len == 0) len = NRF24_PAYLOAD_LEN;
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, payload, len);
 #else
 		NRF24_ReadArray(NRF24_CMD_R_RX_PAYLOAD, payload, NRF24_PAYLOAD_LEN);
