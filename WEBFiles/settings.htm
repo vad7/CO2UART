@@ -6,9 +6,10 @@
 </head><body>
 ~inc:menu.inc~
 CO2: ~CO2_current~, Fan speed previous: ~fan_speed_previous~<br>
-LastTime: <span id="time_co2">~CO2_last_time~</span><br>
+LastTime: <span id="time_co2">~CO2_last_time~</span> (~nrf24_reset_cnt~)<br>
 Night: ~now_night~<br><br>
-<a href="/fans.xml">fans.xml</a><br><br>
+<a href="/fans.xml">fans.xml</a><br>
+<a href="/nrf24_regs.xml">nRF24 registers</a><br><br>
 IoT last status: <span id="time_iot">~iot_LastSt_time~</span> - ~iot_LastSt~<br>
 Make time: ~mktime~<br>
 SSID name: ~wifi_ap_ssid~ WEB ver: ~sys_webver~, SDK ver: ~sys_sdkver~.<br>

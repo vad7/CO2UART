@@ -43,6 +43,7 @@ gpio1_fun
 gpio_inp
 gpio_out
 gpio_dir
+nrf24_regs
 inc:grfx1.inc
 inc:grfx2.inc
 CO2_current
@@ -50,6 +51,7 @@ inc:menu.inc
 CO2_current
 fan_speed_previous
 CO2_last_time
+nrf24_reset_cnt
 now_night
 iot_LastSt_time
 iot_LastSt
@@ -194,6 +196,7 @@ inc:menumain.inc
 cfg_vars_fans_speed_ov
 cfg_vars_receive_timeout
 cfg_glo_rf_ch
+cfg_glo_nrfreset_t
 cfg_glo_fans
 cfg_glo_fans_speed_th
 cfg_glo_fans_speed_delta
@@ -209,6 +212,7 @@ cfg_glo_history_size
 cfg_iot_cloud_enable
 cfg_iot_ini
 uart_0_baud
+cfg_glo_sntps
 inc:footer.inc
 bin_flash_settings
 inc:menu.inc

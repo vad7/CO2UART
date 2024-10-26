@@ -134,6 +134,20 @@ void ICACHE_FLASH_ATTR web_test_adc(TCP_SERV_CONN *ts_conn)
 }
 #endif // TEST_SEND_WAVE
 
+// Print nRF24l01 registers
+void ICACHE_FLASH_ATTR web_nrf24_regs(TCP_SERV_CONN *ts_conn)
+{
+	WEB_SRV_CONN *web_conn = (WEB_SRV_CONN *) ts_conn->linkd;
+//	if(CheckSCB(SCB_RETRYCB)==0) { // Check if this is a first round call
+//	}
+	uint8 i;
+	for(i = 0; i <= 0x17; i++) {
+		tcp_puts_fd("%X:%02x ", i, NRF_read_register(i));
+	}
+	tcp_puts_fd("1C:%02x 1D:%02x\n", NRF_read_register(0x1C), NRF_read_register(0x1D));
+	ClrSCB(SCB_RETRYCB);
+}
+
 // Print fans array as xml, web_conn->udata_start = start fan n, web_conn->udata_stop = max fan n + 1
 void ICACHE_FLASH_ATTR web_fans_xml(TCP_SERV_CONN *ts_conn)
 {
@@ -868,8 +882,10 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 		        	else ifcmp("max") tcp_puts("%d", cfg_glo.fans_speed_night_max);
 		        }
 		        else ifcmp("refresh_t") tcp_puts("%u", cfg_glo.page_refresh_time);
+		        else ifcmp("nrfreset_t") tcp_puts("%u", cfg_glo.nRF24_reset_time);
 		        else ifcmp("history_size") tcp_puts("%u", cfg_glo.history_size);
 		        else ifcmp("FSPM") tcp_puts("%d", FAN_SPEED_MAX);
+				else ifcmp("sntps") tcp_puts("%s", cfg_glo.sntp_server);
 		    }
 		    else ifcmp("fan_") { // cfg_
 	        	cstr += 4;
@@ -1335,6 +1351,7 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
         else ifcmp("Humidity") tcp_puts("%d.%01u", Humidity / 10, Humidity % 10);
         else ifcmp("now_night_override") tcp_puts("%d", now_night_override);
         else ifcmp("now_night") tcp_puts("%d", now_night);
+        else ifcmp("nrf24_reset_cnt") tcp_puts("%d", cfg_glo.nRF24_reset_time - nRF24_reset_counter);
         else ifcmp("fan_speed_") {
         	cstr += 10;
         	ifcmp("previous") tcp_puts("%d", fan_speed_previous);
@@ -1348,6 +1365,9 @@ void ICACHE_FLASH_ATTR web_int_callback(TCP_SERV_CONN *ts_conn, uint8 *cstr)
 	    	web_conn->udata_start = 0;
 	    	web_conn->udata_stop = cfg_glo.fans;
 	    	web_fans_xml(ts_conn);
+        } else ifcmp("nrf24_regs") {
+	    	web_conn->udata_start = 0;
+	    	web_nrf24_regs(ts_conn);
         }
 #ifdef DEBUG_TO_RAM
         else ifcmp("dbg_") { // debug to RAM

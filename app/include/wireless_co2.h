@@ -23,7 +23,8 @@ typedef struct __attribute__((packed)) {
 	uint16	page_refresh_time;		// ms
 	uint16	history_size;			// CO2 store RAM buffer size, must be divided by 3 without remains!
 	int16_t temp_threshold_dec[4];	// *10 (C), decrease fans speed: if temp < [i] then speed -= i
-//	char sntp_server[20];
+	uint16_t nRF24_reset_time;		// if no connection reset nRF24 after x sec
+	char 	sntp_server[32];
 } CFG_GLO;
 CFG_GLO __attribute__((aligned(4))) cfg_glo;
 
@@ -76,6 +77,7 @@ GLOBAL_VARS __attribute__((aligned(4))) global_vars;
 uint16_t CO2level;		// (ppm)
 int16_t  Temperature;	// *10 (C)
 uint16_t Humidity;		// *10 (%)
+uint16_t nRF24_reset_counter;	// sec
 
 uint8  *history_co2;		// history buffer in the RAM
 uint16	history_co2_pos;	// current pos (by 1.5 byte)
@@ -95,6 +97,7 @@ uint8_t WriteFanEEPROM;		// Number of Fan (1..MAX)
 uint8_t	WriteFanEEPROM_addr;
 uint8_t	WriteFanEEPROM_value;
 
+
 void send_fans_speed_now(uint8 fan, uint8 calc_speed) ICACHE_FLASH_ATTR;
 void user_initialize(uint8 index) ICACHE_FLASH_ATTR;
 void user_loop(void) ICACHE_FLASH_ATTR;
@@ -107,5 +110,7 @@ void iot_cloud_send(uint8 fwork) ICACHE_FLASH_ATTR;
 
 void uart_wait_tx_fifo_empty(void) ICACHE_FLASH_ATTR;
 void _localtime(time_t * tim_p, struct tm * res) ICACHE_FLASH_ATTR;
+
+uint8_t NRF_read_register(uint8_t reg) ICACHE_FLASH_ATTR;
 
 #endif

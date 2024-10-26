@@ -30,7 +30,7 @@ char AZ_7798_Command_GetValues[] = 	{ ":\r" };
 #define AZ_7798_CO2End				'p'
 char AZ_7798_ResponseEnd[] = 		{ "%\r\0" };
 
-uint8 CO2_work_flag = 0; // 0 - not inited, 1 - wait incoming, 2 - send
+uint8 CO2_work_flag = 0; // 1 - new CO2 value ready
 uint8 CO2_send_flag;		// 0 - ready to send, 1 - sending
 uint8 CO2_send_fan_idx;
 uint8 nrf_last_rf_channel = 255;
@@ -207,6 +207,28 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 		if(f->forced_speed_timeout) f->forced_speed_timeout--;
 		if(!f->powered_off && get_sntp_localtime() - f->transmit_ok_last_time > cfg_fans[fan].timeout) f->transmit_last_status |= 8;
 	}
+	if(cfg_glo.nRF24_reset_time != 0) {
+		if(nRF24_reset_counter <= 3) {
+			if(nRF24_reset_counter == 3) {
+				NRF24_SendCommand(NRF24_CMD_FLUSH_RX);
+				NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
+				NRF24_WriteByte(NRF24_CMD_W_REGISTER | NRF24_REG_CONFIG, 0<<NRF24_BIT_PWR_UP);
+				nRF24_reset_counter--;
+				dbg_printf("nRF off,");
+				return;
+			} else if(nRF24_reset_counter == 0) {
+				NRF24_init();
+				NRF24_SendCommand(NRF24_CMD_FLUSH_RX);
+				NRF24_SendCommand(NRF24_CMD_FLUSH_TX);
+				NRF24_SetMode(NRF24_ReceiveMode);
+				nRF24_reset_counter = cfg_glo.nRF24_reset_time;
+				receive_timeout = global_vars.receive_timeout;
+				dbg_printf("on");
+				return;
+			}
+		}
+		nRF24_reset_counter--;
+	}
 	if(sntp_status == 1) { // New time - send it to CO2 meter
 		sntp_status = 2;
 		uart_drv_start();
@@ -315,6 +337,7 @@ void ICACHE_FLASH_ATTR user_initialize(uint8 index)
 			cfg_glo.fans_speed_threshold[4] = 800;
 			cfg_glo.fans_speed_threshold[5] = 900;
 			cfg_glo.fans_speed_delta = 30;
+			cfg_glo.nRF24_reset_time = 60*60; //
 			uint8 i;
 			for(i = 0; i < sizeof(cfg_glo.temp_threshold_dec)/sizeof(cfg_glo.temp_threshold_dec[0]); i++) {
 				cfg_glo.temp_threshold_dec[i] = -50 - i;
@@ -330,6 +353,7 @@ void ICACHE_FLASH_ATTR user_initialize(uint8 index)
 		}
 		receive_timeout = global_vars.receive_timeout * 2;
 		fan_speed_previous = 0;
+		nRF24_reset_counter = cfg_glo.nRF24_reset_time;
 		os_memset(&fans, 0, sizeof(fans));
 		ets_timer_disarm(&user_loop_timer);
 		os_timer_setfn(&user_loop_timer, (os_timer_func_t *)user_loop, NULL);
@@ -380,6 +404,13 @@ bool ICACHE_FLASH_ATTR write_wireless_fans_cfg(void) {
 
 bool ICACHE_FLASH_ATTR write_global_vars_cfg(void) {
 	return flash_save_cfg(&global_vars, ID_CFG_VARS, sizeof(global_vars));
+}
+
+uint8_t ICACHE_FLASH_ATTR NRF_read_register(uint8_t reg)
+{
+	uint8 buf;
+	NRF24_ReadArray(NRF24_CMD_R_REGISTER + reg, &buf, 1);
+	return buf;
 }
 
 ///*

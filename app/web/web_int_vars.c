@@ -364,6 +364,7 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 	        	else ifcmp("max") cfg_glo.fans_speed_night_max = val;
 	        }
 	        else ifcmp("refresh_t") cfg_glo.page_refresh_time = val;
+	        else ifcmp("nrfreset_t") cfg_glo.nRF24_reset_time = val;
 	        else ifcmp("history_size") {
 	        	val = (val / 3) * 3;
 	        	if(cfg_glo.history_size != val) {
@@ -374,6 +375,12 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 					history_co2_full = 0;
 	        	}
 	        }
+			else ifcmp("sntps") {
+				os_strncpy(cfg_glo.sntp_server, pvar, sizeof(cfg_glo.sntp_server));
+				sntp_close();
+				sntp_inits(UTC_OFFSET, (char*)&cfg_glo.sntp_server);
+			}
+
 //			else ifcmp("reset_data") {
 //				if(os_strcmp(pvar, "RESET") == 0) ; //_clear_all_data();
 //			}
@@ -461,7 +468,7 @@ void ICACHE_FLASH_ATTR web_int_vars(TCP_SERV_CONN *ts_conn, uint8 *pcmd, uint8 *
 			ifcmp("_time") sntp_set_time(val);
 			else {
 				syscfg.cfg.b.sntp_ena = (val)? 1 : 0;
-				if(syscfg.cfg.b.sntp_ena) sntp_inits(UTC_OFFSET);
+				if(syscfg.cfg.b.sntp_ena) sntp_inits(UTC_OFFSET, (char*)&cfg_glo.sntp_server);
 				else sntp_close();
 			}
 		}
