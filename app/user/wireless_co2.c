@@ -293,6 +293,7 @@ void ICACHE_FLASH_ATTR user_loop(void) // call every 1 sec
 					if(f->adjust_speed & 0b1000) f->adjust_speed |= 0xF0; // negative number
 					f->powered_off = (st & 0b10000) != 0;
 				}
+				nRF24_reset_counter = cfg_glo.nRF24_reset_time;
 				#ifdef DEBUG_TO_RAM
 					if(Debug_RAM_addr != NULL && f->transmit_last_status) {
 						struct tm tm;
